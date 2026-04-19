@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_client_visit_user,access.client.visit.user,model_surepay_client_visit,base.group_user,1,1,1,0
+access_client_visit_manager,access.client.visit.manager,model_surepay_client_visit,sales_team.group_sale_manager,1,1,1,1
+access_visit_map_user,access.visit.map.user,model_surepay_visit_map,base.group_user,1,0,1,0
+access_visit_map_manager,access.visit.map.manager,model_surepay_visit_map,sales_team.group_sale_manager,1,1,1,0

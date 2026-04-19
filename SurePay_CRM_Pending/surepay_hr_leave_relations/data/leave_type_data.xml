@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Annual Leave Type -->
+        <record id="leave_type_annual" model="hr.leave.type">
+            <field name="name">Annual Leave</field>
+            <field name="color">7</field>
+            <field name="is_surepay_custom" eval="True"/>
+            <field name="active" eval="True"/>
+        </record>
+        
+        <!-- Sick Leave Type -->
+        <record id="leave_type_sick" model="hr.leave.type">
+            <field name="name">Sick Leave</field>
+            <field name="color">10</field>
+            <field name="is_surepay_custom" eval="True"/>
+            <field name="restrict_probation" eval="False"/>
+            <field name="active" eval="True"/>
+        </record>
+        
+        <!-- Maternity Leave Type -->
+        <record id="leave_type_maternity" model="hr.leave.type">
+            <field name="name">Maternity Leave</field>
+            <field name="color">8</field>
+            <field name="is_surepay_custom" eval="True"/>
+            <field name="restrict_probation" eval="False"/>
+            <field name="maternity_leave_days">90</field>
+            <field name="active" eval="True"/>
+        </record>
+        
+        <!-- Paternity Leave Type -->
+        <record id="leave_type_paternity" model="hr.leave.type">
+            <field name="name">Paternity Leave</field>
+            <field name="color">9</field>
+            <field name="is_surepay_custom" eval="True"/>
+            <field name="restrict_probation" eval="False"/>
+            <field name="paternity_leave_days">5</field>
+            <field name="active" eval="True"/>
+        </record>
+        
+        <!-- Emergency Leave Type -->
+        <record id="leave_type_emergency" model="hr.leave.type">
+            <field name="name">Emergency Leave</field>
+            <field name="color">11</field>
+            <field name="is_surepay_custom" eval="True"/>
+            <field name="restrict_probation" eval="True"/>
+            <field name="active" eval="True"/>
+        </record>
+        
+        <!-- Study Leave Type -->
+        <record id="leave_type_study" model="hr.leave.type">
+            <field name="name">Study Leave</field>
+            <field name="color">12</field>
+            <field name="is_surepay_custom" eval="True"/>
+            <field name="restrict_probation" eval="True"/>
+            <field name="active" eval="True"/>
+        </record>
+        
+        <!-- Compassionate Leave Type -->
+        <record id="leave_type_compassionate" model="hr.leave.type">
+            <field name="name">Compassionate Leave</field>
+            <field name="color">13</field>
+            <field name="is_surepay_custom" eval="True"/>
+            <field name="restrict_probation" eval="False"/>
+            <field name="active" eval="True"/>
+        </record>
+        
+        <!-- Unpaid Leave Type -->
+        <record id="leave_type_unpaid" model="hr.leave.type">
+            <field name="name">Unpaid Leave</field>
+            <field name="color">14</field>
+            <field name="is_surepay_custom" eval="True"/>
+            <field name="restrict_probation" eval="False"/>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>

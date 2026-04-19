@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Mail Template for Contract Expiration Notification -->
+        <record id="mail_template_contract_expiration" model="mail.template">
+            <field name="name">SurePay HR: Contract Expiration Notification</field>
+            <field name="model_id" ref="hr_contract.model_hr_contract"/>
+            <field name="subject">Contract Expiring Soon - ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear HR Team,</p>
+                    <p>This is to inform you that the following contract is expiring soon:</p>
+                    <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; background-color: #f9f9f9;">
+                        <p><strong>Employee:</strong> ${object.employee_id.name}</p>
+                        <p><strong>Department:</strong> ${object.employee_id.department_id.name or 'N/A'}</p>
+                        <p><strong>Contract Type:</strong> ${object.certification_type or 'Employment Contract'}</p>
+                        <p><strong>Expiration Date:</strong> ${object.expiration_date or 'N/A'}</p>
+                        <p><strong>Days Until Expiration:</strong> ${object.days_until_expiration or 'N/A'}</p>
+                        <p><strong>Certification Number:</strong> ${object.certification_number or 'N/A'}</p>
+                        <p><strong>Issuing Authority:</strong> ${object.issuing_authority or 'N/A'}</p>
+                    </div>
+                    <p>Please take necessary action to renew the contract or certification before the expiration date.</p>
+                    <p>You can view the contract details here: <a href="${object.get_base_url()}/web#id=${object.id}&amp;model=${object._name}">View Contract</a></p>
+                    <p>Best regards,<br/>SurePay HR System</p>
+                </div>
+            </field>
+            <field name="auto_delete">True</field>
+            <field name="lang">${object.employee_id.lang}</field>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+        
+        <!-- Mail Template for Disciplinary Action Notification -->
+        <record id="mail_template_disciplinary_action" model="mail.template">
+            <field name="name">SurePay HR: New Disciplinary Action</field>
+            <field name="model_id" ref="model_hr_disciplinary_action"/>
+            <field name="subject">New Disciplinary Action - ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear HR Team,</p>
+                    <p>A new disciplinary action has been recorded:</p>
+                    <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; background-color: #f9f9f9;">
+                        <p><strong>Employee:</strong> ${object.employee_id.name}</p>
+                        <p><strong>Department:</strong> ${object.employee_id.department_id.name or 'N/A'}</p>
+                        <p><strong>Action Type:</strong> ${object.action_type}</p>
+                        <p><strong>Date:</strong> ${object.date}</p>
+                        <p><strong>Title:</strong> ${object.title}</p>
+                        <p><strong>Description:</strong> ${object.description}</p>
+                        <p><strong>Status:</strong> ${object.state}</p>
+                    </div>
+                    <p>Please review and take appropriate action.</p>
+                    <p>You can view the disciplinary action details here: <a href="${object.get_base_url()}/web#id=${object.id}&amp;model=${object._name}">View Disciplinary Action</a></p>
+                    <p>Best regards,<br/>SurePay HR System</p>
+                </div>
+            </field>
+            <field name="auto_delete">True</field>
+            <field name="lang">${object.employee_id.lang}</field>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+        
+        <!-- Mail Template for Disciplinary Action Status Change -->
+        <record id="mail_template_disciplinary_action_status" model="mail.template">
+            <field name="name">SurePay HR: Disciplinary Action Status Update</field>
+            <field name="model_id" ref="model_hr_disciplinary_action"/>
+            <field name="subject">Disciplinary Action Status Update - ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear HR Team,</p>
+                    <p>The status of a disciplinary action has been updated:</p>
+                    <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; background-color: #f9f9f9;">
+                        <p><strong>Employee:</strong> ${object.employee_id.name}</p>
+                        <p><strong>Department:</strong> ${object.employee_id.department_id.name or 'N/A'}</p>
+                        <p><strong>Action Type:</strong> ${object.action_type}</p>
+                        <p><strong>Title:</strong> ${object.title}</p>
+                        <p><strong>New Status:</strong> ${object.state}</p>
+                        <p><strong>Active:</strong> ${object.active}</p>
+                    </div>
+                    <p>Please review the updated status and take appropriate action.</p>
+                    <p>You can view the disciplinary action details here: <a href="${object.get_base_url()}/web#id=${object.id}&amp;model=${object._name}">View Disciplinary Action</a></p>
+                    <p>Best regards,<br/>SurePay HR System</p>
+                </div>
+            </field>
+            <field name="auto_delete">True</field>
+            <field name="lang">${object.employee_id.lang}</field>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+        
+        <!-- Mail Template for Probation Status Notification -->
+        <record id="mail_template_probation_status" model="mail.template">
+            <field name="name">SurePay HR: Probation Status Notification</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="subject">Probation Status Update - ${object.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear HR Team,</p>
+                    <p>The probation status for the following employee has been updated:</p>
+                    <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; background-color: #f9f9f9;">
+                        <p><strong>Employee:</strong> ${object.name}</p>
+                        <p><strong>Department:</strong> ${object.department_id.name or 'N/A'}</p>
+                        <p><strong>Job Position:</strong> ${object.job_id.name or 'N/A'}</p>
+                        <p><strong>On Probation:</strong> ${object.is_on_probation}</p>
+                        <p><strong>Probation End Date:</strong> ${object.probation_end_date or 'N/A'}</p>
+                    </div>
+                    <p>Please review the probation status and plan for confirmation or extension as needed.</p>
+                    <p>You can view the employee details here: <a href="${object.get_base_url()}/web#id=${object.id}&amp;model=${object._name}">View Employee</a></p>
+                    <p>Best regards,<br/>SurePay HR System</p>
+                </div>
+            </field>
+            <field name="auto_delete">True</field>
+            <field name="lang">${object.lang}</field>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+        
+        <!-- Mail Template for Skill Fulfilled Notification -->
+        <record id="mail_template_skill_fulfilled" model="mail.template">
+            <field name="name">SurePay HR: Skill Requirement Fulfilled</field>
+            <field name="model_id" ref="model_hr_employee_skill"/>
+            <field name="subject">Skill Requirement Fulfilled - ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear HR Team,</p>
+                    <p>An employee has fulfilled a required skill:</p>
+                    <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; background-color: #f9f9f9;">
+                        <p><strong>Employee:</strong> ${object.employee_id.name}</p>
+                        <p><strong>Department:</strong> ${object.employee_id.department_id.name or 'N/A'}</p>
+                        <p><strong>Skill:</strong> ${object.skill_id.name}</p>
+                        <p><strong>Skill Category:</strong> ${object.skill_id.skill_category_id.name or 'N/A'}</p>
+                        <p><strong>Current Level:</strong> ${object.skill_level}</p>
+                        <p><strong>Required Level:</strong> ${object.skill_id.skill_level}</p>
+                        <p><strong>Date Acquired:</strong> ${object.date_acquired}</p>
+                    </div>
+                    <p>The employee now meets the required skill level for this position.</p>
+                    <p>You can view the employee skills here: <a href="${object.get_base_url()}/web#id=${object.employee_id.id}&amp;model=hr.employee">View Employee</a></p>
+                    <p>Best regards,<br/>SurePay HR System</p>
+                </div>
+            </field>
+            <field name="auto_delete">True</field>
+            <field name="lang">${object.employee_id.lang}</field>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+        
+        <!-- Mail Template for Weekly Skill Gap Report -->
+        <record id="mail_template_weekly_skill_gap_report" model="mail.template">
+            <field name="name">SurePay HR: Weekly Skill Gap Report</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="subject">Weekly Skill Gap Analysis Report</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear HR Team,</p>
+                    <p>Here is the weekly skill gap analysis report:</p>
+                    <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; background-color: #f9f9f9;">
+                        <p><strong>Report Date:</strong> ${object.env['mail.template']._render_template('${object.env.context.get("current_date")}', object.model, object.id)}</p>
+                        <p><strong>Total Employees:</strong> ${object.env['hr.employee'].search_count([('active', '=', True)])}</p>
+                        <p><strong>Employees with Skill Gaps:</strong> ${object.env['hr.employee'].search_count([('skill_gap_count', '>', 0)])}</p>
+                        <p><strong>Total Skill Gaps:</strong> ${sum(object.env['hr.employee'].search([('active', '=', True)]).mapped('skill_gap_count'))}</p>
+                    </div>
+                    <p>Please review the skill gaps and plan for training or recruitment as needed.</p>
+                    <p>You can view the detailed skill gap report here: <a href="${object.get_base_url()}/web#action=${object.env.ref('surepay_hr_management.action_hr_skill_gap_report').id}">View Skill Gap Report</a></p>
+                    <p>Best regards,<br/>SurePay HR System</p>
+                </div>
+            </field>
+            <field name="auto_delete">True</field>
+            <field name="lang">${object.env.user.lang}</field>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+        
+    </data>
+</odoo>

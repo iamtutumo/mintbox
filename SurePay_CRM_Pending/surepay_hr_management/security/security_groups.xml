@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Extended HR User Group -->
+        <record id="group_hr_user_extended" model="res.groups">
+            <field name="name">HR Officer (Extended)</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+            <field name="implied_ids" eval="[(4, ref('hr.group_hr_user'))]"/>
+            <field name="comment">The user will be able to manage extended HR features including disciplinary actions, skill gaps, and analytics.</field>
+        </record>
+        
+        <!-- Extended HR Manager Group -->
+        <record id="group_hr_manager_extended" model="res.groups">
+            <field name="name">HR Manager (Extended)</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+            <field name="implied_ids" eval="[(4, ref('hr.group_hr_manager')), (4, ref('group_hr_user_extended'))]"/>
+            <field name="comment">The user will have full access to all extended HR features including configuration and analytics.</field>
+        </record>
+        
+        <!-- Employee Self-Service Group -->
+        <record id="group_hr_employee_self_service" model="res.groups">
+            <field name="name">Employee Self-Service</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">The user will be able to view and update their own skills and view their own HR information.</field>
+        </record>
+        
+        <!-- Security Rules for Employee Self-Service -->
+        <record id="hr_employee_skill_rule_employee" model="ir.rule">
+            <field name="name">Employee Skill: Employee can only see their own skills</field>
+            <field name="model_id" ref="model_hr_employee_skill"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_hr_employee_self_service'))]"/>
+            <field name="perm_read">True</field>
+            <field name="perm_write">True</field>
+            <field name="perm_create">True</field>
+            <field name="perm_unlink">False</field>
+        </record>
+        
+        <record id="hr_disciplinary_action_rule_employee" model="ir.rule">
+            <field name="name">Disciplinary Action: Employee can only see their own actions</field>
+            <field name="model_id" ref="model_hr_disciplinary_action"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_hr_employee_self_service'))]"/>
+            <field name="perm_read">True</field>
+            <field name="perm_write">False</field>
+            <field name="perm_create">False</field>
+            <field name="perm_unlink">False</field>
+        </record>
+        
+        <!-- Security Rules for HR Users -->
+        <record id="hr_employee_skill_rule_hr_user" model="ir.rule">
+            <field name="name">Employee Skill: HR User can see all skills in their department</field>
+            <field name="model_id" ref="model_hr_employee_skill"/>
+            <field name="domain_force">[('employee_id.department_id', 'child_of', user.employee_id.department_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_hr_user_extended'))]"/>
+        </record>
+        
+        <record id="hr_disciplinary_action_rule_hr_user" model="ir.rule">
+            <field name="name">Disciplinary Action: HR User can see actions in their department</field>
+            <field name="model_id" ref="model_hr_disciplinary_action"/>
+            <field name="domain_force">[('employee_id.department_id', 'child_of', user.employee_id.department_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_hr_user_extended'))]"/>
+        </record>
+        
+        <!-- Security Rules for HR Managers -->
+        <record id="hr_employee_skill_rule_hr_manager" model="ir.rule">
+            <field name="name">Employee Skill: HR Manager can see all skills</field>
+            <field name="model_id" ref="model_hr_employee_skill"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_hr_manager_extended'))]"/>
+        </record>
+        
+        <record id="hr_disciplinary_action_rule_hr_manager" model="ir.rule">
+            <field name="name">Disciplinary Action: HR Manager can see all actions</field>
+            <field name="model_id" ref="model_hr_disciplinary_action"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_hr_manager_extended'))]"/>
+        </record>
+        
+        <!-- Multi-company Rules -->
+        <record id="hr_employee_skill_rule_company" model="ir.rule">
+            <field name="name">Employee Skill: Multi-company</field>
+            <field name="model_id" ref="model_hr_employee_skill"/>
+            <field name="domain_force">['|', ('employee_id.company_id', '=', False), ('employee_id.company_id', 'in', company_ids)]</field>
+        </record>
+        
+        <record id="hr_disciplinary_action_rule_company" model="ir.rule">
+            <field name="name">Disciplinary Action: Multi-company</field>
+            <field name="model_id" ref="model_hr_disciplinary_action"/>
+            <field name="domain_force">['|', ('employee_id.company_id', '=', False), ('employee_id.company_id', 'in', company_ids)]</field>
+        </record>
+        
+        <record id="hr_skill_rule_company" model="ir.rule">
+            <field name="name">Skill: Multi-company</field>
+            <field name="model_id" ref="model_hr_skill"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+        
+    </data>
+</odoo>

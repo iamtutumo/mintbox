@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Education Form View -->
+    <record id="view_hr_applicant_education_form" model="ir.ui.view">
+        <field name="name">hr.applicant.education.form</field>
+        <field name="model">hr.applicant.education</field>
+        <field name="arch" type="xml">
+            <form string="Education">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="degree" placeholder="e.g., Bachelor of Science"/>
+                            <field name="institution" placeholder="e.g., University of Nairobi"/>
+                            <field name="field_of_study" placeholder="e.g., Computer Science"/>
+                        </group>
+                        <group>
+                            <field name="year_completed"/>
+                            <field name="grade" placeholder="e.g., First Class Honours, 3.8 GPA"/>
+                            <field name="currently_studying"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes" placeholder="Additional information about this qualification..."/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Education Tree View -->
+    <record id="view_hr_applicant_education_tree" model="ir.ui.view">
+        <field name="name">hr.applicant.education.tree</field>
+        <field name="model">hr.applicant.education</field>
+        <field name="arch" type="xml">
+            <tree string="Education History">
+                <field name="degree"/>
+                <field name="institution"/>
+                <field name="field_of_study"/>
+                <field name="year_completed"/>
+                <field name="currently_studying"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>

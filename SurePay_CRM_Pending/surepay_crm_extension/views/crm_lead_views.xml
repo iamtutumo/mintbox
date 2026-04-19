@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View -->
+    <record id="view_crm_lead_form_surepay" model="ir.ui.view">
+        <field name="name">surepay.crm.lead.form</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Hide header buttons -->
+            <xpath expr="//header" position="inside">
+                <!-- Remove unwanted buttons by making them invisible -->
+                <xpath expr="//button[@name='action_fetch_mail']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_start_survey']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_assign_lead']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </xpath>
+            
+            <!-- Hide unwanted buttons from button box -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <!-- Remove KYC documents button -->
+                <xpath expr="//button[@name='557']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </xpath>
+            
+            <!-- Custom fields -->
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="company_id" invisible="1"/>
+                <field name="is_cold_lead" invisible="1"/>
+                <field name="product_sync_code" invisible="not is_cold_lead"/>
+                <field name="is_referral" invisible="1"/>
+            </xpath>
+            
+            <!-- Referral Information Section -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Referral Information" invisible="not is_referral">
+                    <group>
+                        <group>
+                            <field name="referrer_name" readonly="1"/>
+                            <field name="referrer_phone" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="referral_date" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_crm_lead_search_surepay" model="ir.ui.view">
+        <field name="name">surepay.crm.lead.search</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='won']" position="after">
+                <separator/>
+                <filter name="cold_leads" string="Cold Leads" domain="[('is_cold_lead', '=', True)]"/>
+                <filter name="referrals" string="Referrals" domain="[('is_referral', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Action for Cold Leads -->
+    <record id="action_crm_lead_cold" model="ir.actions.act_window">
+        <field name="name">Cold Leads</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('is_cold_lead', '=', True)]</field>
+        <field name="context">{'search_default_cold_leads': 1, 'default_type': 'opportunity', 'default_is_cold_lead': True}</field>
+        <field name="search_view_id" ref="view_crm_lead_search_surepay"/>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_crm_lead_cold"
+        name="Cold Leads"
+        action="action_crm_lead_cold"
+        parent="crm.crm_menu_root"
+        sequence="15"/>
+
+    <!-- Custom Kanban View for CRM Leads with filtered stages -->
+    <record id="view_crm_lead_kanban_surepay" model="ir.ui.view">
+        <field name="name">surepay.crm.lead.kanban</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <!-- Remove domain filter to prevent white page issues -->
+                <attribute name="domain" remove="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Custom Search View with stage filters -->
+    <record id="view_crm_lead_search_surepay_stages" model="ir.ui.view">
+        <field name="name">surepay.crm.lead.search.stages</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='won']" position="after">
+                <separator/>
+                <filter string="SurePay Stages" name="surepay_stages" domain="[('stage_id.name', 'in', ['Cold Lead', 'Prospecting', 'Preparation', 'Closing', 'Won', 'Lost'])]"/>
+                <filter string="Active Stages Only" name="active_stages" domain="[('stage_id.fold', '=', False)]"/>
+                <separator/>
+                <filter string="Cold Lead" name="stage_cold_lead" domain="[('stage_id.name', '=', 'Cold Lead')]"/>
+                <filter string="Prospecting" name="stage_prospecting" domain="[('stage_id.name', '=', 'Prospecting')]"/>
+                <filter string="Preparation" name="stage_preparation" domain="[('stage_id.name', '=', 'Preparation')]"/>
+                <filter string="Closing" name="stage_closing" domain="[('stage_id.name', '=', 'Closing')]"/>
+                <filter string="Won" name="stage_won" domain="[('stage_id.name', '=', 'Won')]"/>
+                <filter string="Lost" name="stage_lost" domain="[('stage_id.name', '=', 'Lost')]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Custom Action for CRM Leads with filtered stages -->
+    <record id="action_crm_lead_surepay" model="ir.actions.act_window">
+        <field name="name">Pipeline</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">kanban,tree,form,activity</field>
+        <field name="context">{'search_default_active_stages': 1, 'default_type': 'opportunity'}</field>
+        <field name="domain">[('stage_id.fold', '=', False)]</field>
+        <field name="search_view_id" ref="view_crm_lead_search_surepay_stages"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first opportunity
+            </p>
+        </field>
+    </record>
+
+    <!-- Override default CRM Pipeline action -->
+    <record id="crm.crm_lead_action_pipeline" model="ir.actions.act_window">
+        <field name="context">{'search_default_active_stages': 1, 'default_type': 'opportunity'}</field>
+        <field name="domain">[('stage_id.fold', '=', False)]</field>
+        <field name="search_view_id" ref="view_crm_lead_search_surepay_stages"/>
+    </record>
+
+</odoo>

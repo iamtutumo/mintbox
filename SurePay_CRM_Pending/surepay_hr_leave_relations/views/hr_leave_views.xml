@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Leave Type Form View -->
+        <record id="view_hr_leave_type_form" model="ir.ui.view">
+            <field name="name">hr.leave.type.form</field>
+            <field name="model">hr.leave.type</field>
+            <field name="arch" type="xml">
+                <form string="Leave Type">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" required="1"/>
+                                <field name="color" widget="color_picker"/>
+                                <field name="is_surepay_custom"/>
+                                <field name="restrict_probation" invisible="is_surepay_custom == False"/>
+                                <field name="maternity_leave_days" invisible="name != 'Maternity Leave'"/>
+                                <field name="paternity_leave_days" invisible="name != 'Paternity Leave'"/>
+                            </group>
+                            <group>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Leave Type Tree View -->
+        <record id="view_hr_leave_type_tree" model="ir.ui.view">
+            <field name="name">hr.leave.type.tree</field>
+            <field name="model">hr.leave.type</field>
+            <field name="arch" type="xml">
+                <tree string="Leave Types">
+                    <field name="name"/>
+                    <field name="color" widget="color_picker"/>
+                    <field name="is_surepay_custom"/>
+                    <field name="restrict_probation" invisible="is_surepay_custom == False"/>
+                    <field name="maternity_leave_days" invisible="name != 'Maternity Leave'"/>
+                    <field name="paternity_leave_days" invisible="name != 'Paternity Leave'"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Leave Form View -->
+        <record id="view_hr_leave_form" model="ir.ui.view">
+            <field name="name">hr.leave.form</field>
+            <field name="model">hr.leave</field>
+            <field name="arch" type="xml">
+                <form string="Leave Request">
+                    <header>
+                        <button name="action_confirm" string="Confirm" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                        <button name="action_approve" string="Approve" type="object" class="oe_highlight" invisible="state != 'confirm'" groups="hr_holidays.group_hr_holidays_user"/>
+                        <button name="action_refuse" string="Refuse" type="object" invisible="state not in ['confirm', 'validate']" groups="hr_holidays.group_hr_holidays_user"/>
+                        <button name="action_draft" string="Set to Draft" type="object" invisible="state != 'refuse'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="holiday_status_id" readonly="state != 'draft'"/>
+                            </h1>
+                            <div class="alert alert-info" invisible="is_annual_allocation == False">
+                                <i class="fa fa-info-circle"/> This is an annual allocation for <field name="allocation_year"/>.
+                            </div>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="employee_id" readonly="state != 'draft'"/>
+                                <field name="department_id" readonly="1"/>
+                                <field name="holiday_type" readonly="state != 'draft'"/>
+                                <field name="employee_company_id" invisible="1"/>
+                                <field name="is_annual_allocation" invisible="1"/>
+                                <field name="allocation_year" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="request_date_from" readonly="state != 'draft'"/>
+                                <field name="request_date_to" readonly="state != 'draft'"/>
+                                <field name="number_of_days" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Description">
+                                <field name="name" placeholder="Add a description..." readonly="state != 'draft'"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Leave Tree View -->
+        <record id="view_hr_leave_tree" model="ir.ui.view">
+            <field name="name">hr.leave.tree</field>
+            <field name="model">hr.leave</field>
+            <field name="arch" type="xml">
+                <tree string="Leave Requests" decoration-info="state=='draft'" decoration-success="state=='validate'" decoration-warning="state=='confirm'" decoration-danger="state=='refuse'">
+                    <field name="employee_id"/>
+                    <field name="holiday_status_id"/>
+                    <field name="request_date_from"/>
+                    <field name="request_date_to"/>
+                    <field name="number_of_days" sum="Total Leaves"/>
+                    <field name="state"/>
+                    <field name="is_annual_allocation"/>
+                    <field name="allocation_year"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Leave Allocation Form View -->
+        <record id="view_hr_leave_allocation_form" model="ir.ui.view">
+            <field name="name">hr.leave.allocation.form</field>
+            <field name="model">hr.leave.allocation</field>
+            <field name="arch" type="xml">
+                <form string="Leave Allocation">
+                    <header>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="holiday_status_id" readonly="state != 'draft'"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="employee_id" readonly="state != 'draft'"/>
+                                <field name="department_id" readonly="1"/>
+                                <field name="holiday_type" readonly="state != 'draft'"/>
+                                <field name="is_annual_allocation"/>
+                                <field name="allocation_year" invisible="is_annual_allocation == False"/>
+                            </group>
+                            <group>
+                                <field name="number_of_days" readonly="state != 'draft'"/>
+                                <field name="date_from" readonly="state != 'draft'"/>
+                                <field name="date_to" readonly="state != 'draft'"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Description">
+                                <field name="name" placeholder="Add a description..." readonly="state != 'draft'"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Leave Allocation Tree View -->
+        <record id="view_hr_leave_allocation_tree" model="ir.ui.view">
+            <field name="name">hr.leave.allocation.tree</field>
+            <field name="model">hr.leave.allocation</field>
+            <field name="arch" type="xml">
+                <tree string="Leave Allocations" decoration-info="state=='draft'" decoration-success="state=='validate'" decoration-warning="state=='confirm'" decoration-danger="state=='refuse'">
+                    <field name="employee_id"/>
+                    <field name="holiday_status_id"/>
+                    <field name="number_of_days" sum="Total Allocations"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="state"/>
+                    <field name="is_annual_allocation"/>
+                    <field name="allocation_year" invisible="is_annual_allocation == False"/>
+                </tree>
+            </field>
+        </record>
+        
+        
+    </data>
+</odoo>

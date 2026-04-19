@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- 
+        Note: Stage cleanup is handled in the post_init_hook 
+        in the __manifest__.py file
+    -->
+    
+    <!-- Stage 1: Application Received (First Stage) -->
+    <record id="stage_application_received" model="hr.recruitment.stage">
+        <field name="name">Application Received</field>
+        <field name="sequence">1</field>
+        <field name="fold" eval="False"/>
+        <field name="send_email_on_enter" eval="True"/>
+        <field name="email_template_id" ref="hr_recruitment_notifications_extended.email_application_received"/>
+        <field name="email_description">Sends a confirmation email to applicants when their application is received, including tracking information and next steps.</field>
+    </record>
+
+    <!-- Stage 2: Initial Screening -->
+    <record id="stage_initial_screening" model="hr.recruitment.stage">
+        <field name="name">Initial Screening</field>
+        <field name="sequence">2</field>
+        <field name="fold" eval="False"/>
+    </record>
+
+    <!-- Stage 3: Shortlisting -->
+    <record id="stage_shortlisting" model="hr.recruitment.stage">
+        <field name="name">Shortlisting</field>
+        <field name="sequence">3</field>
+        <field name="fold" eval="False"/>
+    </record>
+
+    <!-- Stage 4: Committee Review -->
+    <record id="stage_committee_review" model="hr.recruitment.stage">
+        <field name="name">Committee Review</field>
+        <field name="sequence">4</field>
+        <field name="fold" eval="False"/>
+    </record>
+
+    <!-- Stage 5: Interview -->
+    <record id="stage_interview" model="hr.recruitment.stage">
+        <field name="name">Interview</field>
+        <field name="sequence">5</field>
+        <field name="fold" eval="False"/>
+    </record>
+
+    <!-- Stage 6: Committee Final Review -->
+    <record id="stage_committee_final" model="hr.recruitment.stage">
+        <field name="name">Committee Final Review</field>
+        <field name="sequence">6</field>
+        <field name="fold" eval="False"/>
+    </record>
+
+    <!-- Stage 7: Offer -->
+    <record id="stage_offer" model="hr.recruitment.stage">
+        <field name="name">Offer</field>
+        <field name="sequence">7</field>
+        <field name="fold" eval="False"/>
+    </record>
+
+    <!-- Stage 8: Onboarding -->
+    <record id="stage_onboarding" model="hr.recruitment.stage">
+        <field name="name">Onboarding</field>
+        <field name="sequence">8</field>
+        <field name="fold" eval="False"/>
+        <field name="hired_stage" eval="True"/>
+    </record>
+
+    <!-- Stage 9: Rejected (Folded) -->
+    <record id="stage_rejected" model="hr.recruitment.stage">
+        <field name="name">Rejected</field>
+        <field name="sequence">99</field>
+        <field name="fold" eval="True"/>
+        <field name="send_email_on_enter" eval="True"/>
+        <field name="email_template_id" ref="hr_recruitment_notifications_extended.email_eligibility_rejection"/>
+        <field name="email_description">Sends a rejection email to applicants who do not meet the eligibility requirements for the position.</field>
+    </record>
+
+</odoo>

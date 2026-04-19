@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="email_applicant_tracking_link" model="mail.template">
+        <field name="name">Applicant: Tracking Information</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Your Application Status - Tracking ID: {{ object.tracking_id }}</field>
+        <field name="email_from">{{ (object.company_id.email or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.email_from }}</field>
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p>Dear {{ object.partner_name }},</p>
+                
+                <p>Thank you for your application for the position of <strong>{{ object.job_id.name }}</strong>.</p>
+                
+                <div style="background-color: #f8f9fa; border-left: 4px solid #007bff; padding: 12px; margin: 16px 0;">
+                    <p style="margin: 0 0 8px 0; font-weight: bold;">Your Application Details:</p>
+                    <p style="margin: 4px 0;">
+                        <strong>Tracking ID:</strong> {{ object.tracking_id }}<br/>
+                        <strong>Position:</strong> {{ object.job_id.name }}<br/>
+                        <strong>Application Date:</strong> {{ object.create_date }}
+                    </p>
+                </div>
+                
+                <p>You can check the status of your application at any time using this link:</p>
+                
+                <div style="margin: 16px 0; text-align: center;">
+                    <a href="{{ object.get_base_url() }}/job/status?tracking_id={{ object.tracking_id }}" 
+                       style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">
+                        Check Application Status
+                    </a>
+                </div>
+                
+                <p>If the button above doesn't work, you can copy and paste this link into your browser:</p>
+                <p style="word-break: break-all;">
+                    {{ object.get_base_url() }}/job/status?tracking_id={{ object.tracking_id }}
+                </p>
+                
+                <p>Our recruitment team will review your application and contact you if your qualifications match our requirements.</p>
+                
+                <p>Thank you for your interest in joining our team!</p>
+                
+                <p>Best regards,<br/>
+                {% if user.signature %}
+                    {{ user.signature | safe }}
+                {% else %}
+                    --<br/>The {{ object.company_id.name or 'Company' }} Team
+                {% endif %}
+                </p>
+                
+                <div style="margin-top: 32px; font-size: 12px; color: #6c757d; border-top: 1px solid #dee2e6; padding-top: 16px;">
+                    <p style="margin: 0 0 8px 0;">
+                        <strong>Note:</strong> This is an automated message, please do not reply to this email.
+                    </p>
+                </div>
+            </div>
+        </field>
+    </record>
+</odoo>

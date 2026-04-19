@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Onboarding Dashboard Template -->
+    <record id="onboarding_dashboard_template" model="ir.ui.view">
+        <field name="name">Onboarding Dashboard</field>
+        <field name="type">qweb</field>
+        <field name="key">hr_recruitment_onboarding_portal.onboarding_dashboard_template</field>
+        <field name="arch" type="xml">
+            <t t-name="hr_recruitment_onboarding_portal.onboarding_dashboard_template">
+                <t t-call="website.layout">
+                    <div id="wrap" class="oe_structure">
+                        <div class="container mt-5 mb-5">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card shadow-sm">
+                                        <div class="card-header bg-success text-white">
+                                            <h2 class="h3 mb-0">Welcome to SurePay Ltd!</h2>
+                                            <p class="mb-0">Onboarding Portal for <t t-esc="applicant.partner_name"/></p>
+                                        </div>
+                                        <div class="card-body">
+                                            
+                                            <!-- Progress Overview -->
+                                            <div class="row mb-4">
+                                                <div class="col-md-6">
+                                                    <h5>Task Progress</h5>
+                                                    <div class="progress" style="height: 30px;">
+                                                        <div class="progress-bar bg-success" role="progressbar" t-att-style="'width: ' + str(onboarding.task_progress) + '%'">
+                                                            <t t-esc="int(onboarding.task_progress)"/>%
+                                                        </div>
+                                                    </div>
+                                                    <small><t t-esc="onboarding.completed_task_count"/> of <t t-esc="onboarding.task_count"/> tasks completed</small>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h5>Document Upload Progress</h5>
+                                                    <div class="progress" style="height: 30px;">
+                                                        <div class="progress-bar bg-info" role="progressbar" t-att-style="'width: ' + str(onboarding.document_progress) + '%'">
+                                                            <t t-esc="int(onboarding.document_progress)"/>%
+                                                        </div>
+                                                    </div>
+                                                    <small><t t-esc="onboarding.uploaded_document_count"/> of <t t-esc="onboarding.document_count"/> documents uploaded</small>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Tasks Section -->
+                                            <h4 class="border-bottom pb-2 mb-3">Onboarding Tasks</h4>
+                                            <div class="list-group mb-4">
+                                                <t t-foreach="onboarding.task_ids" t-as="task">
+                                                    <div class="list-group-item" t-att-class="'list-group-item-success' if task.completed else ''">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div>
+                                                                <h6 class="mb-1">
+                                                                    <t t-if="task.completed">
+                                                                        <i class="fa fa-check-circle text-success"></i>
+                                                                    </t>
+                                                                    <t t-else="">
+                                                                        <i class="fa fa-circle-o"></i>
+                                                                    </t>
+                                                                    <t t-esc="task.name"/>
+                                                                    <t t-if="task.required">
+                                                                        <span class="badge badge-danger">Required</span>
+                                                                    </t>
+                                                                </h6>
+                                                                <p class="mb-1 text-muted"><t t-esc="task.description"/></p>
+                                                            </div>
+                                                            <t t-if="not task.completed">
+                                                                <form method="post" t-attf-action="/onboarding/#{onboarding.portal_access_token}/task/complete">
+                                                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                                    <input type="hidden" name="task_id" t-att-value="task.id"/>
+                                                                    <button type="submit" class="btn btn-sm btn-success">Mark Complete</button>
+                                                                </form>
+                                                            </t>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                            
+                                            <!-- Documents Section -->
+                                            <h4 class="border-bottom pb-2 mb-3">Required Documents</h4>
+                                            <div class="list-group mb-4">
+                                                <t t-foreach="onboarding.document_ids" t-as="doc">
+                                                    <div class="list-group-item">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div>
+                                                                <h6 class="mb-1">
+                                                                    <t t-if="doc.verified">
+                                                                        <i class="fa fa-check-circle text-success"></i>
+                                                                    </t>
+                                                                    <t t-elif="doc.file">
+                                                                        <i class="fa fa-clock-o text-info"></i>
+                                                                    </t>
+                                                                    <t t-else="">
+                                                                        <i class="fa fa-circle-o"></i>
+                                                                    </t>
+                                                                    <t t-esc="doc.name"/>
+                                                                    <t t-if="doc.required">
+                                                                        <span class="badge badge-danger">Required</span>
+                                                                    </t>
+                                                                </h6>
+                                                                <t t-if="doc.verified">
+                                                                    <small class="text-success">Verified by <t t-esc="doc.verified_by.name"/> on <t t-esc="doc.verified_date"/></small>
+                                                                </t>
+                                                                <t t-elif="doc.file">
+                                                                    <small class="text-info">Uploaded, pending verification</small>
+                                                                </t>
+                                                            </div>
+                                                            <t t-if="not doc.file">
+                                                                <form method="post" t-attf-action="/onboarding/#{onboarding.portal_access_token}/upload" enctype="multipart/form-data">
+                                                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                                    <input type="hidden" name="document_id" t-att-value="doc.id"/>
+                                                                    <div class="input-group">
+                                                                        <input type="file" name="file" class="form-control" required="required"/>
+                                                                        <button type="submit" class="btn btn-primary">Upload</button>
+                                                                    </div>
+                                                                </form>
+                                                            </t>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                            
+                                            <!-- Next Steps -->
+                                            <div class="alert alert-info">
+                                                <h5>Next Steps:</h5>
+                                                <ul>
+                                                    <li>Complete all required tasks</li>
+                                                    <li>Upload all required documents</li>
+                                                    <li>Wait for HR to verify your documents</li>
+                                                    <li>Your employee record will be created once everything is complete</li>
+                                                </ul>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </field>
+    </record>
+
+</odoo>

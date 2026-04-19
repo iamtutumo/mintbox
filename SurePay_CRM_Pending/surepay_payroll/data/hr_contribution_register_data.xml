@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Contribution Registers -->
+        <record id="contribution_register_basic" model="hr.contribution.register">
+            <field name="name">Basic Pay Register</field>
+            <field name="code">BASIC_REG</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <record id="contribution_register_allowances" model="hr.contribution.register">
+            <field name="name">Allowances Register</field>
+            <field name="code">ALW_REG</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <record id="contribution_register_nssf" model="hr.contribution.register">
+            <field name="name">NSSF Contributions Register</field>
+            <field name="code">NSSF_REG</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <record id="contribution_register_tax" model="hr.contribution.register">
+            <field name="name">Tax Deductions Register</field>
+            <field name="code">TAX_REG</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <record id="contribution_register_deductions" model="hr.contribution.register">
+            <field name="name">Other Deductions Register</field>
+            <field name="code">DED_REG</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <record id="contribution_register_net" model="hr.contribution.register">
+            <field name="name">Net Salary Register</field>
+            <field name="code">NET_REG</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+    </data>
+</odoo>

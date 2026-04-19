@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Fixed Template for Payslip Details Report with Proper Company Layout -->
+    <template id="report_payslipdetails">
+        <!-- Include payroll assets for proper print styling -->
+        <t t-call="surepay_payroll.payroll_report_assets"/>
+        <t t-call="web.external_layout">
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                    <main>
+                        <div class="oe_structure"/>
+                        <!-- Professional Payslip Header -->
+                        <div class="text-center mb-4" style="margin-top: 20px;">
+                            <h2 class="mb-2" style="font-weight: bold; border-bottom: 2px solid black; padding-bottom: 10px;">PAY SLIP DETAILS</h2>
+                            <h4 class="text-muted mb-0" t-field="o.name"/>
+                            <div class="text-muted small">
+                                Period: <span t-field="o.date_from"/> to <span t-field="o.date_to"/>
+                            </div>
+                        </div>
+                        
+                        <!-- Employee Information Table -->
+                        <div class="table-responsive mb-4">
+                            <table class="table table-sm table-bordered" style="border: 1px solid #dee2e6;">
+                                <thead>
+                                    <tr>
+                                        <th colspan="4" class="text-center" style="font-weight: bold; padding: 12px; font-size: 16px;">Employee Information</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td width="20%" style="font-weight: bold; padding: 8px; font-size: 14px;">Employee Name</td>
+                                        <td width="30%" style="padding: 8px; font-size: 14px;"><span t-field="o.employee_id"/></td>
+                                        <td width="20%" style="font-weight: bold; padding: 8px; font-size: 14px;">Designation</td>
+                                        <td width="30%" style="padding: 8px; font-size: 14px;"><span t-field="o.employee_id.job_id"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; padding: 8px; font-size: 14px;">Email</td>
+                                        <td style="padding: 8px; font-size: 14px;"><span t-field="o.employee_id.work_email"/></td>
+                                        <td style="font-weight: bold; padding: 8px; font-size: 14px;">Identification No</td>
+                                        <td style="padding: 8px; font-size: 14px;"><span t-field="o.employee_id.identification_id"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; padding: 8px; font-size: 14px;">Payslip No</td>
+                                        <td style="padding: 8px; font-size: 14px;"><span t-field="o.number"/></td>
+                                        <td style="font-weight: bold; padding: 8px; font-size: 14px;">Bank Account</td>
+                                        <td style="padding: 8px; font-size: 14px;"><span t-field="o.employee_id.bank_account_id"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; padding: 8px; font-size: 14px;"><strong>Department</strong></td>
+                                        <td style="padding: 8px; font-size: 14px;"><span t-field="o.employee_id.department_id"/></td>
+                                        <td style="font-weight: bold; padding: 8px; font-size: 14px;"><strong>Work Location</strong></td>
+                                        <td style="padding: 8px; font-size: 14px;"><span t-field="o.employee_id.work_location_id"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Details by Salary Rule Category -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Details by Salary Rule Category</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped" style="border: 2px solid #dee2e6; border-collapse: collapse;">
+                                        <thead>
+                                            <tr>
+                                                <th width="10%" style="padding: 8px; font-size: 14px;">Code</th>
+                                                <th width="60%" style="padding: 8px; font-size: 14px;">Salary Rule Category</th>
+                                                <th width="30%" class="text-right" style="padding: 8px; font-size: 14px;">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-if="get_details_by_rule_category.get(o.id, [])">
+                                                <tr t-foreach="get_details_by_rule_category.get(o.id, [])" t-as="h">
+                                                    <td style="padding: 6px; font-size: 12px;"><span t-esc="h['code']"/></td>
+                                                    <td style="padding: 6px; font-size: 12px;">
+                                                        <span class="ms-2" t-esc="'..'*h['level']"/>
+                                                        <span t-esc="h['rule_category']"/>
+                                                    </td>
+                                                    <td class="text-right" style="padding: 6px; font-size: 12px;">
+                                                        <span t-field="h['total']" 
+                                                              t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="not get_details_by_rule_category.get(o.id, [])">
+                                                <tr>
+                                                    <td colspan="3" class="text-center text-muted" style="padding: 8px; font-size: 14px;">No salary rule categories available</td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Payslip Lines by Contribution Register -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Payslip Lines by Contribution Register</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th width="10%">Code</th>
+                                                <th width="35%">Name</th>
+                                                <th width="15%" class="text-center">Quantity</th>
+                                                <th width="15%" class="text-right">Rate</th>
+                                                <th width="25%" class="text-right">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-if="get_lines_by_contribution_register.get(o.id, [])">
+                                                <tr t-foreach="get_lines_by_contribution_register.get(o.id, [])" t-as="p">
+                                                    <td><span t-esc="p.get('code', '')"/></td>
+                                                    <td><span t-esc="p.get('name', '')"/></td>
+                                                    <td class="text-center"><span t-esc="p.get('quantity', '')"/></td>
+                                                    <td class="text-right">
+                                                        <span t-field="p.get('amount', 0)" 
+                                                              t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <span t-field="p.get('total', 0)" 
+                                                              t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="not get_lines_by_contribution_register.get(o.id, [])">
+                                                <tr>
+                                                    <td colspan="5" class="text-center text-muted">No contribution register lines available</td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Summary Section -->
+                        <div class="row mb-4">
+                            <div class="col-8">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Report Summary</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-sm mb-0">
+                                            <tr>
+                                                <td width="50%"><strong>Report Type:</strong></td>
+                                                <td width="50%">Payslip Details Report</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Generated On:</strong></td>
+                                                <td><span t-esc="datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Total Categories:</strong></td>
+                                                <td><span t-esc="len(get_details_by_rule_category.get(o.id, []))"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Total Contribution Lines:</strong></td>
+                                                <td><span t-esc="len(get_lines_by_contribution_register.get(o.id, []))"/></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Net Pay</h5>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <h3 class="mb-0">
+                                            <span t-field="sum(o.line_ids.filtered(lambda l: l.category_id.code == 'NET').mapped('total'))" 
+                                                  t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Signature Section -->
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <div class="border-bottom mb-2" style="height: 1px;"></div>
+                                <p class="mb-0"><strong>Employee Signature</strong></p>
+                                <p class="text-muted small">_________________________</p>
+                            </div>
+                            <div class="col-6 text-center">
+                                <div class="border-bottom mb-2" style="height: 1px;"></div>
+                                <p class="mb-0"><strong>Authorized Signature</strong></p>
+                                <p class="text-muted small">_________________________</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Footer Note -->
+                        <div class="text-center mt-4 text-muted small">
+                            <p>This is a computer-generated payslip details report and does not require a physical signature.</p>
+                            <p>Generated on <span t-esc="datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/></p>
+                        </div>
+                    </main>
+                </div>
+                </t>
+            </t>
+    </template>
+</odoo>

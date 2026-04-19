@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Budget Form View -->
+        <record id="view_hr_expense_budget_form" model="ir.ui.view">
+            <field name="name">hr.expense.budget.form</field>
+            <field name="model">hr.expense.budget</field>
+            <field name="arch" type="xml">
+                <form string="Expense Budget">
+                    <header>
+                        <button name="action_activate" string="Activate" type="object" 
+                                class="btn-primary" invisible="state != 'draft'"/>
+                        <button name="action_expire" string="Expire" type="object" 
+                                invisible="state != 'active'"/>
+                        <button name="action_cancel" string="Cancel" type="object" 
+                                invisible="state == 'cancelled'"/>
+                        <button name="action_draft" string="Set to Draft" type="object" 
+                                invisible="state == 'draft'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,active,expired"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_expenses" type="object" 
+                                    class="oe_stat_button" icon="fa-money">
+                                <field name="expense_count" widget="statinfo" string="Expenses"/>
+                            </button>
+                            <button name="create_renewal_budget" type="object" 
+                                    class="oe_stat_button" icon="fa-refresh" 
+                                    invisible="auto_renew == False or state != 'active'">
+                                <field name="renewal_count" widget="statinfo" string="Renewals"/>
+                            </button>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="period_type"/>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                            </group>
+                            <group>
+                                <field name="amount_allocated"/>
+                                <field name="amount_spent"/>
+                                <field name="amount_remaining"/>
+                                <field name="currency_id" groups="base.group_multi_currency"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Renewal Settings">
+                                <field name="auto_renew"/>
+                                <field name="rollover_remaining"/>
+                                <field name="renewal_count" readonly="1"/>
+                            </group>
+                            <group string="Template Information">
+                                <field name="budget_template_id" readonly="1"/>
+                                <field name="parent_budget_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Budget Summary">
+                                <group>
+                                    <group>
+                                        <label for="budget_utilization"/>
+                                        <div class="o_row">
+                                            <field name="amount_spent" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                            <span>/</span>
+                                            <field name="amount_allocated" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                            <field name="budget_utilization" widget="percentpie"/>
+                                        </div>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Expenses">
+                                <field name="expense_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="date"/>
+                                        <field name="product_id"/>
+                                        <field name="total_amount" widget="monetary"/>
+                                        <field name="state"/>
+                                        <field name="approval_level"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Child Budgets">
+                                <field name="child_budget_ids">
+                                    <tree>
+                                        <field name="employee_id"/>
+                                        <field name="period_type"/>
+                                        <field name="date_start"/>
+                                        <field name="date_end"/>
+                                        <field name="amount_allocated" widget="monetary"/>
+                                        <field name="amount_spent" widget="monetary"/>
+                                        <field name="amount_remaining" widget="monetary"/>
+                                        <field name="state"/>
+                                        <field name="renewal_count"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Budget Tree View -->
+        <record id="view_hr_expense_budget_tree" model="ir.ui.view">
+            <field name="name">hr.expense.budget.tree</field>
+            <field name="model">hr.expense.budget</field>
+            <field name="arch" type="xml">
+                <tree string="Expense Budgets" decoration-success="state=='active'" 
+                      decoration-warning="state=='expired'" decoration-danger="state=='cancelled'">
+                    <field name="employee_id"/>
+                    <field name="period_type"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="amount_allocated" widget="monetary"/>
+                    <field name="amount_spent" widget="monetary"/>
+                    <field name="amount_remaining" widget="monetary"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="auto_renew"/>
+                    <field name="rollover_remaining"/>
+                    <field name="renewal_count"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Budget Kanban View -->
+        <record id="view_hr_expense_budget_kanban" model="ir.ui.view">
+            <field name="name">hr.expense.budget.kanban</field>
+            <field name="model">hr.expense.budget</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile_view">
+                    <field name="employee_id"/>
+                    <field name="amount_allocated"/>
+                    <field name="amount_spent"/>
+                    <field name="amount_remaining"/>
+                    <field name="currency_id"/>
+                    <field name="state"/>
+                    <field name="period_type"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="employee_id"/>
+                                    </strong>
+                                    <div class="o_kanban_tags_section">
+                                        <span class="badge badge-pill badge-info">
+                                            <field name="period_type"/>
+                                        </span>
+                                        <span t-attf-class="badge badge-pill {{ 'badge-success' if record.state.raw_value == 'active' else 'badge-warning' if record.state.raw_value == 'expired' else 'badge-danger' if record.state.raw_value == 'cancelled' else 'badge-secondary' }}">
+                                            <field name="state"/>
+                                        </span>
+                                    </div>
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <div>
+                                                <field name="amount_allocated" widget="monetary"/>
+                                            </div>
+                                            <div>
+                                                <field name="amount_spent" widget="monetary"/>
+                                            </div>
+                                            <div>
+                                                <field name="amount_remaining" widget="monetary"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Budget Pivot View -->
+        <record id="view_hr_expense_budget_pivot" model="ir.ui.view">
+            <field name="name">hr.expense.budget.pivot</field>
+            <field name="model">hr.expense.budget</field>
+            <field name="arch" type="xml">
+                <pivot string="Budget Analysis">
+                    <field name="employee_id" type="row"/>
+                    <field name="period_type" type="col"/>
+                    <field name="amount_allocated" type="measure"/>
+                    <field name="amount_spent" type="measure"/>
+                    <field name="amount_remaining" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Budget Graph View -->
+        <record id="view_hr_expense_budget_graph" model="ir.ui.view">
+            <field name="name">hr.expense.budget.graph</field>
+            <field name="model">hr.expense.budget</field>
+            <field name="arch" type="xml">
+                <graph string="Budget Analysis">
+                    <field name="employee_id"/>
+                    <field name="amount_allocated" type="measure"/>
+                    <field name="amount_spent" type="measure"/>
+                    <field name="amount_remaining" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Budget Search View -->
+        <record id="view_hr_expense_budget_search" model="ir.ui.view">
+            <field name="name">hr.expense.budget.search</field>
+            <field name="model">hr.expense.budget</field>
+            <field name="arch" type="xml">
+                <search string="Search Budgets">
+                    <field name="employee_id"/>
+                    <field name="period_type"/>
+                    <field name="state"/>
+                    <separator/>
+                    <filter name="active" string="Active" domain="[('state', '=', 'active')]"/>
+                    <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                    <filter name="expired" string="Expired" domain="[('state', '=', 'expired')]"/>
+                    <filter name="cancelled" string="Cancelled" domain="[('state', '=', 'cancelled')]"/>
+                    <separator/>
+                    <filter name="week" string="Weekly" domain="[('period_type', '=', 'week')]"/>
+                    <filter name="month" string="Monthly" domain="[('period_type', '=', 'month')]"/>
+                    <filter name="quarter" string="Quarterly" domain="[('period_type', '=', 'quarter')]"/>
+                    <filter name="year" string="Yearly" domain="[('period_type', '=', 'year')]"/>
+                    <filter name="custom" string="Custom" domain="[('period_type', '=', 'custom')]"/>
+                    <separator/>
+                    <filter name="auto_renew" string="Auto Renew" domain="[('auto_renew', '=', True)]"/>
+                    <filter name="rollover" string="Rollover Enabled" domain="[('rollover_remaining', '=', True)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_period_type" string="Period Type" context="{'group_by': 'period_type'}"/>
+                        <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                        <filter name="group_date_start" string="Start Date" context="{'group_by': 'date_start'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Budget Action -->
+        <record id="action_hr_expense_budget" model="ir.actions.act_window">
+            <field name="name">Expense Budgets</field>
+            <field name="res_model">hr.expense.budget</field>
+            <field name="view_mode">tree,kanban,form,pivot,graph</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first expense budget
+                </p>
+                <p>
+                    Manage expense budgets for employees with different period types (weekly, monthly, yearly, or custom).
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

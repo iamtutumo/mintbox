@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Salary Advance & Loan Menu Items -->
+        <menuitem id="menu_hr_salary_advance_root"
+                  name="Advances &amp; Loans"
+                  parent="menu_surepay_payroll_root"
+                  sequence="60"
+                  groups="surepay_payroll.group_surepay_payroll_user,surepay_payroll.group_surepay_payroll_manager"/>
+        
+        <!-- Salary Advances Menu -->
+        <menuitem id="menu_hr_salary_advance_simple"
+                  name="Salary Advances (Simple)"
+                  parent="menu_hr_salary_advance_root"
+                  action="action_hr_salary_advance_simple"
+                  sequence="10"/>
+        
+        <!-- Employee Loans Menu -->
+        <menuitem id="menu_hr_loan"
+                  name="Employee Loans (Legacy)"
+                  parent="menu_hr_salary_advance_root"
+                  action="action_hr_loan"
+                  sequence="20"/>
+        
+    </data>
+</odoo>

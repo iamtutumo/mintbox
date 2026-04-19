@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="email_application_received" model="mail.template">
+        <field name="name">Recruitment: Application Received</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Application Received - <t t-esc="object.job_id.name or 'Position'"/> at <t t-esc="object.company_id.name or 'Our Company'"/></field>
+        <field name="email_from" expression="(object.company_id.email or user.email_formatted)"/>
+        <field name="email_to" expression="object.email_from"/>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <p>Dear <t t-esc="object.partner_name or 'Applicant'"/>,</p>
+                
+                <p>Thank you for your application for the position of <strong t-esc="object.job_id.name or 'the position'"/>.</p>
+                
+                <div style="background-color: #f8f9fa; border-left: 4px solid #007bff; padding: 12px; margin: 16px 0;">
+                    <p style="margin: 0 0 8px 0; font-weight: bold;">Your Application Details:</p>
+                    <p style="margin: 4px 0;">
+                        <strong>Tracking ID:</strong> <t t-esc="object.tracking_id or 'N/A'"/><br/>
+                        <strong>Position:</strong> <t t-esc="object.job_id.name or 'N/A'"/><br/>
+                        <t t-if="object.create_date">
+                            <strong>Application Date:</strong> <t t-esc="format_datetime(object.create_date, tz=user.tz, dt_format='long')"/>
+                        </t>
+                    </p>
+                </div>
+                
+                <p>You can check the status of your application at any time using this link:</p>
+                
+                <div style="margin: 20px 0; text-align: center;">
+                    <a t-attf-href="{{ object.get_base_url() }}/job/status?tracking_id={{ object.tracking_id }}"
+                       style="background-color: #1a365d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block; font-size: 16px;">
+                        Check Application Status
+                    </a>
+                </div>
+                
+                <p>If the button above doesn't work, you can copy and paste this link into your browser:<br/>
+                <span style="word-break: break-all; color: #1a365d;"><t t-esc="object.get_base_url()"/>/job/status?tracking_id=<t t-esc="object.tracking_id or ''"/></span></p>
+                
+                <p>Our recruitment team will review your application and contact you if your qualifications match our requirements.</p>
+                
+                <p>Thank you for your interest in joining our team!</p>
+                
+                <p>Best regards,<br/>
+                <t t-if="user.signature" t-raw="user.signature"/>
+                <t t-else="">
+                    --<br/>
+                    The <t t-esc="object.company_id.name or 'Company'" /> Team
+                </t></p>
+                
+                <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee; font-size: 12px; color: #777;">
+                    <p style="margin: 5px 0;">This is an automated message. Please do not reply to this email.</p>
+                </div>
+            </div>
+        ]]></field>
+    </record>
+</odoo>

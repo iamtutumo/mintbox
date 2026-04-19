@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_exit_clearance_user,hr.exit.clearance.user,model_hr_exit_clearance,base.group_user,1,0,0,0
+access_hr_exit_clearance_manager,hr.exit.clearance.manager,model_hr_exit_clearance,hr.group_hr_manager,1,1,1,1
+access_hr_exit_clearance_line_user,hr.exit.clearance.line.user,model_hr_exit_clearance_line,base.group_user,1,0,0,0
+access_hr_exit_clearance_line_manager,hr.exit.clearance.line.manager,model_hr_exit_clearance_line,hr.group_hr_manager,1,1,1,1
+access_hr_exit_asset_return_user,hr.exit.asset.return.user,model_hr_exit_asset_return,base.group_user,1,0,0,0
+access_hr_exit_asset_return_manager,hr.exit.asset.return.manager,model_hr_exit_asset_return,hr.group_hr_manager,1,1,1,1
+access_hr_exit_knowledge_handover_user,hr.exit.knowledge.handover.user,model_hr_exit_knowledge_handover,base.group_user,1,0,0,0
+access_hr_exit_knowledge_handover_manager,hr.exit.knowledge.handover.manager,model_hr_exit_knowledge_handover,hr.group_hr_manager,1,1,1,1
+access_hr_grievance_user,hr.grievance.user,model_hr_grievance,base.group_user,1,0,1,0
+access_hr_grievance_manager,hr.grievance.manager,model_hr_grievance,hr.group_hr_manager,1,1,1,1
+access_hr_grievance_officer,hr.grievance.officer,model_hr_grievance,hr.group_hr_user,1,1,1,0

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Extend Expense Form View -->
+        <record id="hr_expense_view_form_inherit" model="ir.ui.view">
+            <field name="name">hr.expense.form.inherit</field>
+            <field name="model">hr.expense</field>
+            <field name="inherit_id" ref="hr_expense.hr_expense_view_form"/>
+            <field name="arch" type="xml">
+                <field name="employee_id" position="after">
+                    <field name="budget_id"/>
+                </field>
+                
+                <xpath expr="//form/sheet" position="inside">
+                    <notebook>
+                        <page string="Budget Information">
+                            <group>
+                                <group string="Budget Details">
+                                    <field name="budget_id" readonly="1"/>
+                                    <field name="requires_override_approval" readonly="1"/>
+                                    <field name="approval_level" readonly="1"/>
+                                    <field name="budget_utilization_at_submission" widget="percentage" readonly="1"/>
+                                </group>
+                                <group string="Budget Summary">
+                                    <label for="budget_amount_allocated"/>
+                                    <div class="o_row">
+                                        <field name="budget_amount_allocated" widget="monetary" readonly="1"/>
+                                    </div>
+                                    <label for="budget_amount_spent"/>
+                                    <div class="o_row">
+                                        <field name="budget_amount_spent" widget="monetary" readonly="1"/>
+                                    </div>
+                                    <label for="budget_amount_remaining"/>
+                                    <div class="o_row">
+                                        <field name="budget_amount_remaining" widget="monetary" readonly="1"/>
+                                    </div>
+                                </group>
+                            </group>
+                            
+                            <!-- Approval Workflow Group -->
+                            <group string="Approval Workflow" name="approval_workflow">
+                                <group>
+                                    <field name="override_requested_by" readonly="1"/>
+                                    <field name="override_requested_date" readonly="1"/>
+                                    <field name="override_approved_by" readonly="1"/>
+                                    <field name="override_approved_date" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="override_notes" readonly="1"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Escalation Group -->
+                            <group string="Escalation Details" name="escalation_details" invisible="approval_level not in ['escalated', 'approved', 'rejected']">
+                                <group>
+                                    <field name="escalation_requested_by" readonly="1"/>
+                                    <field name="escalation_requested_date" readonly="1"/>
+                                    <field name="escalation_approved_by" readonly="1"/>
+                                    <field name="escalation_approved_date" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="escalation_notes" readonly="1"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Budget Check Result -->
+                            <group string="Budget Validation" name="budget_validation">
+                                <field name="budget_check_result" widget="text" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </xpath>
+                
+                <xpath expr="//form/sheet" position="inside">
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_budget" type="object" 
+                                class="oe_stat_button" icon="fa-wallet" 
+                                invisible="budget_id == False"
+                                help="View associated budget">
+                            <span>Budget</span>
+                        </button>
+                        <!-- Approval Workflow Buttons -->
+                        <button name="action_approve_escalation" type="object" class="oe_stat_button" icon="fa-check-circle" invisible="approval_level != 'escalated'">
+                            <field string="Approve Escalation" name="approval_level" widget="statinfo"/>
+                        </button>
+                        <button name="action_reject_escalation" type="object" class="oe_stat_button" icon="fa-times-circle" invisible="approval_level != 'escalated'">
+                            <field string="Reject Escalation" name="approval_level" widget="statinfo"/>
+                        </button>
+                    </div>
+                </xpath>
+                
+                <!-- Modify submit button to show budget validation -->
+                <button name="action_submit_expenses" position="replace">
+                    <button name="action_submit_expenses" string="Submit" type="object" 
+                            class="btn-primary" invisible="state != 'draft'">
+                        <i class="fa fa-check"/>
+                        Submit to Manager
+                    </button>
+                </button>
+            </field>
+        </record>
+
+        <!-- Extend Expense Tree View -->
+        <record id="hr_expense_view_tree_inherit" model="ir.ui.view">
+            <field name="name">hr.expense.tree.inherit</field>
+            <field name="model">hr.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_expenses_tree"/>
+            <field name="arch" type="xml">
+                <field name="employee_id" position="after">
+                    <field name="budget_id"/>
+                </field>
+                <field name="total_amount" position="after">
+                    <field name="requires_override_approval" widget="boolean_toggle"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Extend Expense Search View -->
+        <record id="hr_expense_view_search_inherit" model="ir.ui.view">
+            <field name="name">hr.expense.search.inherit</field>
+            <field name="model">hr.expense</field>
+            <field name="inherit_id" ref="hr_expense.hr_expense_view_search"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="budget_id"/>
+                </field>
+                <separator position="after">
+                    <filter name="requires_override" string="Requires Override Approval" 
+                            domain="[('requires_override_approval', '=', True)]"/>
+                    <filter name="within_budget" string="Within Budget" 
+                            domain="[('requires_override_approval', '=', False)]"/>
+                </separator>
+                <group position="inside">
+                    <filter name="group_budget" string="Budget" context="{'group_by': 'budget_id'}"/>
+                </group>
+            </field>
+        </record>
+
+        <!-- Expense Kanban View -->
+        <record id="hr_expense_view_kanban" model="ir.ui.view">
+            <field name="name">hr.expense.kanban</field>
+            <field name="model">hr.expense</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile_view">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="total_amount"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                    <field name="budget_id"/>
+                    <field name="requires_override_approval"/>
+                    <field name="currency_id"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                    <div class="o_kanban_tags_section">
+                                        <div t-if="record.budget_id.raw_value">
+                                            <span class="badge badge-secondary">
+                                                <field name="budget_id"/>
+                                            </span>
+                                        </div>
+                                        <div t-if="record.requires_override_approval.raw_value">
+                                            <span class="badge badge-danger">
+                                                Over Budget
+                                            </span>
+                                        </div>
+                                        <span t-attf-class="badge badge-pill {{ 'badge-success' if record.state.raw_value == 'approved' else 'badge-warning' if record.state.raw_value == 'submitted' else 'badge-secondary' if record.state.raw_value == 'draft' else 'badge-danger' }}">
+                                            <field name="state"/>
+                                        </span>
+                                    </div>
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <div>
+                                                <field name="employee_id"/>
+                                            </div>
+                                            <div>
+                                                <field name="date"/>
+                                            </div>
+                                            <div>
+                                                <field name="total_amount" widget="monetary"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Expense Pivot View -->
+        <record id="hr_expense_view_pivot" model="ir.ui.view">
+            <field name="name">hr.expense.pivot</field>
+            <field name="model">hr.expense</field>
+            <field name="arch" type="xml">
+                <pivot string="Expenses Analysis">
+                    <field name="employee_id" type="row"/>
+                    <field name="budget_id" type="row"/>
+                    <field name="date" type="col" interval="month"/>
+                    <field name="total_amount" type="measure"/>
+                    <field name="state" type="col"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Expense Graph View -->
+        <record id="hr_expense_view_graph" model="ir.ui.view">
+            <field name="name">hr.expense.graph</field>
+            <field name="model">hr.expense</field>
+            <field name="arch" type="xml">
+                <graph string="Expense Analysis" type="bar">
+                    <field name="employee_id"/>
+                    <field name="budget_id"/>
+                    <field name="date" interval="month"/>
+                    <field name="total_amount" type="measure"/>
+                    <field name="budget_amount_allocated" type="measure"/>
+                    <field name="budget_amount_spent" type="measure"/>
+                    <field name="budget_amount_remaining" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+    </data>
+</odoo>

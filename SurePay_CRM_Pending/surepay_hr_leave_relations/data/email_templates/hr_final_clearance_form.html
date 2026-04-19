@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Exit Clearance Form - ${employee_name}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 28px;
+        }
+        .header p {
+            color: #7f8c8d;
+            margin: 10px 0 0 0;
+            font-size: 16px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            color: #34495e;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 3px solid #3498db;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .info-value {
+            color: #34495e;
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-cleared {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-returned {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-not_returned {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-damaged {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-lost {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-low {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-medium {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-high {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-draft {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+        .status-submitted {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        .status-manager_review {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-hr_review {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        .status-under_investigation {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-resolved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-escalated {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-closed {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #34495e;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .summary-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+        }
+        .summary-card p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .signature-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .signature-box {
+            border: 2px dashed #bdc3c7;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        .signature-box img {
+            max-width: 200px;
+            max-height: 100px;
+            margin-bottom: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #bdc3c7;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .form-actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        @media (max-width: 768px) {
+            .info-grid, .signature-section {
+                grid-template-columns: 1fr;
+            }
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Final Exit Clearance Form</h1>
+            <p>Comprehensive Exit Documentation and Final Approval</p>
+        </div>
+
+        <!-- Employee Information -->
+        <div class="section">
+            <h2>Employee Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Employee Name:</span>
+                    <span class="info-value">${employee_name}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Employee ID:</span>
+                    <span class="info-value">${employee_id}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Department:</span>
+                    <span class="info-value">${department}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Position:</span>
+                    <span class="info-value">${position}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Supervisor:</span>
+                    <span class="info-value">${supervisor_name}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Length of Service:</span>
+                    <span class="info-value">${length_of_service}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Last Working Day:</span>
+                    <span class="info-value">${last_working_day}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Exit Reason:</span>
+                    <span class="info-value">${exit_reason}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exit Interview Summary -->
+        <div class="section">
+            <h2>Exit Interview Summary</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Interview Date:</span>
+                    <span class="info-value">${interview_date}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Reason Category:</span>
+                    <span class="info-value">${reason_for_leaving_category}</span>
+                </div>
+            </div>
+            % if reason_for_leaving_other:
+            <div class="info-item" style="margin-bottom: 15px;">
+                <span class="info-label">Other Reason:</span>
+                <span class="info-value">${reason_for_leaving_other}</span>
+            </div>
+            % endif
+            
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #34495e; margin-bottom: 10px;">Decision Factors:</h3>
+                <p style="background: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 3px solid #3498db;">${decision_factors}</p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #34495e; margin-bottom: 10px;">Most Satisfying Aspects:</h3>
+                <p style="background: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 3px solid #27ae60;">${most_satisfying}</p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #34495e; margin-bottom: 10px;">Least Satisfying Aspects:</h3>
+                <p style="background: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 3px solid #e74c3c;">${least_satisfying}</p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #34495e; margin-bottom: 10px;">Job Duties as Expected:</h3>
+                <p style="background: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 3px solid #f39c12;">${job_duties_as_expected}</p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #34495e; margin-bottom: 10px;">Improvement Suggestions:</h3>
+                <p style="background: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 3px solid #9b59b6;">${improvement_suggestions}</p>
+            </div>
+        </div>
+
+        <!-- Clearance Status Summary -->
+        <div class="section">
+            <h2>Clearance Status Summary</h2>
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>${total_departments}</h3>
+                    <p>Total Departments</p>
+                </div>
+                <div class="summary-card">
+                    <h3>${cleared_departments}</h3>
+                    <p>Cleared Departments</p>
+                </div>
+                <div class="summary-card">
+                    <h3>${pending_departments}</h3>
+                    <p>Pending Departments</p>
+                </div>
+                <div class="summary-card">
+                    <h3>${total_equipment_count}</h3>
+                    <p>Total Equipment Items</p>
+                </div>
+                <div class="summary-card">
+                    <h3>${returned_equipment_count}</h3>
+                    <p>Returned Equipment</p>
+                </div>
+                <div class="summary-card">
+                    <h3>${pending_equipment_count}</h3>
+                    <p>Pending Returns</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Equipment Return Details -->
+        <div class="section">
+            <h2>Equipment Return Details</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item Description</th>
+                        <th>Serial Number</th>
+                        <th>Date Returned</th>
+                        <th>Status</th>
+                        <th>Condition</th>
+                        <th>Returned To</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    % for equipment in equipment_returns:
+                    <tr>
+                        <td>${equipment.item_description}</td>
+                        <td>${equipment.serial_number or 'N/A'}</td>
+                        <td>${equipment.date_returned or 'N/A'}</td>
+                        <td><span class="status-badge status-${equipment.status}">${equipment.status}</span></td>
+                        <td>${equipment.condition_on_return or 'N/A'}</td>
+                        <td>${equipment.returned_to or 'N/A'}</td>
+                        <td>${equipment.notes or 'N/A'}</td>
+                    </tr>
+                    % endfor
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Grievance History Section -->
+        <div class="section">
+            <h2>Grievance History</h2>
+            % if grievance_history:
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Resolution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    % for grievance in grievance_history:
+                    <tr>
+                        <td>${grievance.submission_date}</td>
+                        <td>${grievance.grievance_type.replace('_', ' ').title()}</td>
+                        <td>${grievance.title}</td>
+                        <td><span class="status-badge status-${grievance.status}">${grievance.status.replace('_', ' ').title()}</span></td>
+                        <td>${grievance.resolution_notes or 'N/A'}</td>
+                    </tr>
+                    % endfor
+                </tbody>
+            </table>
+            % else:
+            <p style="color: #7f8c8d; font-style: italic;">No grievance history found for this employee.</p>
+            % endif
+        </div>
+
+        <!-- Disciplinary Actions Section -->
+        <div class="section">
+            <h2>Disciplinary Actions</h2>
+            % if disciplinary_actions:
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Action Type</th>
+                        <th>Reason</th>
+                        <th>Severity</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    % for action in disciplinary_actions:
+                    <tr>
+                        <td>${action.action_date}</td>
+                        <td>${action.action_type.replace('_', ' ').title()}</td>
+                        <td>${action.reason}</td>
+                        <td><span class="status-badge status-${action.severity}">${action.severity.title()}</span></td>
+                        <td><span class="status-badge status-${action.status}">${action.status.replace('_', ' ').title()}</span></td>
+                    </tr>
+                    % endfor
+                </tbody>
+            </table>
+            % else:
+            <p style="color: #7f8c8d; font-style: italic;">No disciplinary actions found for this employee.</p>
+            % endif
+        </div>
+
+        <!-- Signatures -->
+        <div class="section">
+            <h2>Signatures</h2>
+            <div class="signature-section">
+                <div class="signature-box">
+                    <h3>Employee Signature</h3>
+                    % if employee_signature:
+                    <img src="${employee_signature}" alt="Employee Signature">
+                    % else:
+                    <p style="color: #7f8c8d; font-style: italic;">No signature provided</p>
+                    % endif
+                    <p><strong>Date:</strong> ${employee_signature_date}</p>
+                </div>
+                <div class="signature-box">
+                    <h3>HR/Supervisor Signature</h3>
+                    % if hr_supervisor_signature:
+                    <img src="${hr_supervisor_signature}" alt="HR/Supervisor Signature">
+                    % else:
+                    <p style="color: #7f8c8d; font-style: italic;">No signature provided</p>
+                    % endif
+                    <p><strong>Date:</strong> ${hr_supervisor_signature_date}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Final Approval Section -->
+        <div class="section">
+            <h2>Final HR Approval</h2>
+            <form action="${final_submission_url}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="clearance_id" value="${clearance_id}">
+                <input type="hidden" name="security_token" value="${security_token}">
+                
+                <div style="margin-bottom: 20px;">
+                    <label for="final_approval_status" style="display: block; margin-bottom: 5px; font-weight: bold;">Final Approval Status:</label>
+                    <select id="final_approval_status" name="final_approval_status" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        <option value="">Select Status</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="pending_review">Pending Review</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label for="hr_final_notes" style="display: block; margin-bottom: 5px; font-weight: bold;">HR Final Notes:</label>
+                    <textarea id="hr_final_notes" name="hr_final_notes" rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="Enter final HR notes and comments..."></textarea>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label for="hr_final_signature" style="display: block; margin-bottom: 5px; font-weight: bold;">HR Final Signature:</label>
+                    <input type="file" id="hr_final_signature" name="hr_final_signature" accept="image/*" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Submit Final Approval</button>
+                    <button type="button" class="btn btn-primary" onclick="window.print()">Print Form</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="footer">
+            <p>This form was generated on ${fields.Date.today()} | Clearance ID: ${clearance_id}</p>
+            <p>© 2024 SurePay HR Management System. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        .clearance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .clearance-table th,
+        .clearance-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .clearance-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        .equipment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .equipment-table th,
+        .equipment-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .equipment-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .signature-section {
+            border-top: 3px solid #dc3545;
+            padding-top: 20px;
+            margin-top: 30px;
+        }
+        .signature-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-cleared {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .generate-btn {
+            background: #dc3545;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            display: block;
+            margin: 30px auto;
+        }
+        .generate-btn:hover {
+            background: #c82333;
+        }
+        .summary-box {
+            background: #f8f9fa;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .summary-box h3 {
+            margin-top: 0;
+            color: #dc3545;
+        }
+        .employee-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 768px) {
+            .signature-group {
+                grid-template-columns: 1fr;
+            }
+            .employee-info-grid {
+                grid-template-columns: 1fr;
+            }
+            .clearance-table,
+            .equipment-table {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>FINAL EXIT CLEARANCE FORM</h1>
+            <p>Comprehensive Employee Exit Documentation</p>
+        </div>
+
+        <!-- Employee Information Section -->
+        <div class="section">
+            <h2>Employee Information</h2>
+            <div class="employee-info-grid">
+                <div class="form-group">
+                    <label>Employee Name:</label>
+                    <input type="text" value="${employee_name}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Employee ID:</label>
+                    <input type="text" value="${employee_id}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Department:</label>
+                    <input type="text" value="${department}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Position:</label>
+                    <input type="text" value="${position}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Supervisor:</label>
+                    <input type="text" value="${supervisor_name}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Length of Service:</label>
+                    <input type="text" value="${length_of_service}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Last Working Day:</label>
+                    <input type="date" value="${last_working_day}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Exit Reason:</label>
+                    <input type="text" value="${exit_reason}" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exit Interview Summary -->
+        <div class="section">
+            <h2>Exit Interview Summary</h2>
+            <div class="form-group">
+                <label>Interview Date:</label>
+                <input type="date" value="${interview_date}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Reason for Leaving Category:</label>
+                <input type="text" value="${reason_for_leaving_category}" readonly>
+            </div>
+            % if reason_for_leaving_other:
+            <div class="form-group">
+                <label>Other Reason:</label>
+                <input type="text" value="${reason_for_leaving_other}" readonly>
+            </div>
+            % endif
+            
+            <h3>Employee Feedback Summary</h3>
+            <div class="form-group">
+                <label>Decision Factors:</label>
+                <textarea readonly>${decision_factors}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Most Satisfying Aspects:</label>
+                <textarea readonly>${most_satisfying}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Least Satisfying Aspects:</label>
+                <textarea readonly>${least_satisfying}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Job Duties as Expected:</label>
+                <textarea readonly>${job_duties_as_expected}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Improvement Suggestions:</label>
+                <textarea readonly>${improvement_suggestions}</textarea>
+            </div>
+        </div>
+
+        <!-- Equipment Return Summary -->
+        <div class="section">
+            <h2>Equipment Return Summary</h2>
+            <table class="equipment-table">
+                <thead>
+                    <tr>
+                        <th>Item Description</th>
+                        <th>Serial Number</th>
+                        <th>Date Returned</th>
+                        <th>Status</th>
+                        <th>Condition</th>
+                        <th>Returned To</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    % for equipment in equipment_returns:
+                    <tr>
+                        <td>${equipment.item_description}</td>
+                        <td>${equipment.serial_number or 'N/A'}</td>
+                        <td>${equipment.date_returned or 'N/A'}</td>
+                        <td><span class="status-badge status-${equipment.status}">${equipment.status}</span></td>
+                        <td>${equipment.condition_on_return or 'N/A'}</td>
+                        <td>${equipment.returned_to or 'N/A'}</td>
+                        <td>${equipment.notes or 'N/A'}</td>
+                    </tr>
+                    % endfor
+                </tbody>
+            </table>
+            
+            <div class="summary-box">
+                <h3>Equipment Return Status</h3>
+                <p><strong>All Equipment Returned:</strong> ${'Yes' if all_equipment_returned else 'No'}</p>
+                <p><strong>Total Items:</strong> ${total_equipment_count}</p>
+                <p><strong>Items Returned:</strong> ${returned_equipment_count}</p>
+                <p><strong>Items Pending:</strong> ${pending_equipment_count}</p>
+            </div>
+        </div>
+
+        <!-- Final Clearance Summary -->
+        <div class="section">
+            <h2>Final Clearance Summary</h2>
+            <div class="summary-box">
+                <h3>Clearance Status</h3>
+                <p><strong>All Departments Cleared:</strong> ${'Yes' if all_cleared else 'No'}</p>
+                <p><strong>Total Departments:</strong> ${total_departments}</p>
+                <p><strong>Departments Cleared:</strong> ${cleared_departments}</p>
+                <p><strong>Departments Pending:</strong> ${pending_departments}</p>
+            </div>
+            
+            <div class="form-group">
+                <label>HR Final Notes:</label>
+                <textarea name="hr_final_notes" placeholder="Add any final HR notes or comments..."></textarea>
+            </div>
+        </div>
+
+        <!-- Signatures Section -->
+        <div class="section signature-section">
+            <h2>Final Approvals</h2>
+            
+            <!-- Employee Signature -->
+            <h3>Employee Acknowledgement</h3>
+            <p>I hereby acknowledge that I have provided accurate information in this Employee Exit Form and that I have returned all company property and equipment assigned to me during my employment.</p>
+            
+            <div class="signature-group">
+                <div class="form-group">
+                    <label>Employee Signature:</label>
+                    % if employee_signature:
+                    <img src="${employee_signature}" alt="Employee Signature" style="max-width: 200px; border: 1px solid #ddd;">
+                    % else:
+                    <input type="text" value="Signature not provided" readonly>
+                    % endif
+                </div>
+                <div class="form-group">
+                    <label>Date:</label>
+                    <input type="date" value="${employee_signature_date}" readonly>
+                </div>
+            </div>
+
+            <!-- HR/Supervisor Signature -->
+            <h3>HR / Supervisor Acknowledgement</h3>
+            <p>I hereby acknowledge that the information provided in this Employee Exit Form has been reviewed and that all company property and equipment have been received from the employee.</p>
+            
+            <div class="signature-group">
+                <div class="form-group">
+                    <label>HR / Supervisor Signature:</label>
+                    % if hr_supervisor_signature:
+                    <img src="${hr_supervisor_signature}" alt="HR/Supervisor Signature" style="max-width: 200px; border: 1px solid #ddd;">
+                    % else:
+                    <input type="text" value="Signature not provided" readonly>
+                    % endif
+                </div>
+                <div class="form-group">
+                    <label>Date:</label>
+                    <input type="date" value="${hr_supervisor_signature_date}" readonly>
+                </div>
+            </div>
+
+            <!-- HR Final Approval -->
+            <h3>HR Final Approval</h3>
+            <p>I hereby certify that all clearance procedures have been completed and that the employee's exit process is finalized.</p>
+            
+            <div class="signature-group">
+                <div class="form-group">
+                    <label for="hr_final_signature">HR Manager Signature:</label>
+                    <input type="file" id="hr_final_signature" name="hr_final_signature" accept="image/*" required>
+                </div>
+                <div class="form-group">
+                    <label for="hr_final_signature_date">Date:</label>
+                    <input type="date" id="hr_final_signature_date" name="hr_final_signature_date" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="final_clearance_status">Final Clearance Status:</label>
+                <select id="final_clearance_status" name="final_clearance_status" required>
+                    <option value="">Select Status</option>
+                    <option value="approved">Approved</option>
+                    <option value="pending">Pending</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+        </div>
+
+        <form action="${final_submission_url}" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="clearance_id" value="${clearance_id}">
+            <input type="hidden" name="security_token" value="${security_token}">
+            
+            <button type="submit" class="generate-btn">Generate Final Clearance Form</button>
+        </form>
+
+        <div class="summary-box">
+            <h3>Important Notes</h3>
+            <ul>
+                <li>This Final Exit Clearance Form is confidential and should be kept in the employee's personnel file.</li>
+                <li>All signatures and approvals must be obtained before the employee's final departure.</li>
+                <li>Ensure all company property and equipment have been returned and documented.</li>
+                <li>Final payroll processing should only occur after this form is approved.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

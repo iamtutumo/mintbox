@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Fixed Template for Payslip Surepay Report with Proper Company Layout -->
+    <template id="report_payslipsurepay_fixed">
+        <!-- Include payroll assets for proper print styling -->
+        <t t-call="surepay_payroll.payroll_report_assets"/>
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <!-- Use web.external_layout for company branding -->
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Company Header (will be provided by web.external_layout) -->
+                        
+                        <!-- Professional Payslip Header -->
+                        <div class="text-center mb-4" style="margin-top: 20px;">
+                            <h2 class="mb-2" style="color: #2c3e50; font-weight: bold; border-bottom: 2px solid #3498db; padding-bottom: 10px;">SUREPAY PAY SLIP</h2>
+                            <h4 class="text-muted mb-0" t-field="o.name"/>
+                            <div class="text-muted small">
+                                Period: <span t-field="o.date_from"/> to <span t-field="o.date_to"/>
+                            </div>
+                        </div>
+                        
+                        <!-- Employee Information Table -->
+                        <div class="table-responsive mb-4">
+                            <table class="table table-sm table-bordered" style="border: 1px solid #dee2e6;">
+                                <thead class="bg-light" style="background-color: #f8f9fa !important;">
+                                    <tr>
+                                        <th colspan="4" class="text-center" style="background-color: #e9ecef; font-weight: bold;">Employee Information</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td width="20%" style="font-weight: bold;">Employee Name</td>
+                                        <td width="30%"><span t-field="o.employee_id"/></td>
+                                        <td width="20%" style="font-weight: bold;">Designation</td>
+                                        <td width="30%"><span t-field="o.employee_id.job_id"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold;">Email</td>
+                                        <td><span t-field="o.employee_id.work_email"/></td>
+                                        <td style="font-weight: bold;">Identification No</td>
+                                        <td><span t-field="o.employee_id.identification_id"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold;">Payslip No</td>
+                                        <td><span t-field="o.number"/></td>
+                                        <td style="font-weight: bold;">Bank Account</td>
+                                        <td><span t-field="o.employee_id.bank_account_id"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold;">Department</td>
+                                        <td><span t-field="o.employee_id.department_id"/></td>
+                                        <td style="font-weight: bold;">Work Location</td>
+                                        <td><span t-field="o.employee_id.work_location_id"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Payslip Lines Table -->
+                        <div class="table-responsive mb-4">
+                            <table class="table table-sm table-bordered table-striped" style="border: 1px solid #dee2e6;">
+                                <thead class="bg-light" style="background-color: #f8f9fa !important;">
+                                    <tr>
+                                        <th width="10%" style="font-weight: bold;">Code</th>
+                                        <th width="40%" style="font-weight: bold;">Description</th>
+                                        <th width="15%" class="text-center" style="font-weight: bold;">Quantity</th>
+                                        <th width="15%" class="text-right" style="font-weight: bold;">Rate</th>
+                                        <th width="20%" class="text-right" style="font-weight: bold;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="o.line_ids.filtered(lambda line: line.appears_on_payslip)">
+                                        <tr t-foreach="o.line_ids.filtered(lambda line: line.appears_on_payslip)" t-as="line">
+                                            <td><span t-esc="line.code"/></td>
+                                            <td><span t-esc="line.name"/></td>
+                                            <td class="text-center">
+                                                <span t-esc="line.quantity" t-options='{"widget": "float", "precision": 2}'/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="line.amount" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="line.total" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="not o.line_ids.filtered(lambda line: line.appears_on_payslip)">
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted">No payslip lines available</td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Summary Section -->
+                        <div class="row mb-4">
+                            <div class="col-8">
+                                <div class="card" style="border: 1px solid #dee2e6;">
+                                    <div class="card-header bg-light" style="background-color: #f8f9fa !important;">
+                                        <h5 class="mb-0">Payment Summary</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-sm mb-0">
+                                            <tr>
+                                                <td width="50%" style="font-weight: bold;">Gross Wage:</td>
+                                                <td width="50%" class="text-right">
+                                                    <span t-esc="o.gross_wage" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight: bold;">Total Deductions:</td>
+                                                <td class="text-right">
+                                                    <span t-esc="o.total_ded" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight: bold;">Net Wage:</td>
+                                                <td class="text-right">
+                                                    <span t-esc="o.net_wage" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card" style="border: 1px solid #dee2e6;">
+                                    <div class="card-header bg-light" style="background-color: #f8f9fa !important;">
+                                        <h5 class="mb-0">Payment Info</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-sm mb-0">
+                                            <tr>
+                                                <td style="font-weight: bold;">Payment Date:</td>
+                                                <td><span t-field="o.credit_note"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight: bold;">Status:</td>
+                                                <td><span t-field="o.state"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight: bold;">Company:</td>
+                                                <td><span t-field="o.company_id.name"/></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional Surepay Information -->
+                        <div class="card mb-4" style="border: 1px solid #dee2e6;">
+                            <div class="card-header bg-light" style="background-color: #f8f9fa !important;">
+                                <h5 class="mb-0">Surepay Processing Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p class="mb-2"><strong>Processing Date:</strong> <span t-esc="datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/></p>
+                                        <p class="mb-2"><strong>Batch ID:</strong> <span t-esc="o.id"/></p>
+                                        <p class="mb-0"><strong>Payment Method:</strong> Bank Transfer</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p class="mb-2"><strong>Currency:</strong> <span t-field="o.company_id.currency_id.name"/></p>
+                                        <p class="mb-2"><strong>Tax Year:</strong> <span t-esc="o.date_to.year"/></p>
+                                        <p class="mb-0"><strong>Pay Period:</strong> Monthly</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Signatures -->
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <div class="border-bottom mb-2" style="height: 1px;"></div>
+                                <p class="mb-0"><strong>Employee Signature</strong></p>
+                                <p class="text-muted small">_________________________</p>
+                            </div>
+                            <div class="col-6 text-center">
+                                <div class="border-bottom mb-2" style="height: 1px;"></div>
+                                <p class="mb-0"><strong>Authorized Signature</strong></p>
+                                <p class="text-muted small">_________________________</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Company Footer (will be provided by web.external_layout) -->
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

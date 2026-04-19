@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sequence for Client Visit Reference -->
+    <record id="seq_surepay_client_visit" model="ir.sequence">
+        <field name="name">Client Visit</field>
+        <field name="code">surepay.client.visit</field>
+        <field name="prefix">CV/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

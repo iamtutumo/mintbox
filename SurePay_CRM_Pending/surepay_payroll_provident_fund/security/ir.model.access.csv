@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_contract_provident_fund,hr.contract.provident.fund,model_hr_contract,hr.group_hr_user,1,1,1,0
+access_hr_payslip_provident_fund,hr.payslip.provident.fund,model_surepay_payroll_hr_payslip,hr.group_hr_user,1,0,0,0

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Main Menu Structure -->
+        
+        <!-- Budgets Menu under Employees -->
+        <menuitem id="menu_hr_expense_budgets_root" 
+                  name="Budgets &amp; Reports" 
+                  parent="hr.menu_hr_root" 
+                  sequence="70"
+                  groups="hr.group_hr_manager,hr.group_hr_user,account.group_account_manager,account.group_account_user"/>
+        
+        <!-- Budget Management Submenu -->
+        <menuitem id="menu_hr_expense_budgets" 
+                  name="Budget Management" 
+                  parent="menu_hr_expense_budgets_root" 
+                  sequence="10"/>
+        
+        <!-- Budgets Menu Item -->
+        <menuitem id="menu_hr_expense_budget" 
+                  name="Expense Budgets" 
+                  parent="menu_hr_expense_budgets" 
+                  action="action_hr_expense_budget" 
+                  sequence="10"/>
+        
+        <!-- Reports Submenu -->
+        <menuitem id="menu_hr_expense_reports" 
+                  name="Reports" 
+                  parent="menu_hr_expense_budgets_root" 
+                  sequence="20"/>
+        
+        <!-- Budget Analysis Report -->
+        <menuitem id="menu_hr_expense_budget_analysis" 
+                  name="Budget Analysis" 
+                  parent="menu_hr_expense_reports" 
+                  action="action_hr_expense_budget_analysis" 
+                  sequence="10"/>
+        
+        <!-- Over Budget Report -->
+        <menuitem id="menu_hr_expense_over_budget" 
+                  name="Over Budget Employees" 
+                  parent="menu_hr_expense_reports" 
+                  action="action_hr_expense_over_budget" 
+                  sequence="20"/>
+        
+        <!-- Under Budget Report -->
+        <menuitem id="menu_hr_expense_under_budget" 
+                  name="Under Budget Employees" 
+                  parent="menu_hr_expense_reports" 
+                  action="action_hr_expense_under_budget" 
+                  sequence="30"/>
+        
+        <!-- Expenses by Budget Report -->
+        <menuitem id="menu_hr_expense_by_budget" 
+                  name="Expenses by Budget" 
+                  parent="menu_hr_expense_reports" 
+                  action="action_hr_expense_by_budget" 
+                  sequence="40"/>
+        
+        <!-- Configuration Submenu -->
+        <menuitem id="menu_hr_expense_config" 
+                  name="Configuration" 
+                  parent="menu_hr_expense_budgets_root" 
+                  sequence="90"/>
+        
+        <!-- Budget Configuration -->
+        <menuitem id="menu_hr_expense_budget_config" 
+                  name="Budget Settings" 
+                  parent="menu_hr_expense_config" 
+                  action="base.action_res_company_form" 
+                  sequence="10"/>
+        
+        <!-- Add Budgets to Employee Form Context Menu -->
+        <menuitem id="menu_employee_budgets" 
+                  name="Employee Budgets" 
+                  parent="hr.menu_hr_employee_payroll" 
+                  action="action_hr_expense_budget" 
+                  sequence="50"
+                  groups="hr.group_hr_manager,hr.group_hr_user"/>
+        
+        
+        <!-- Add Budgets to Expenses Menu -->
+        <menuitem id="menu_expense_budgets" 
+                  name="Budget Management" 
+                  parent="hr_expense.menu_hr_expense_root" 
+                  sequence="40"
+                  groups="hr.group_hr_manager,hr.group_hr_user,account.group_account_manager,account.group_account_user"/>
+        
+        <!-- Expense Budgets under Expenses Menu -->
+        <menuitem id="menu_expense_budget_list" 
+                  name="Expense Budgets" 
+                  parent="menu_expense_budgets" 
+                  action="action_hr_expense_budget" 
+                  sequence="10"/>
+        
+        <!-- Expense Reports under Expenses Menu -->
+        <menuitem id="menu_expense_reports" 
+                  name="Budget Reports" 
+                  parent="menu_expense_budgets" 
+                  sequence="20"/>
+        
+        <!-- Budget Analysis under Expenses -->
+        <menuitem id="menu_expense_budget_analysis" 
+                  name="Budget Analysis" 
+                  parent="menu_expense_reports" 
+                  action="action_hr_expense_budget_analysis" 
+                  sequence="10"/>
+        
+        <!-- Over Budget under Expenses -->
+        <menuitem id="menu_expense_over_budget" 
+                  name="Over Budget Employees" 
+                  parent="menu_expense_reports" 
+                  action="action_hr_expense_over_budget" 
+                  sequence="20"/>
+        
+        <!-- Under Budget under Expenses -->
+        <menuitem id="menu_expense_under_budget" 
+                  name="Under Budget Employees" 
+                  parent="menu_expense_reports" 
+                  action="action_hr_expense_under_budget" 
+                  sequence="30"/>
+        
+        <!-- Expenses by Budget under Expenses -->
+        <menuitem id="menu_expense_by_budget" 
+                  name="Expenses by Budget" 
+                  parent="menu_expense_reports" 
+                  action="action_hr_expense_by_budget" 
+                  sequence="40"/>
+        
+        <!-- Dashboard Menu Item -->
+        <menuitem id="menu_hr_expense_dashboard" 
+                  name="Budget Dashboard" 
+                  parent="menu_hr_expense_budgets_root" 
+                  action="action_hr_expense_budget_analysis" 
+                  sequence="5"
+                  groups="hr.group_hr_manager,hr.group_hr_user,account.group_account_manager,account.group_account_user"/>
+        
+    </data>
+</odoo>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Inherit Applicant Form for GDPR -->
+    <record id="view_applicant_form_gdpr" model="ir.ui.view">
+        <field name="name">hr.applicant.form.gdpr</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_applicant_tracking_random.view_applicant_form_tracking"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add invisible fields needed for button visibility -->
+            <xpath expr="//sheet" position="before">
+                <field name="anonymized" invisible="1"/>
+            </xpath>
+            
+            <!-- Add GDPR Actions in Button Box (near delete button) -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_export_data" string="Export Data" type="object" 
+                        class="oe_stat_button" icon="fa-download" 
+                        help="Export applicant data for GDPR compliance">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">GDPR Export</span>
+                    </div>
+                </button>
+                <button name="action_anonymize_data" string="Anonymize" type="object" 
+                        class="oe_stat_button" icon="fa-user-secret" 
+                        groups="hr_recruitment.group_hr_recruitment_manager" 
+                        invisible="anonymized"
+                        help="Permanently anonymize personal data (cannot be undone)">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Anonymize</span>
+                    </div>
+                </button>
+            </xpath>
+            
+            <!-- Add GDPR Information Group (Collapsed by default) -->
+            <xpath expr="//sheet/group" position="after">
+                <group string="GDPR Compliance" name="gdpr_compliance" groups="hr_recruitment.group_hr_recruitment_manager">
+                    <field name="gdpr_consent"/>
+                    <field name="gdpr_consent_date" invisible="not gdpr_consent"/>
+                    <field name="consent_source" invisible="not gdpr_consent"/>
+                    <field name="data_retention_date"/>
+                    <field name="anonymized"/>
+                    <field name="anonymized_date" invisible="not anonymized"/>
+                    <field name="anonymized_by" invisible="not anonymized"/>
+                </group>
+            </xpath>
+            
+        </field>
+    </record>
+
+</odoo>

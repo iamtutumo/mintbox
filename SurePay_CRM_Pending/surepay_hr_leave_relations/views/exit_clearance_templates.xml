@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Success Template -->
+        <template id="exit_clearance_success_template">
+            <t t-call="web.layout">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 offset-md-2">
+                            <div class="card mt-5">
+                                <div class="card-header bg-success text-white text-center">
+                                    <h3><i class="fa fa-check-circle"></i> Success!</h3>
+                                </div>
+                                <div class="card-body text-center">
+                                    <div class="alert alert-success">
+                                        <h4 t-esc="message"/>
+                                    </div>
+                                    <p class="text-muted">
+                                        Thank you, <strong t-esc="employee_name"/>. Your submission has been processed successfully.
+                                    </p>
+                                    <p class="text-muted">
+                                        The HR department has been notified and will review your submission.
+                                    </p>
+                                    <hr/>
+                                    <p class="text-muted small">
+                                        If you have any questions, please contact the HR department.
+                                    </p>
+                                    <div class="mt-4">
+                                        <button class="btn btn-primary" onclick="window.close()">
+                                            <i class="fa fa-times"></i> Close Window
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-center text-muted">
+                                    <small>© 2024 SurePay HR Management System</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!-- Error Template -->
+        <template id="exit_clearance_error_template">
+            <t t-call="web.layout">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 offset-md-2">
+                            <div class="card mt-5">
+                                <div class="card-header bg-danger text-white text-center">
+                                    <h3><i class="fa fa-exclamation-triangle"></i> Error</h3>
+                                </div>
+                                <div class="card-body text-center">
+                                    <div class="alert alert-danger">
+                                        <h4 t-esc="error_message"/>
+                                    </div>
+                                    <p class="text-muted">
+                                        We apologize for the inconvenience. Please try again or contact the HR department if the problem persists.
+                                    </p>
+                                    <hr/>
+                                    <div class="mt-4">
+                                        <button class="btn btn-secondary" onclick="window.history.back()">
+                                            <i class="fa fa-arrow-left"></i> Go Back
+                                        </button>
+                                        <button class="btn btn-primary" onclick="window.close()">
+                                            <i class="fa fa-times"></i> Close Window
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-center text-muted">
+                                    <small>© 2024 SurePay HR Management System</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

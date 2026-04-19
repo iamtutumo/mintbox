@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Skill Levels Data -->
+        <record id="skill_level_beginner" model="hr.skill.level">
+            <field name="name">Beginner</field>
+        </record>
+        
+        <record id="skill_level_intermediate" model="hr.skill.level">
+            <field name="name">Intermediate</field>
+        </record>
+        
+        <record id="skill_level_advanced" model="hr.skill.level">
+            <field name="name">Advanced</field>
+        </record>
+        
+        <record id="skill_level_expert" model="hr.skill.level">
+            <field name="name">Expert</field>
+        </record>
+        
+    </data>
+</odoo>

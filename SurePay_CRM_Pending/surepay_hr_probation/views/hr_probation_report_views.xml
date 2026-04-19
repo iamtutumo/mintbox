@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <record id="action_hr_probation_report" model="ir.actions.act_window">
+            <field name="name">Employees on Probation</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">tree,kanban,form,pivot,graph</field>
+            <field name="domain">[('is_probation', '=', True)]</field>
+            <field name="context">{'search_default_on_probation': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No employees currently on probation
+                </p>
+                <p>
+                    Employees on probation will appear here. You can track their probation period and status.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_hr_probation_report"
+                  name="Probation Report"
+                  parent="hr.menu_hr_root"
+                  action="action_hr_probation_report"
+                  sequence="65"
+                  groups="hr.group_hr_user"/>
+
+</odoo>

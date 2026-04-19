@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Main Risk Management Menu -->
+        <menuitem id="menu_risk_management_root" 
+                  name="Risk Management" 
+                  sequence="65"/>
+        
+        <!-- Risk Register Submenu -->
+        <menuitem id="menu_risk_register" 
+                  name="Risk Register" 
+                  parent="menu_risk_management_root" 
+                  action="action_risk_register" 
+                  sequence="10"/>
+        
+        <!-- Dashboard Submenu - Temporarily disabled due to JS error -->
+        <!-- <menuitem id="menu_risk_dashboard"
+                  name="Dashboard"
+                  parent="menu_risk_management_root"
+                  action="action_risk_dashboard_client"
+                  sequence="15"/> -->
+        
+        
+        <!-- Configuration Menu -->
+        <menuitem id="menu_risk_management_config" 
+                  name="Configuration" 
+                  parent="menu_risk_management_root" 
+                  sequence="90"
+                  groups="risk_register.group_risk_admin"/>
+        
+    </data>
+</odoo>

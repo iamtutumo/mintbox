@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View -->
+    <record id="view_client_visit_form" model="ir.ui.view">
+        <field name="name">surepay.client.visit.form</field>
+        <field name="model">surepay.client.visit</field>
+        <field name="arch" type="xml">
+            <form string="Client Visit">
+                <header>
+                    <field name="name" invisible="1"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="open_lead" type="object" class="oe_stat_button" icon="fa-bullhorn" invisible="not lead_id">
+                            <field name="lead_id" widget="statinfo" string="Opportunity"/>
+                        </button>
+                        <button name="open_partner" type="object" class="oe_stat_button" icon="fa-building">
+                            <field name="partner_id" widget="statinfo" string="Client"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" default_focus="1" placeholder="Visit Reference"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" widget="res_partner_many2one"/>
+                            <field name="lead_id" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="user_id" options="{'no_open': True}"/>
+                        </group>
+                        <group>
+                            <field name="visit_date"/>
+                            <field name="purpose"/>
+                            <field name="map_url" widget="url" readonly="1" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Details">
+                            <group>
+                                <field name="comments" placeholder="Enter visit notes here..."/>
+                            </group>
+                        </page>
+                        <page string="Location">
+                            <div class="oe_button_box" name="location_button_box">
+                                <button name="action_capture_location" type="object" string="Capture Current Location" class="oe_stat_button btn-primary" icon="fa-map-marker" style="min-width: 200px; text-align: center; white-space: normal; height: auto; padding: 8px 12px; line-height: 1.2;"/>
+                            </div>
+                            <div class="o_form_sheet_bg">
+                                <div class="clearfix position-relative">
+                                    <div id="map_container" style="width: 100%; height: 400px; border: 1px solid #ccc; overflow: hidden;" invisible="not latitude and not longitude">
+                                        <field name="map_iframe_url" widget="url" readonly="1" invisible="1"/>
+                                        <iframe id="visit_map_iframe" style="width: 100%; height: 100%; border: none;" frameborder="0" allowfullscreen=""/>
+                                    </div>
+                                    <div style="width: 100%; height: 400px; border: 1px solid #ccc; background-color: #f8f9fa;" invisible="latitude or longitude">
+                                        <div style="text-align: center; padding-top: 180px;">
+                                            <i class="fa fa-map-marker fa-3x" style="color: #875A7B;"></i>
+                                            <p>Click 'Capture Current Location' to get coordinates automatically</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <group>
+                                <group>
+                                    <field name="latitude" widget="float" options="{'digits': [7, 7]}" placeholder="Click 'Capture Current Location' to get coordinates"/>
+                                    <field name="longitude" widget="float" options="{'digits': [7, 7]}" placeholder="Click 'Capture Current Location' to get coordinates"/>
+                                    <!-- Temporary coordinate fields for new record handling -->
+                                    <field name="temp_latitude" invisible="1"/>
+                                    <field name="temp_longitude" invisible="1"/>
+                                </group>
+                                <group>
+                                    <!-- Map is displayed above in the iframe container -->
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_client_visit_tree" model="ir.ui.view">
+        <field name="name">surepay.client.visit.tree</field>
+        <field name="model">surepay.client.visit</field>
+        <field name="arch" type="xml">
+            <tree string="Client Visits">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="lead_id" optional="show"/>
+                <field name="visit_date" decoration-muted="visit_date &lt; current_date"/>
+                <field name="purpose"/>
+                <field name="user_id" groups="sales_team.group_sale_salesman"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_client_visit_search" model="ir.ui.view">
+        <field name="name">surepay.client.visit.search</field>
+        <field name="model">surepay.client.visit</field>
+        <field name="arch" type="xml">
+            <search string="Client Visits">
+                <field name="name" filter_domain="['|', ('name', 'ilike', self), ('partner_id', 'ilike', self)]"/>
+                <filter string="Today's Visits" name="today" domain="[('visit_date', '&gt;=', context_today() + ' 00:00:00'), ('visit_date', '&lt;=', context_today() + ' 23:59:59')]"/>
+                <filter string="This Week" name="this_week" domain="[('visit_date', '&gt;=', (context_today() + ' 00:00:00')), ('visit_date', '&lt;=', (context_today() + relativedelta(days=+7)) + ' 23:59:59')]"/>
+                <filter string="Overdue" name="overdue" domain="[('visit_date', '&amp;lt;', context_today() + ' 00:00:00'), ('visit_date', '!=', False)]"/>
+                <separator/>
+                <filter string="My Visits" name="my_visits" domain="[('user_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Salesperson" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Purpose" name="group_purpose" context="{'group_by': 'purpose'}"/>
+                    <filter string="Client" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'visit_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Calendar View -->
+    <record id="view_client_visit_calendar" model="ir.ui.view">
+        <field name="name">surepay.client.visit.calendar</field>
+        <field name="model">surepay.client.visit</field>
+        <field name="arch" type="xml">
+            <calendar string="Client Visits" date_start="visit_date" date_stop="visit_date" color="user_id">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="purpose"/>
+                <field name="user_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Map Dashboard View -->
+    <record id="view_visit_map_form" model="ir.ui.view">
+        <field name="name">surepay.visit.map.form</field>
+        <field name="model">surepay.visit.map</field>
+        <field name="arch" type="xml">
+            <form string="Visit Map Dashboard">
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_calendar" type="object" class="oe_stat_button" icon="fa-calendar" string="Calendar" help="View visits in calendar"/>
+                    <button name="action_view_list" type="object" class="oe_stat_button" icon="fa-list" string="List View" help="View visits in list"/>
+                    <button name="action_export_visits" type="object" class="oe_stat_button" icon="fa-download" string="Export" help="Export visits to Excel"/>
+                </div>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Client Visits Map Dashboard</h1>
+                    </div>
+                    
+                    <!-- Statistics Cards -->
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-3">
+                            <div class="oe_stat_box" style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; text-align: center;">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_value" style="font-size: 24px; font-weight: bold; color: #875A7B;">
+                                        <field name="visit_count" widget="statinfo" nolabel="1"/>
+                                    </span>
+                                    <span class="o_stat_text">Total Visits</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="oe_stat_box" style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; text-align: center;">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_value" style="font-size: 24px; font-weight: bold; color: #875A7B;">
+                                        <field name="unique_clients" widget="statinfo" nolabel="1"/>
+                                    </span>
+                                    <span class="o_stat_text">Unique Clients</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="oe_stat_box" style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; text-align: center;">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_value" style="font-size: 24px; font-weight: bold; color: #875A7B;">
+                                        <field name="avg_visits_per_day" widget="statinfo" nolabel="1"/>
+                                    </span>
+                                    <span class="o_stat_text">Avg Visits/Day</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="oe_stat_box" style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; text-align: center;">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_value" style="font-size: 16px; font-weight: bold; color: #875A7B;">
+                                        <field name="user_id" widget="statinfo" nolabel="1"/>
+                                    </span>
+                                    <span class="o_stat_text">Salesperson</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Filters -->
+                    <group>
+                        <group string="Date Range">
+                            <field name="date_from" widget="datetime" string="From"/>
+                            <field name="date_to" widget="datetime" string="To"/>
+                            <div class="btn-group">
+                                <button name="action_set_this_week" type="object" string="This Week" class="btn btn-sm btn-secondary" icon="fa-calendar-week"/>
+                                <button name="action_set_this_month" type="object" string="This Month" class="btn btn-sm btn-secondary" icon="fa-calendar-alt"/>
+                                <button name="action_set_last_week" type="object" string="Last Week" class="btn btn-sm btn-secondary" icon="fa-history"/>
+                            </div>
+                        </group>
+                        <group string="Filters">
+                            <field name="user_id" string="Salesperson" options="{'no_create': True}"/>
+                            <field name="partner_id" string="Client" options="{'no_create': True}"/>
+                            <field name="purpose" string="Purpose"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Map Container -->
+                    <div class="o_form_sheet_bg">
+                        <div class="clearfix position-relative">
+                            <div id="all_visits_map" style="width: 100%; height: 600px; border: 1px solid #ccc; position: relative;">
+                                <div style="text-align: center; padding-top: 280px;" invisible="visit_count > 0">
+                                    <i class="fa fa-map-marker fa-3x" style="color: #875A7B;"></i>
+                                    <p>No visits found for the selected filters</p>
+                                    <p>Adjust your filters or capture some visit locations</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Visit List -->
+                    <notebook>
+                        <page string="Visit List">
+                            <field name="visit_ids" widget="one2many_list">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="visit_date" widget="datetime"/>
+                                    <field name="purpose"/>
+                                    <field name="user_id"/>
+                                    <field name="latitude"/>
+                                    <field name="longitude"/>
+                                    <button name="action_open_map" type="object" string="View on Map" icon="fa-map-marker" class="btn btn-sm btn-primary"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Analytics">
+                            <group>
+                                <group>
+                                    <field name="visit_count" readonly="1"/>
+                                    <field name="unique_clients" readonly="1"/>
+                                    <field name="avg_visits_per_day" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="user_id" readonly="1"/>
+                                    <field name="date_from" readonly="1"/>
+                                    <field name="date_to" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Map Dashboard -->
+    <record id="action_visit_map_dashboard" model="ir.actions.act_window">
+        <field name="name">Visit Map Dashboard</field>
+        <field name="res_model">surepay.visit.map</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_visit_map_form"/>
+        <field name="target">current</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Use the map dashboard to visualize client visits
+            </p>
+            <p>
+                Filter by date range, salesperson, client, or purpose to see visit patterns on the map.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_client_visit" model="ir.actions.act_window">
+        <field name="name">Client Visits</field>
+        <field name="res_model">surepay.client.visit</field>
+        <field name="view_mode">calendar,tree,form,pivot,graph</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No client visits found. Let's create your first one!
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem 
+        id="menu_client_visit_root" 
+        name="Client Visits" 
+        parent="crm.crm_menu_root"
+        sequence="30"/>
+    <menuitem 
+        id="menu_client_visit_list" 
+        name="All Visits" 
+        parent="menu_client_visit_root"
+        action="action_client_visit"
+        sequence="10"/>
+    <menuitem 
+        id="menu_visit_map_dashboard" 
+        name="Visit Map Dashboard" 
+        parent="menu_client_visit_root"
+        action="action_visit_map_dashboard"
+        sequence="20"/>
+</odoo>

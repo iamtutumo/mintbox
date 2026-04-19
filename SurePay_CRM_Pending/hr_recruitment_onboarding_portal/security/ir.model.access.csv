@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_applicant_onboarding_user,hr.applicant.onboarding.user,model_hr_applicant_onboarding,hr_recruitment.group_hr_recruitment_user,1,1,1,0
+access_hr_applicant_onboarding_manager,hr.applicant.onboarding.manager,model_hr_applicant_onboarding,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
+access_onboarding_task_user,onboarding.task.user,model_onboarding_task,hr_recruitment.group_hr_recruitment_user,1,1,1,1
+access_onboarding_task_line_user,onboarding.task.line.user,model_onboarding_task_line,hr_recruitment.group_hr_recruitment_user,1,1,1,1
+access_onboarding_document_user,onboarding.document.user,model_onboarding_document,hr_recruitment.group_hr_recruitment_user,1,1,1,1
+access_hr_applicant_onboarding_public,hr.applicant.onboarding.public,model_hr_applicant_onboarding,base.group_public,1,1,0,0
+access_onboarding_task_line_public,onboarding.task.line.public,model_onboarding_task_line,base.group_public,1,1,0,0
+access_onboarding_document_public,onboarding.document.public,model_onboarding_document,base.group_public,1,1,0,0

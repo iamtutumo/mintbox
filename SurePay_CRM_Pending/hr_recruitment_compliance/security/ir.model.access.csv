@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_applicant_audit_log_user,applicant.audit.log.user,model_applicant_audit_log,hr_recruitment.group_hr_recruitment_user,1,0,1,0
+access_applicant_audit_log_manager,applicant.audit.log.manager,model_applicant_audit_log,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
+access_gdpr_export_wizard_user,gdpr.export.wizard.user,model_gdpr_export_wizard,hr_recruitment.group_hr_recruitment_user,1,1,1,1
+access_gdpr_anonymize_wizard_manager,gdpr.anonymize.wizard.manager,model_gdpr_anonymize_wizard,hr_recruitment.group_hr_recruitment_manager,1,1,1,1

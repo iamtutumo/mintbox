@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department Clearance Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #28a745;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #28a745;
+            margin: 0;
+            font-size: 24px;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .section h2 {
+            color: #28a745;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            font-size: 18px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        .equipment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .equipment-table th,
+        .equipment-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .equipment-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .signature-section {
+            border-top: 2px solid #28a745;
+            padding-top: 20px;
+            margin-top: 30px;
+        }
+        .signature-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .submit-btn {
+            background: #28a745;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 20px auto;
+        }
+        .submit-btn:hover {
+            background: #218838;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-cleared {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        @media (max-width: 600px) {
+            .signature-group {
+                grid-template-columns: 1fr;
+            }
+            .equipment-table {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>DEPARTMENT CLEARANCE FORM</h1>
+            <p>${department_name} Department Sign-off</p>
+        </div>
+
+        <form action="${form_submission_url}" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="clearance_id" value="${clearance_id}">
+            <input type="hidden" name="department" value="${department}">
+            <input type="hidden" name="manager_id" value="${manager_id}">
+            <input type="hidden" name="security_token" value="${security_token}">
+
+            <!-- Employee Information Section -->
+            <div class="section">
+                <h2>Employee Information</h2>
+                <div class="form-group">
+                    <label for="employee_name">Employee Name:</label>
+                    <input type="text" id="employee_name" name="employee_name" value="${employee_name}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="employee_department">Department:</label>
+                    <input type="text" id="employee_department" name="employee_department" value="${employee_department}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="last_working_day">Last Working Day:</label>
+                    <input type="date" id="last_working_day" name="last_working_day" value="${last_working_day}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="clearance_status">Current Status:</label>
+                    <span class="status-badge status-${clearance_status}">${clearance_status}</span>
+                </div>
+            </div>
+
+            <!-- Department Specific Items -->
+            <div class="section">
+                <h2>${department_name} Department Clearance Items</h2>
+                
+                <!-- HR Department Specific Items -->
+                % if department == 'HR':
+                <div class="form-group">
+                    <label for="hr_records_updated">HR Records Updated:</label>
+                    <select id="hr_records_updated" name="hr_records_updated" required>
+                        <option value="">Select Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="not_applicable">Not Applicable</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="benefits_processed">Benefits Processed:</label>
+                    <select id="benefits_processed" name="benefits_processed" required>
+                        <option value="">Select Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="not_applicable">Not Applicable</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="final_payroll_processed">Final Payroll Processed:</label>
+                    <select id="final_payroll_processed" name="final_payroll_processed" required>
+                        <option value="">Select Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="not_applicable">Not Applicable</option>
+                    </select>
+                </div>
+                % endif
+
+                <!-- IT Department Specific Items -->
+                % if department == 'IT':
+                <div class="form-group">
+                    <label for="email_account_disabled">Email Account Disabled:</label>
+                    <select id="email_account_disabled" name="email_account_disabled" required>
+                        <option value="">Select Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="not_applicable">Not Applicable</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="system_access_revoked">System Access Revoked:</label>
+                    <select id="system_access_revoked" name="system_access_revoked" required>
+                        <option value="">Select Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="not_applicable">Not Applicable</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="data_backed_up">Employee Data Backed Up:</label>
+                    <select id="data_backed_up" name="data_backed_up" required>
+                        <option value="">Select Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="not_applicable">Not Applicable</option>
+                    </select>
+                </div>
+                % endif
+
+                <!-- Finance Department Specific Items -->
+                % if department == 'Finance':
+                <div class="form-group">
+                    <label for="expense_reports_settled">Expense Reports Settled:</label>
+                    <select id="expense_reports_settled" name="expense_reports_settled" required>
+                        <option value="">Select Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="not_applicable">Not Applicable</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="company_card_returned">Company Card Returned:</label>
+                    <select id="company_card_returned" name="company_card_returned" required>
+                        <option value="">Select Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="not_applicable">Not Applicable</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="financial_obligations_cleared">Financial Obligations Cleared:</label>
+                    <select id="financial_obligations_cleared" name="financial_obligations_cleared" required>
+                        <option value="">Select Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="not_applicable">Not Applicable</option>
+                    </select>
+                </div>
+                % endif
+
+                <!-- Line Manager Specific Items -->
+                % if department == 'Line Manager':
+                <div class="form-group">
+                    <label for="work_handover_completed">Work Handover Completed:</label>
+                    <select id="work_handover_completed" name="work_handover_completed" required>
+                        <option value="">Select Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="not_applicable">Not Applicable</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="projects_transferred">Projects Transferred:</label>
+                    <select id="projects_transferred" name="projects_transferred" required>
+                        <option value="">Select Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="not_applicable">Not Applicable</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="client_relations_handover">Client Relations Handover:</label>
+                    <select id="client_relations_handover" name="client_relations_handover" required>
+                        <option value="">Select Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="not_applicable">Not Applicable</option>
+                    </select>
+                </div>
+                % endif
+
+                <!-- Common for All Departments -->
+                <div class="form-group">
+                    <label for="clearance_notes">Clearance Notes:</label>
+                    <textarea id="clearance_notes" name="clearance_notes" placeholder="Please provide any additional notes or comments regarding the clearance process..."></textarea>
+                </div>
+            </div>
+
+            <!-- Quick Clearance Actions -->
+            <div class="section">
+                <h2>Quick Clearance Actions</h2>
+                <p style="margin-bottom: 20px;">Use the buttons below to quickly approve or reject this clearance:</p>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <a href="${approve_url}" class="btn btn-success" style="background: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 4px; margin: 0 10px; display: inline-block;">
+                        ✅ Approve Clearance
+                    </a>
+                    <a href="${reject_url}" class="btn btn-danger" style="background: #dc3545; color: white; padding: 12px 30px; text-decoration: none; border-radius: 4px; margin: 0 10px; display: inline-block;">
+                        ❌ Reject Clearance
+                    </a>
+                </div>
+                <p style="font-size: 12px; color: #666; text-align: center; font-style: italic;">
+                    Or scroll down to fill out the detailed form below
+                </p>
+            </div>
+
+            <!-- Equipment Return Section -->
+            <div class="section">
+                <h2>Equipment Return Status</h2>
+                <table class="equipment-table">
+                    <thead>
+                        <tr>
+                            <th>Item Description</th>
+                            <th>Serial Number</th>
+                            <th>Status</th>
+                            <th>Condition</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        % for equipment in equipment_list:
+                        <tr>
+                            <td>${equipment.item_description}</td>
+                            <td>${equipment.serial_number or 'N/A'}</td>
+                            <td>
+                                <select name="equipment_status_${equipment.id}" required>
+                                    <option value="">Select Status</option>
+                                    <option value="returned">Returned</option>
+                                    <option value="not_returned">Not Returned</option>
+                                    <option value="damaged">Damaged</option>
+                                    <option value="lost">Lost</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="equipment_condition_${equipment.id}">
+                                    <option value="">Select Condition</option>
+                                    <option value="excellent">Excellent</option>
+                                    <option value="good">Good</option>
+                                    <option value="fair">Fair</option>
+                                    <option value="poor">Poor</option>
+                                    <option value="damaged">Damaged</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" name="equipment_notes_${equipment.id}" placeholder="Notes">
+                            </td>
+                        </tr>
+                        % endfor
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Department Manager Approval Section -->
+            <div class="section signature-section">
+                <h2>Department Manager Approval</h2>
+                <p>I hereby acknowledge that I have reviewed the clearance items for ${employee_name} and confirm that all ${department_name} department obligations have been settled.</p>
+                
+                <div class="signature-group">
+                    <div class="form-group">
+                        <label for="manager_signature">Manager Signature:</label>
+                        <input type="file" id="manager_signature" name="manager_signature" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="manager_signature_date">Date:</label>
+                        <input type="date" id="manager_signature_date" name="manager_signature_date" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="clearance_decision">Clearance Decision:</label>
+                    <select id="clearance_decision" name="clearance_decision" required>
+                        <option value="">Select Decision</option>
+                        <option value="cleared">Cleared</option>
+                        <option value="pending">Pending</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Department Clearance</button>
+        </form>
+    </div>
+</body>
+</html>

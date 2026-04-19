@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="email_template_overstaying_leads" model="mail.template">
+            <field name="name">Overstaying Leads Notification</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="subject">Leads Overstaying in Stages</field>
+            <field name="body_html"><![CDATA[
+                <p>Dear CRM Manager,</p>
+                <p>The following leads have been in their current stage longer than the allowed duration:</p>
+                <ul>
+                    <t t-foreach="object.search([]).filtered(lambda l: l.days_in_stage > (l.stage_id.allowed_duration_days or 7))" t-as="lead">
+                        <li><a t-attf-href="/web#id={{lead.id}}&model=crm.lead">{{lead.name}}</a> - {{lead.days_in_stage}} days in {{lead.stage_id.name}}</li>
+                    </t>
+                </ul>
+                <p>Please review these leads.</p>
+                <p>Best regards,<br/>Odoo System</p>
+            ]]></field>
+            <field name="email_from">${(object.user_id.email or 'noreply@example.com')|safe}</field>
+            <field name="email_to">${(object.user_id.email or 'manager@example.com')|safe}</field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+    </data>
+</odoo>

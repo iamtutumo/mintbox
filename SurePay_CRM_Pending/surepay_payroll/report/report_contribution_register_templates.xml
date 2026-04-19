@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Contribution Register Report Template -->
+    <template id="report_contributionregister">
+        <!-- Include payroll assets for proper print styling -->
+        <t t-call="surepay_payroll.payroll_report_assets"/>
+        <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page avoid-page-break">
+                            <main>
+                            
+                            <!-- Professional Header -->
+                            <div class="text-center mb-4">
+                                <h2 class="mb-2">CONTRIBUTION REGISTER REPORT</h2>
+                                <h4 class="text-muted mb-0" t-field="o.name"/>
+                                <div class="text-muted small">
+                                    Period: <span t-esc="data['form']['date_from']"/> to <span t-esc="data['form']['date_to']"/>
+                                </div>
+                            </div>
+                            
+                            <!-- Report Summary Card -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Register Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <strong>Register Name:</strong>
+                                            <p class="mb-0" t-field="o.name"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>Period From:</strong>
+                                            <p class="mb-0" t-esc="data['form']['date_from']"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>Period To:</strong>
+                                            <p class="mb-0" t-esc="data['form']['date_to']"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Contribution Lines Table -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">PaySlip Lines by Contribution Register</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-bordered table-striped">
+                                            <thead class="bg-light">
+                                                <tr>
+                                                    <th width="20%">PaySlip Name</th>
+                                                    <th width="10%">Code</th>
+                                                    <th width="25%">Description</th>
+                                                    <th width="10%" class="text-center">Quantity</th>
+                                                    <th width="15%" class="text-right">Amount</th>
+                                                    <th width="20%" class="text-right">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-if="lines_data.get(o.id, [])">
+                                                    <tr t-foreach="lines_data.get(o.id, [])" t-as="line">
+                                                        <td>
+                                                            <span t-esc="line.slip_id.name"/>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge badge-secondary" t-esc="line.code"/>
+                                                        </td>
+                                                        <td>
+                                                            <span t-esc="line.name"/>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <span t-esc="line.quantity"/>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <span t-esc="line.amount"
+                                                                  t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                        </td>
+                                                        <td class="text-right font-weight-bold">
+                                                            <span t-esc="line.total"
+                                                                  t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-else="">
+                                                    <tr>
+                                                        <td colspan="6" class="text-center text-muted">
+                                                            <em>No contribution lines found for this register</em>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Summary Total -->
+                            <div class="row justify-content-end">
+                                <div class="col-md-4">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <h5 class="mb-0">Grand Total</h5>
+                                                </div>
+                                                <div class="col-6 text-right">
+                                                    <h3 class="mb-0">
+                                                        <span t-esc="lines_total.get(o.id)"
+                                                              t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                    </h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            </main>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+</odoo>

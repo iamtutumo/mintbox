@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- HR Payslip Form View Inheritance -->
+        <record id="hr_payslip_view_form_inherit_medical_insurance" model="ir.ui.view">
+            <field name="name">hr.payslip.form.inherit.medical.insurance</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+            <field name="inherit_id" ref="surepay_payroll.hr_payslip_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Medical Insurance">
+                        <group>
+                            <group>
+                                <field name="medical_insurance_eligible"/>
+                                <field name="medical_insurance_plan_id" 
+                                       invisible="medical_insurance_eligible == False"/>
+                            </group>
+                            <group>
+                                <field name="medical_insurance_employee_deduction" 
+                                       invisible="medical_insurance_eligible == False"/>
+                                <field name="medical_insurance_employer_contribution" 
+                                       invisible="medical_insurance_eligible == False"/>
+                            </group>
+                        </group>
+                        <group string="Actions">
+                            <button name="action_view_medical_insurance_details" type="object" 
+                                    string="View Medical Insurance Details" class="btn-primary"
+                                    invisible="medical_insurance_eligible == False"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- HR Payslip Tree View Inheritance -->
+        <record id="hr_payslip_view_tree_inherit_medical_insurance" model="ir.ui.view">
+            <field name="name">hr.payslip.tree.inherit.medical.insurance</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+            <field name="inherit_id" ref="surepay_payroll.hr_payslip_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='number']" position="after">
+                    <field name="medical_insurance_eligible"/>
+                    <field name="medical_insurance_plan_id"/>
+                    <field name="medical_insurance_employee_deduction"/>
+                    <field name="medical_insurance_employer_contribution"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- HR Payslip Kanban View Inheritance -->
+        <record id="hr_payslip_view_kanban_inherit_medical_insurance" model="ir.ui.view">
+            <field name="name">hr.payslip.kanban.inherit.medical.insurance</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+            <field name="inherit_id" ref="surepay_payroll.hr_payslip_view_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('row')]/div[last()]" position="after">
+                    <div class="oe_kanban_details">
+                        <field name="medical_insurance_eligible" invisible="1"/>
+                        <field name="medical_insurance_plan_id" invisible="1"/>
+                        <field name="medical_insurance_employee_deduction" invisible="1"/>
+                        <field name="medical_insurance_employer_contribution" invisible="1"/>
+                        <div t-if="record.medical_insurance_eligible.raw_value">
+                            <div class="text-muted">
+                                <i class="fa fa-heartbeat"/> Medical Insurance: 
+                                <field name="medical_insurance_plan_id"/>
+                            </div>
+                            <div class="text-muted">
+                                Employee Deduction: <field name="medical_insurance_employee_deduction"/>
+                            </div>
+                            <div class="text-muted">
+                                Employer Contribution: <field name="medical_insurance_employer_contribution"/>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- HR Payslip Search View Inheritance -->
+        <record id="hr_payslip_view_search_inherit_medical_insurance" model="ir.ui.view">
+            <field name="name">hr.payslip.search.inherit.medical.insurance</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+            <field name="inherit_id" ref="surepay_payroll.hr_payslip_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='done']" position="after">
+                    <separator/>
+                    <filter name="medical_insurance_eligible" string="Medical Insurance Eligible" 
+                            domain="[('medical_insurance_eligible', '=', True)]"/>
+                    <filter name="no_medical_insurance" string="No Medical Insurance" 
+                            domain="[('medical_insurance_eligible', '=', False)]"/>
+                    <separator/>
+                    <field name="medical_insurance_plan_id"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

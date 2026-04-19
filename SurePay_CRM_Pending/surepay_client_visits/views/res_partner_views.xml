@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Partner form to add visits smart button -->
+    <record id="view_partner_form_inherit_visits" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.visits</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button 
+                    name="action_log_visit" 
+                    type="object" 
+                    class="oe_stat_button"
+                    icon="fa-calendar"
+                    groups="base.group_user"
+                    string="Log Visit"/>
+                <button 
+                    name="action_view_visits" 
+                    type="object" 
+                    class="oe_stat_button"
+                    icon="fa-list"
+                    groups="base.group_user">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="visit_count" class="o_stat_value"/>
+                        </span>
+                        <span class="o_stat_text"> Visits</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Client Visits">
+                    <field name="visit_ids">
+                        <tree>
+                            <field name="name"/>
+                            <field name="visit_date"/>
+                            <field name="purpose"/>
+                            <field name="user_id"/>
+                            <field name="comments"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

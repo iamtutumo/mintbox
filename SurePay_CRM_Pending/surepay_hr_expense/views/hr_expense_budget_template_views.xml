@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Budget Template Tree View -->
+        <record id="hr_expense_budget_template_view_tree" model="ir.ui.view">
+            <field name="name">hr.expense.budget.template.tree</field>
+            <field name="model">hr.expense.budget.template</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Templates" decoration-success="active" decoration-muted="not active">
+                    <field name="name"/>
+                    <field name="period_type"/>
+                    <field name="amount_allocated" widget="monetary"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="auto_renew"/>
+                    <field name="rollover_remaining"/>
+                    <field name="budget_count"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Budget Template Form View -->
+        <record id="hr_expense_budget_template_view_form" model="ir.ui.view">
+            <field name="name">hr.expense.budget.template.form</field>
+            <field name="model">hr.expense.budget.template</field>
+            <field name="arch" type="xml">
+                <form string="Budget Template">
+                    <header>
+                        <button name="action_create_budgets" type="object" string="Create Budgets" class="btn-primary" invisible="active == False"/>
+                        <button name="action_view_budgets" type="object" string="View Created Budgets" class="btn-secondary" invisible="budget_count == 0"/>
+                        <field name="active" widget="boolean_toggle"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_budgets" type="object" class="oe_stat_button" invisible="budget_count == 0">
+                                <field string="Budgets" name="budget_count" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="description"/>
+                                <field name="period_type"/>
+                                <field name="amount_allocated"/>
+                                <field name="currency_id"/>
+                            </group>
+                            <group>
+                                <field name="auto_renew"/>
+                                <field name="rollover_remaining"/>
+                                <field name="company_id"/>
+                                <field name="budget_count"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Applicability">
+                                <group>
+                                    <group string="Employees">
+                                        <field name="employee_ids" nolabel="1">
+                                            <tree>
+                                                <field name="name"/>
+                                                <field name="department_id"/>
+                                                <field name="job_id"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                    <group string="Departments">
+                                        <field name="department_ids" nolabel="1">
+                                            <tree>
+                                                <field name="name"/>
+                                                <field name="manager_id"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                    <group string="Job Positions">
+                                        <field name="job_ids" nolabel="1">
+                                            <tree>
+                                                <field name="name"/>
+                                                <field name="department_id"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </group>
+                                <div class="alert alert-info">
+                                    <p><strong>Note:</strong> If no employees, departments, or job positions are specified, this template will apply to all active employees.</p>
+                                </div>
+                            </page>
+                            
+                            <page string="Created Budgets">
+                                <field name="budget_ids" nolabel="1">
+                                    <tree>
+                                        <field name="employee_id"/>
+                                        <field name="period_type"/>
+                                        <field name="date_start"/>
+                                        <field name="date_end"/>
+                                        <field name="amount_allocated" widget="monetary"/>
+                                        <field name="amount_spent" widget="monetary"/>
+                                        <field name="amount_remaining" widget="monetary"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Budget Template Search View -->
+        <record id="hr_expense_budget_template_view_search" model="ir.ui.view">
+            <field name="name">hr.expense.budget.template.search</field>
+            <field name="model">hr.expense.budget.template</field>
+            <field name="arch" type="xml">
+                <search string="Budget Templates">
+                    <field name="name"/>
+                    <field name="period_type"/>
+                    <field name="employee_ids"/>
+                    <field name="department_ids"/>
+                    <field name="job_ids"/>
+                    <separator/>
+                    <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                    <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter name="week" string="Weekly" domain="[('period_type', '=', 'week')]"/>
+                    <filter name="month" string="Monthly" domain="[('period_type', '=', 'month')]"/>
+                    <filter name="quarter" string="Quarterly" domain="[('period_type', '=', 'quarter')]"/>
+                    <filter name="year" string="Yearly" domain="[('period_type', '=', 'year')]"/>
+                    <filter name="custom" string="Custom" domain="[('period_type', '=', 'custom')]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_period_type" string="Period Type" context="{'group_by': 'period_type'}"/>
+                        <filter name="group_company" string="Company" context="{'group_by': 'company_id'}"/>
+                        <filter name="group_active" string="Active" context="{'group_by': 'active'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Budget Template Action -->
+        <record id="action_hr_expense_budget_template" model="ir.actions.act_window">
+            <field name="name">Budget Templates</field>
+            <field name="res_model">hr.expense.budget.template</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_active': True}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first budget template
+                </p>
+                <p>
+                    Budget templates allow you to define standard budget configurations that can be automatically applied to employees based on their department, job position, or individual assignment.
+                </p>
+            </field>
+        </record>
+
+        <!-- Add Budget Templates to Budgets Menu -->
+        <menuitem id="menu_hr_expense_budget_template" 
+                  name="Budget Templates" 
+                  parent="menu_hr_expense_budgets" 
+                  action="action_hr_expense_budget_template" 
+                  sequence="30"/>
+
+    </data>
+</odoo>

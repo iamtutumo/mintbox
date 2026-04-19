@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Audit Log Tree View -->
+    <record id="view_applicant_audit_log_tree" model="ir.ui.view">
+        <field name="name">applicant.audit.log.tree</field>
+        <field name="model">applicant.audit.log</field>
+        <field name="arch" type="xml">
+            <tree string="Audit Logs" create="false" edit="false" delete="false">
+                <field name="action_date"/>
+                <field name="applicant_id"/>
+                <field name="action_type"/>
+                <field name="user_id"/>
+                <field name="ip_address"/>
+                <field name="details"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Audit Log Form View -->
+    <record id="view_applicant_audit_log_form" model="ir.ui.view">
+        <field name="name">applicant.audit.log.form</field>
+        <field name="model">applicant.audit.log</field>
+        <field name="arch" type="xml">
+            <form string="Audit Log" create="false" edit="false" delete="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="applicant_id"/>
+                            <field name="action_type"/>
+                            <field name="action_date"/>
+                        </group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="ip_address"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="details" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Audit Log Action -->
+    <record id="action_applicant_audit_log" model="ir.actions.act_window">
+        <field name="name">Audit Logs</field>
+        <field name="res_model">applicant.audit.log</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu - Moved to Configuration submenu -->
+    <menuitem id="menu_applicant_audit_log"
+              name="Audit Logs"
+              parent="hr_recruitment_compliance.menu_hr_recruitment_config"
+              action="action_applicant_audit_log"
+              sequence="20"/>
+
+</odoo>

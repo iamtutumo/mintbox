@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- KYC Document Form View -->
+    <record id="view_kyc_document_form" model="ir.ui.view">
+        <field name="name">surepay.kyc.document.form</field>
+        <field name="model">surepay.kyc.document</field>
+        <field name="arch" type="xml">
+            <form string="KYC Document">
+                <header>
+                    <field name="status" widget="statusbar" statusbar_visible="pending,approved,rejected" statusbar_colors='{"rejected": "red", "approved": "green"}'/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_approve" string="Approve" type="object" class="oe_stat_button" invisible="status == 'approved'" groups="base.group_system">
+                            <field name="status" widget="statinfo" string="Approve"/>
+                        </button>
+                        <button name="action_reject" string="Reject" type="object" class="oe_stat_button" invisible="status == 'rejected'" groups="base.group_system">
+                            <field name="status" widget="statinfo" string="Reject"/>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="name" required="1"/>
+                            <field name="file" filename="file_name" required="1"/>
+                            <field name="uploaded_by" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="status" readonly="1" groups="!base.group_system"/>
+                            <field name="uploaded_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" placeholder="Add any additional information about this document..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- KYC Document Tree View -->
+    <record id="view_kyc_document_tree" model="ir.ui.view">
+        <field name="name">surepay.kyc.document.tree</field>
+        <field name="model">surepay.kyc.document</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="status == 'rejected'" decoration-success="status == 'approved'">
+                <field name="name"/>
+                <field name="status"/>
+                <field name="uploaded_by"/>
+                <field name="uploaded_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action for KYC Documents -->
+    <record id="action_kyc_document" model="ir.actions.act_window">
+        <field name="name">KYC Documents</field>
+        <field name="res_model">surepay.kyc.document</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

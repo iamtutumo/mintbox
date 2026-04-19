@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Contract Form View Extension -->
+        <record id="hr_contract_view_form_inherit" model="ir.ui.view">
+            <field name="name">hr.contract.form.inherit</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page name="expiration" string="Expiration &amp; Certification">
+                        <group>
+                            <group>
+                                <field name="expiration_date"/>
+                                <field name="days_until_expiration"/>
+                                <field name="is_expiring_soon"/>
+                                <field name="expiration_notification_sent"/>
+                            </group>
+                            <group>
+                                <field name="certification_type"/>
+                                <field name="certification_number"/>
+                                <field name="issuing_authority"/>
+                            </group>
+                        </group>
+                        <group>
+                            <button name="action_send_expiration_notification" type="object" string="Send Expiration Notification" class="btn-primary" invisible="expiration_notification_sent == True"/>
+                        </group>
+                    </page>
+                </xpath>
+                
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="action_send_expiration_notification" type="object" class="oe_stat_button" icon="fa-envelope" invisible="expiration_notification_sent == True">
+                        <field name="is_expiring_soon" widget="boolean_toggle" string="Send Notification"/>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Contract Tree View Extension -->
+        <record id="hr_contract_view_tree_inherit" model="ir.ui.view">
+            <field name="name">hr.contract.tree.inherit</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="inside">
+                    <field name="expiration_date"/>
+                    <field name="days_until_expiration"/>
+                    <field name="is_expiring_soon"/>
+                    <field name="certification_type"/>
+                    <field name="expiration_notification_sent"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Contract Search View Extension -->
+        <record id="hr_contract_view_search_inherit" model="ir.ui.view">
+            <field name="name">hr.contract.search.inherit</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='running']" position="after">
+                    <separator/>
+                    <filter name="expiring_soon" string="Expiring Soon" domain="[('is_expiring_soon', '=', True)]"/>
+                    <filter name="notification_sent" string="Notification Sent" domain="[('expiration_notification_sent', '=', True)]"/>
+                    <filter name="notification_not_sent" string="Notification Not Sent" domain="[('expiration_notification_sent', '=', False)]"/>
+                    <separator/>
+                    <filter name="certification_contract" string="Employment Contract" domain="[('certification_type', '=', 'contract')]"/>
+                    <filter name="certification_professional" string="Professional Certification" domain="[('certification_type', '=', 'professional')]"/>
+                    <filter name="certification_safety" string="Safety Certification" domain="[('certification_type', '=', 'safety')]"/>
+                    <filter name="certification_technical" string="Technical Certification" domain="[('certification_type', '=', 'technical')]"/>
+                    <filter name="certification_other" string="Other Certification" domain="[('certification_type', '=', 'other')]"/>
+                </xpath>
+                
+                <xpath expr="//group" position="inside">
+                    <filter name="group_certification_type" string="Certification Type" context="{'group_by': 'certification_type'}"/>
+                    <filter name="group_expiration_status" string="Expiration Status" context="{'group_by': 'is_expiring_soon'}"/>
+                    <filter name="group_notification_status" string="Notification Status" context="{'group_by': 'expiration_notification_sent'}"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Contract Kanban View Extension -->
+        <record id="hr_contract_view_kanban_inherit" model="ir.ui.view">
+            <field name="name">hr.contract.kanban.inherit</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_kanban_content']" position="inside">
+                    <div class="oe_kanban_tags_section">
+                        <div class="oe_kanban_tags">
+                            <span class="badge badge-pill badge-danger" t-if="is_expiring_soon">Expiring Soon</span>
+                            <span class="badge badge-pill badge-info" t-if="certification_type">
+                                <field name="certification_type" readonly="1"/>
+                            </span>
+                            <span class="badge badge-pill badge-success" t-if="expiration_notification_sent">Notification Sent</span>
+                        </div>
+                    </div>
+                    <div class="oe_kanban_details">
+                        <strong>Expiration:</strong> <field name="expiration_date" readonly="1"/><br/>
+                        <strong>Days Left:</strong> <field name="days_until_expiration" readonly="1"/><br/>
+                        <strong>Certification:</strong> <field name="certification_type" readonly="1"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Contract Action for Expiring Contracts -->
+        <record id="action_hr_contract_expiring" model="ir.actions.act_window">
+            <field name="name">Expiring Contracts</field>
+            <field name="res_model">hr.contract</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="domain">[('is_expiring_soon', '=', True)]</field>
+            <field name="context">{'search_default_expiring_soon': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No contracts expiring soon
+                </p>
+                <p>
+                    All contracts are up to date. No contracts are expiring within the next 30 days.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Employee Form View - Add Exit Dues Tab -->
+        <record id="hr_employee_view_form_inherit_exit_dues" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit.exit.dues</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page name="exit_dues" string="Exit Dues">
+                        <field name="has_exit_dues" invisible="1"/>
+                        <field name="total_exit_dues" invisible="1"/>
+                        
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_calculate_exit_dues" 
+                                    type="object" 
+                                    class="oe_stat_button" 
+                                    icon="fa-calculator"
+                                    invisible="active == False"
+                                    title="Calculate Exit Dues">
+                                <field name="total_exit_dues" widget="statinfo" string="Total Dues"/>
+                            </button>
+                        </div>
+                        
+                        <field name="exit_due_ids">
+                            <tree decoration-info="state=='pending'" decoration-success="state=='settled'" decoration-warning="state=='waived'">
+                                <field name="date"/>
+                                <field name="type"/>
+                                <field name="description"/>
+                                <field name="amount" sum="Total Amount"/>
+                                <field name="state"/>
+                                <field name="settlement_date"/>
+                                <field name="reference"/>
+                                <button name="action_settle" type="object" 
+                                        class="btn btn-sm btn-success" 
+                                        icon="fa-check" 
+                                        title="Settle"
+                                        invisible="state != 'pending'"/>
+                                <button name="action_waive" type="object" 
+                                        class="btn btn-sm btn-warning" 
+                                        icon="fa-ban" 
+                                        title="Waive"
+                                        invisible="state != 'pending'"/>
+                                <button name="action_reset_pending" type="object" 
+                                        class="btn btn-sm btn-primary" 
+                                        icon="fa-undo" 
+                                        title="Reset to Pending"
+                                        invisible="state == 'pending'"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Employee Kanban View - Add Exit Dues Indicator -->
+        <record id="hr_employee_view_kanban_inherit_exit_dues" model="ir.ui.view">
+            <field name="name">hr.employee.kanban.inherit.exit.dues</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.hr_kanban_view_employees"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_kanban_details']" position="inside">
+                    <field name="has_exit_dues" invisible="1"/>
+                    <div class="oe_kanban_tags">
+                        <span class="badge badge-warning" invisible="has_exit_dues == False">
+                            <i class="fa fa-money"/> Exit Dues
+                        </span>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

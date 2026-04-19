@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Default Onboarding Tasks -->
+    <record id="task_complete_personal_info" model="onboarding.task">
+        <field name="name">Complete Personal Information Form</field>
+        <field name="description">Fill in your complete personal details including emergency contacts</field>
+        <field name="sequence">1</field>
+        <field name="required" eval="True"/>
+        <field name="task_type">form</field>
+    </record>
+
+    <record id="task_upload_documents" model="onboarding.task">
+        <field name="name">Upload Required Documents</field>
+        <field name="description">Upload all required documents (ID, certificates, etc.)</field>
+        <field name="sequence">2</field>
+        <field name="required" eval="True"/>
+        <field name="task_type">document</field>
+    </record>
+
+    <record id="task_review_handbook" model="onboarding.task">
+        <field name="name">Review Employee Handbook</field>
+        <field name="description">Read and acknowledge the employee handbook</field>
+        <field name="sequence">3</field>
+        <field name="required" eval="True"/>
+        <field name="task_type">other</field>
+    </record>
+
+    <record id="task_sign_contract" model="onboarding.task">
+        <field name="name">Sign Employment Contract</field>
+        <field name="description">Review and digitally sign your employment contract</field>
+        <field name="sequence">4</field>
+        <field name="required" eval="True"/>
+        <field name="task_type">form</field>
+    </record>
+
+    <record id="task_orientation_session" model="onboarding.task">
+        <field name="name">Attend Orientation Session</field>
+        <field name="description">Attend the new employee orientation session</field>
+        <field name="sequence">5</field>
+        <field name="required" eval="True"/>
+        <field name="task_type">meeting</field>
+    </record>
+
+    <record id="task_it_setup" model="onboarding.task">
+        <field name="name">IT Setup and Access</field>
+        <field name="description">Get your email, computer, and system access set up</field>
+        <field name="sequence">6</field>
+        <field name="required" eval="True"/>
+        <field name="task_type">other</field>
+    </record>
+
+    <record id="task_meet_team" model="onboarding.task">
+        <field name="name">Meet Your Team</field>
+        <field name="description">Introduction meeting with your team members</field>
+        <field name="sequence">7</field>
+        <field name="required" eval="False"/>
+        <field name="task_type">meeting</field>
+    </record>
+
+    <record id="task_workspace_setup" model="onboarding.task">
+        <field name="name">Workspace Setup</field>
+        <field name="description">Set up your workspace and request any needed equipment</field>
+        <field name="sequence">8</field>
+        <field name="required" eval="False"/>
+        <field name="task_type">other</field>
+    </record>
+
+</odoo>

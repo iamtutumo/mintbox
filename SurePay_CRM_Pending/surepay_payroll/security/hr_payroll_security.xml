@@ -1,0 +1,221 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Module Category and Groups -->
+        <record model="ir.module.category"
+                id="module_category_surepay_payroll">
+            <field name="name">SurePay Payroll</field>
+            <field name="description">Multi-country Payroll Management with statutory compliance and advance management.</field>
+            <field name="sequence">16</field>
+        </record>
+        <record id="group_surepay_payroll_employee" model="res.groups">
+            <field name="name">Employee</field>
+            <field name="category_id"
+                   ref="surepay_payroll.module_category_surepay_payroll"/>
+            <field name="implied_ids"
+                   eval="[(4, ref('hr.group_hr_user'))]"/>
+            <field name="comment">Can view own payslips and personal payroll information</field>
+        </record>
+        
+        <record id="group_surepay_payroll_user" model="res.groups">
+            <field name="name">HR Officer</field>
+            <field name="category_id"
+                   ref="surepay_payroll.module_category_surepay_payroll"/>
+            <field name="implied_ids"
+                   eval="[(4, ref('hr.group_hr_user')), (4, ref('hr_contract.group_hr_contract_manager'))]"/>
+            <field name="comment">Can process payroll, generate payslips, and manage employee payroll data</field>
+        </record>
+        <record id="group_surepay_payroll_manager" model="res.groups">
+            <field name="name">HR Manager</field>
+            <field name="category_id"
+                   ref="surepay_payroll.module_category_surepay_payroll"/>
+            <field name="implied_ids"
+                   eval="[(4, ref('surepay_payroll.group_surepay_payroll_user'))]"/>
+            <field name="users"
+                   eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+            <field name="comment">Can configure payroll rules, manage structures, and access all payroll reports</field>
+        </record>
+        <record id="base.default_user" model="res.users">
+            <field name="groups_id"
+                   eval="[(4,ref('surepay_payroll.group_surepay_payroll_manager'))]"/>
+        </record>
+
+        <!-- Define model external IDs for custom SurePay models only -->
+        <record id="model_surepay_payroll_hr_payslip" model="ir.model">
+            <field name="name">surepay_payroll.hr.payslip</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+        </record>
+        <record id="model_surepay_payroll_hr_payroll_structure" model="ir.model">
+            <field name="name">surepay_payroll.hr.payroll.structure</field>
+            <field name="model">surepay_payroll.hr.payroll.structure</field>
+        </record>
+        <record id="model_surepay_payroll_hr_salary_rule" model="ir.model">
+            <field name="name">surepay_payroll.hr.salary.rule</field>
+            <field name="model">surepay_payroll.hr.salary.rule</field>
+        </record>
+        <record id="model_surepay_payroll_hr_salary_rule_category" model="ir.model">
+            <field name="name">surepay_payroll.hr.salary.rule.category</field>
+            <field name="model">surepay_payroll.hr.salary.rule.category</field>
+        </record>
+        <record id="model_surepay_payroll_hr_rule_input" model="ir.model">
+            <field name="name">surepay_payroll.hr.rule.input</field>
+            <field name="model">surepay_payroll.hr.rule.input</field>
+        </record>
+        <record id="model_surepay_payroll_hr_payslip_input" model="ir.model">
+            <field name="name">surepay_payroll.hr.payslip.input</field>
+            <field name="model">surepay_payroll.hr.payslip.input</field>
+        </record>
+        <record id="model_surepay_payroll_hr_payslip_worked_days" model="ir.model">
+            <field name="name">surepay_payroll.hr.payslip.worked.days</field>
+            <field name="model">surepay_payroll.hr.payslip.worked.days</field>
+        </record>
+        <record id="model_surepay_payroll_hr_payslip_run" model="ir.model">
+            <field name="name">surepay_payroll.hr.payslip.run</field>
+            <field name="model">surepay_payroll.hr.payslip.run</field>
+        </record>
+        <record id="model_surepay_payroll_hr_payslip_line" model="ir.model">
+            <field name="name">surepay_payroll.hr.payslip.line</field>
+            <field name="model">surepay_payroll.hr.payslip.line</field>
+        </record>
+        <record id="model_surepay_payroll_hr_salary_advance" model="ir.model">
+            <field name="name">surepay_payroll.hr.salary.advance</field>
+            <field name="model">surepay_payroll.hr.salary.advance</field>
+        </record>
+        <record id="model_surepay_payroll_hr_payslips_employees" model="ir.model">
+            <field name="name">surepay_payroll.hr.payslips.employees</field>
+            <field name="model">surepay_payroll.hr.payslips.employees</field>
+        </record>
+        
+        <!-- New simplified models -->
+        <record id="model_surepay_payroll_hr_loan" model="ir.model">
+            <field name="name">surepay_payroll.hr.loan</field>
+            <field name="model">surepay_payroll.hr.loan</field>
+        </record>
+
+
+        <!-- Payroll Security Rules -->
+        <record id="hr_payroll_rule_employee" model="ir.rule">
+            <field name="name">Employee Own Payslip</field>
+            <field name="model_id" ref="surepay_payroll.model_surepay_payroll_hr_payslip"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups"
+                   eval="[(4, ref('surepay_payroll.group_surepay_payroll_employee'))]"/>
+        </record>
+        
+        <record id="hr_payroll_rule_officer" model="ir.rule">
+            <field name="name">HR Officer and Department Payslip</field>
+            <field name="model_id" ref="surepay_payroll.model_surepay_payroll_hr_payslip"/>
+            <field name="domain_force">['|','|', ('employee_id.user_id', '=',
+                user.id), ('employee_id.department_id', '=', False),
+                ('employee_id.department_id.manager_id.user_id', '=', user.id)]
+            </field>
+            <field name="groups"
+                   eval="[(4, ref('surepay_payroll.group_surepay_payroll_user'))]"/>
+        </record>
+        <record id="hr_payslip_rule_manager" model="ir.rule">
+            <field name="name">All Payslip</field>
+            <field name="model_id" ref="surepay_payroll.model_surepay_payroll_hr_payslip"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups"
+                   eval="[(4, ref('surepay_payroll.group_surepay_payroll_manager'))]"/>
+        </record>
+        <record model="ir.rule" id="payroll_multi_company_rule">
+            <field name="name">Payroll multi company</field>
+            <field name="model_id" ref="surepay_payroll.model_surepay_payroll_hr_payslip"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('company_id', '=', False),
+                ('company_id', 'in', company_ids)]
+            </field>
+        </record>
+        
+        <!-- Salary Advance Security Rules -->
+        <record id="hr_salary_advance_rule_employee" model="ir.rule">
+            <field name="name">Employee Own Advances</field>
+            <field name="model_id" ref="model_surepay_payroll_hr_salary_advance"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups"
+                   eval="[(4, ref('surepay_payroll.group_surepay_payroll_employee'))]"/>
+        </record>
+        
+        <record id="hr_salary_advance_rule_officer" model="ir.rule">
+            <field name="name">HR Officer and Department Advances</field>
+            <field name="model_id" ref="model_surepay_payroll_hr_salary_advance"/>
+            <field name="domain_force">['|','|', ('employee_id.user_id', '=', user.id), 
+                ('employee_id.department_id', '=', False),
+                ('employee_id.department_id.manager_id.user_id', '=', user.id)]</field>
+            <field name="groups"
+                   eval="[(4, ref('surepay_payroll.group_surepay_payroll_user'))]"/>
+        </record>
+        
+        <record id="hr_salary_advance_rule_manager" model="ir.rule">
+            <field name="name">All Advances</field>
+            <field name="model_id" ref="model_surepay_payroll_hr_salary_advance"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups"
+                   eval="[(4, ref('surepay_payroll.group_surepay_payroll_manager'))]"/>
+        </record>
+        
+        <!-- New simplified models security rules -->
+        <!-- Salary Advance Security Rules -->
+        <record id="hr_salary_advance_simple_rule_employee" model="ir.rule">
+            <field name="name">Employee Own Salary Advances</field>
+            <field name="model_id" ref="model_surepay_payroll_hr_salary_advance"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups"
+                   eval="[(4, ref('surepay_payroll.group_surepay_payroll_employee'))]"/>
+        </record>
+        
+        <record id="hr_salary_advance_simple_rule_officer" model="ir.rule">
+            <field name="name">HR Officer and Department Salary Advances</field>
+            <field name="model_id" ref="model_surepay_payroll_hr_salary_advance"/>
+            <field name="domain_force">['|','|', ('employee_id.user_id', '=', user.id), 
+                ('employee_id.department_id', '=', False),
+                ('employee_id.department_id.manager_id.user_id', '=', user.id)]</field>
+            <field name="groups"
+                   eval="[(4, ref('surepay_payroll.group_surepay_payroll_user'))]"/>
+        </record>
+        
+        <record id="hr_salary_advance_simple_rule_manager" model="ir.rule">
+            <field name="name">All Salary Advances</field>
+            <field name="model_id" ref="model_surepay_payroll_hr_salary_advance"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups"
+                   eval="[(4, ref('surepay_payroll.group_surepay_payroll_manager'))]"/>
+        </record>
+        
+        <!-- Employee Loan Security Rules -->
+        <record id="hr_loan_rule_employee" model="ir.rule">
+            <field name="name">Employee Own Loans</field>
+            <field name="model_id" ref="model_surepay_payroll_hr_loan"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups"
+                   eval="[(4, ref('surepay_payroll.group_surepay_payroll_employee'))]"/>
+        </record>
+        
+        <record id="hr_loan_rule_officer" model="ir.rule">
+            <field name="name">HR Officer and Department Loans</field>
+            <field name="model_id" ref="model_surepay_payroll_hr_loan"/>
+            <field name="domain_force">['|','|', ('employee_id.user_id', '=', user.id), 
+                ('employee_id.department_id', '=', False),
+                ('employee_id.department_id.manager_id.user_id', '=', user.id)]</field>
+            <field name="groups"
+                   eval="[(4, ref('surepay_payroll.group_surepay_payroll_user'))]"/>
+        </record>
+        
+        <record id="hr_loan_rule_manager" model="ir.rule">
+            <field name="name">All Loans</field>
+            <field name="model_id" ref="model_surepay_payroll_hr_loan"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups"
+                   eval="[(4, ref('surepay_payroll.group_surepay_payroll_manager'))]"/>
+        </record>
+        
+        <record model="ir.rule" id="salary_advance_multi_company_rule">
+            <field name="name">Salary Advance multi company</field>
+            <field name="model_id" ref="model_surepay_payroll_hr_salary_advance"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('company_id', '=', False),
+                ('company_id', 'in', company_ids)]
+            </field>
+        </record>
+    </data>
+</odoo>

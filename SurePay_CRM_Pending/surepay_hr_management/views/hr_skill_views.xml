@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Skill Level Form View -->
+        <record id="view_hr_skill_level_form" model="ir.ui.view">
+            <field name="name">hr.skill.level.form</field>
+            <field name="model">hr.skill.level</field>
+            <field name="arch" type="xml">
+                <form string="Skill Level">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Skill Level Tree View -->
+        <record id="view_hr_skill_level_tree" model="ir.ui.view">
+            <field name="name">hr.skill.level.tree</field>
+            <field name="model">hr.skill.level</field>
+            <field name="arch" type="xml">
+                <tree string="Skill Levels">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Skill Level Search View -->
+        <record id="hr_skill_level_view_search" model="ir.ui.view">
+            <field name="name">hr.skill.level.search</field>
+            <field name="model">hr.skill.level</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Skill Level Action -->
+        <record id="action_hr_skill_level" model="ir.actions.act_window">
+            <field name="name">Skill Levels</field>
+            <field name="res_model">hr.skill.level</field>
+            <field name="view_mode">tree,form,search</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Add skill levels
+                </p>
+                <p>
+                    Create and manage skill levels that can be assigned to employee skills.
+                </p>
+            </field>
+        </record>
+        
+        <!-- Employee Skill Form View (Inherited) -->
+        <record id="view_hr_employee_skill_form" model="ir.ui.view">
+            <field name="name">hr.employee.skill.form</field>
+            <field name="model">hr.employee.skill</field>
+            <field name="arch" type="xml">
+                <form string="Employee Skill">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="skill_id"/>
+                                <field name="skill_type_id"/>
+                                <field name="skill_level_id"/>
+                            </group>
+                            <group>
+                                <field name="is_required" readonly="1"/>
+                                <field name="has_skill_gap" readonly="1"/>
+                                <field name="gap_level" readonly="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Employee Skill Tree View (Inherited) -->
+        <record id="view_hr_employee_skill_tree" model="ir.ui.view">
+            <field name="name">hr.employee.skill.tree</field>
+            <field name="model">hr.employee.skill</field>
+            <field name="arch" type="xml">
+                <tree string="Employee Skills" decoration-success="has_skill_gap == False" decoration-warning="gap_level == 'minor'" decoration-danger="gap_level == 'major'">
+                    <field name="employee_id"/>
+                    <field name="skill_id"/>
+                    <field name="skill_level_id"/>
+                    <field name="is_required"/>
+                    <field name="has_skill_gap"/>
+                    <field name="gap_level"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Employee Skill Search View (Inherited) -->
+        <record id="hr_employee_skill_view_search" model="ir.ui.view">
+            <field name="name">hr.employee.skill.search</field>
+            <field name="model">hr.employee.skill</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="employee_id"/>
+                    <field name="skill_id"/>
+                    <field name="skill_level_id"/>
+                    <separator/>
+                    <filter name="required" string="Required Skills" domain="[('is_required', '=', True)]"/>
+                    <filter name="has_gaps" string="Has Skill Gaps" domain="[('has_skill_gap', '=', True)]"/>
+                    <filter name="no_gaps" string="No Skill Gaps" domain="[('has_skill_gap', '=', False)]"/>
+                    <filter name="minor_gap" string="Minor Gaps" domain="[('gap_level', '=', 'minor')]"/>
+                    <filter name="major_gap" string="Major Gaps" domain="[('gap_level', '=', 'major')]"/>
+                    <separator/>
+                    <filter name="beginner" string="Beginner Level" domain="[('skill_level_id.name', '=', 'Beginner')]"/>
+                    <filter name="intermediate" string="Intermediate Level" domain="[('skill_level_id.name', '=', 'Intermediate')]"/>
+                    <filter name="advanced" string="Advanced Level" domain="[('skill_level_id.name', '=', 'Advanced')]"/>
+                    <filter name="expert" string="Expert Level" domain="[('skill_level_id.name', '=', 'Expert')]"/>
+                    <separator/>
+                    <filter name="my_skills" string="My Skills" domain="[('employee_id.user_id', '=', uid)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_skill" string="Skill" context="{'group_by': 'skill_id'}"/>
+                        <filter name="group_level" string="Skill Level" context="{'group_by': 'skill_level_id'}"/>
+                        <filter name="group_gap" string="Gap Level" context="{'group_by': 'gap_level'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Skill Level Tree View -->
+        <record id="hr_skill_level_view_tree" model="ir.ui.view">
+            <field name="name">hr.skill.level.tree</field>
+            <field name="model">hr.skill.level</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Skill Level Search View -->
+        <record id="hr_skill_level_view_search" model="ir.ui.view">
+            <field name="name">hr.skill.level.search</field>
+            <field name="model">hr.skill.level</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Skill Actions -->
+        <record id="action_hr_skill" model="ir.actions.act_window">
+            <field name="name">Skills</field>
+            <field name="res_model">hr.skill</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No skills found
+                </p>
+                <p>
+                    Create skills to track employee competencies and identify skill gaps.
+                </p>
+            </field>
+        </record>
+        
+        <record id="action_hr_skill_level" model="ir.actions.act_window">
+            <field name="name">Skill Levels</field>
+            <field name="res_model">hr.skill.level</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No skill levels found
+                </p>
+                <p>
+                    Create skill levels to define employee competency levels.
+                </p>
+            </field>
+        </record>
+        
+        <record id="action_hr_skill_type" model="ir.actions.act_window">
+            <field name="name">Skill Types</field>
+            <field name="res_model">hr.skill.type</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No skill types found
+                </p>
+                <p>
+                    Create skill types to organize and classify skills.
+                </p>
+            </field>
+        </record>
+        
+        <record id="action_hr_employee_skill" model="ir.actions.act_window">
+            <field name="name">Employee Skills</field>
+            <field name="res_model">hr.employee.skill</field>
+            <field name="view_mode">tree,form,search,pivot,graph</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Add employee skills
+                </p>
+                <p>
+                    Manage and track employee skills, including skill levels and gap analysis.
+                </p>
+            </field>
+        </record>
+        
+        <record id="action_hr_skill_gap_report" model="ir.actions.act_window">
+            <field name="name">Skill Gap Report</field>
+            <field name="res_model">hr.skill.gap.report</field>
+            <field name="view_mode">tree,pivot,graph</field>
+            <field name="context">{'search_default_has_gaps': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No skill gaps found
+                </p>
+                <p>
+                    All employees have the required skills for their positions.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

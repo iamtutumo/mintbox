@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- PDF Report Template -->
+        <template id="report_risk_register_pdf">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        
+                        <!-- Header -->
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <h2>Risk Register Report</h2>
+                                <h4 t-field="doc.owner_id.company_id.name"/>
+                                <p class="text-muted">
+                                    Generated on: <span t-esc="datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Risk Details -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0">Risk Information</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <strong>Risk Title:</strong> <span t-field="doc.name"/><br/>
+                                                <strong>Date Identified:</strong> <span t-field="doc.identification_date"/><br/>
+                                                <strong>Risk Level:</strong> 
+                                                <span class="badge" t-att-class="{
+                                                    'low': 'badge-success',
+                                                    'medium': 'badge-warning',
+                                                    'high': 'badge-danger',
+                                                    'critical': 'badge-dark'
+                                                }[doc.risk_level]">
+                                                    <span t-field="doc.risk_level"/>
+                                                </span><br/>
+                                                <strong>Impact:</strong> <span t-field="doc.impact"/><br/>
+                                                <strong>Likelihood:</strong> <span t-field="doc.likelihood"/><br/>
+                                                <strong>Risk Score:</strong> <span t-field="doc.risk_score"/>
+                                            </div>
+                                            <div class="col-6">
+                                                <strong>Department:</strong> <span t-field="doc.department_id.name"/><br/>
+                                                <strong>Risk Owner:</strong> <span t-field="doc.owner_id.name"/><br/>
+                                                <strong>Assigned To:</strong> <span t-field="doc.assigned_to.name" t-if="doc.assigned_to"/><span t-if="not doc.assigned_to">Not assigned</span><br/>
+                                                <strong>Escalate to Head:</strong> <span t-if="doc.escalate_to_head">Yes</span><span t-if="not doc.escalate_to_head">No</span><br/>
+                                                <strong>Status:</strong> 
+                                                <span class="badge" t-att-class="{
+                                                    'draft': 'badge-secondary',
+                                                    'active': 'badge-primary',
+                                                    'mitigated': 'badge-warning',
+                                                    'closed': 'badge-success'
+                                                }[doc.status]">
+                                                    <span t-field="doc.status"/>
+                                                </span><br/>
+                                                <strong>Created By:</strong> <span t-field="doc.created_by.name"/><br/>
+                                                <strong>Created Date:</strong> <span t-field="doc.create_date"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Description -->
+                        <div class="row mt-3" t-if="doc.description">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-info text-white">
+                                        <h5 class="mb-0">Description</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p t-field="doc.description"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Mitigation Plan -->
+                        <div class="row mt-3" t-if="doc.mitigation_plan">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-warning text-white">
+                                        <h5 class="mb-0">Mitigation Plan</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p t-field="doc.mitigation_plan"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <!-- Footer -->
+                        <div class="row mt-5">
+                            <div class="col-12 text-center">
+                                <p class="text-muted">
+                                    <small>This report was generated automatically by the Risk Register system.</small>
+                                </p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </t>
+            </t>
+        </template>
+        
+        <!-- Excel Report Action -->
+        <record id="action_report_risk_excel" model="ir.actions.report">
+            <field name="name">Risk Register Excel</field>
+            <field name="model">risk.register</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">risk_register.report_risk_excel</field>
+            <field name="report_file">risk_register.report_risk_excel</field>
+            <field name="binding_model_id" ref="model_risk_register"/>
+            <field name="binding_type">report</field>
+        </record>
+        
+        <!-- CSV Report Action -->
+        <record id="action_report_risk_csv" model="ir.actions.report">
+            <field name="name">Risk Register CSV</field>
+            <field name="model">risk.register</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">risk_register.report_risk_csv</field>
+            <field name="report_file">risk_register.report_risk_csv</field>
+            <field name="binding_model_id" ref="model_risk_register"/>
+            <field name="binding_type">report</field>
+        </record>
+        
+        <!-- PDF Report Action -->
+        <record id="action_report_risk_register" model="ir.actions.report">
+            <field name="name">Risk Register PDF</field>
+            <field name="model">risk.register</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">risk_register.report_risk_register_pdf</field>
+            <field name="report_file">risk_register.report_risk_register_pdf</field>
+            <field name="binding_model_id" ref="model_risk_register"/>
+            <field name="binding_type">report</field>
+        </record>
+        
+    </data>
+</odoo>

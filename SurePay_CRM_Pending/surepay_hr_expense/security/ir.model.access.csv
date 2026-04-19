@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_expense_budget_user,hr.expense.budget.user,model_hr_expense_budget,base.group_user,1,0,0,0
+access_hr_expense_budget_manager,hr.expense.budget.manager,model_hr_expense_budget,hr.group_hr_manager,1,1,1,1
+access_hr_expense_budget_officer,hr.expense.budget.officer,model_hr_expense_budget,hr.group_hr_user,1,1,1,0
+access_hr_expense_budget_account_manager,hr.expense.budget.account.manager,model_hr_expense_budget,account.group_account_manager,1,1,1,1
+access_hr_expense_budget_employee,hr.expense.budget.employee,model_hr_expense_budget,base.group_user,1,0,0,0

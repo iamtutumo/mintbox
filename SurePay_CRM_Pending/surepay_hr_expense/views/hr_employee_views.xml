@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Extend Employee Form View -->
+        <record id="view_employee_form_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <button name="action_view_budgets" type="object" 
+                            class="oe_stat_button" icon="fa-wallet" 
+                            help="View all expense budgets for this employee">
+                        <field name="expense_budget_ids" widget="statinfo" string="Budgets"/>
+                    </button>
+                </div>
+                
+                <notebook position="inside">
+                    <page string="Expense Budgets">
+                        <div class="oe_button_box" name="budget_button_box">
+                            <button name="action_create_budget" type="object" 
+                                    class="oe_stat_button" icon="fa-plus" 
+                                    string="Create Budget"/>
+                        </div>
+                        
+                        <group>
+                            <group string="Current Budget Status">
+                                <field name="current_budget_id" readonly="1"/>
+                                <label for="total_budget_allocated"/>
+                                <div class="o_row">
+                                    <field name="total_budget_allocated" widget="monetary"/>
+                                </div>
+                                <label for="total_budget_spent"/>
+                                <div class="o_row">
+                                    <field name="total_budget_spent" widget="monetary"/>
+                                </div>
+                                <label for="total_budget_remaining"/>
+                                <div class="o_row">
+                                    <field name="total_budget_remaining" widget="monetary"/>
+                                </div>
+                            </group>
+                            <group string="Budget Summary">
+                                <field name="currency_id" invisible="1"/>
+                                <div class="o_row">
+                                    <span>Total Allocated:</span>
+                                    <field name="total_budget_allocated" widget="monetary"/>
+                                </div>
+                                <div class="o_row">
+                                    <span>Total Spent:</span>
+                                    <field name="total_budget_spent" widget="monetary"/>
+                                </div>
+                                <div class="o_row">
+                                    <span>Total Remaining:</span>
+                                    <field name="total_budget_remaining" widget="monetary"/>
+                                </div>
+                                <div class="o_row">
+                                    <span>Utilization:</span>
+                                    <field name="total_budget_allocated" invisible="1"/>
+                                    <field name="total_budget_spent" invisible="1"/>
+                                    <field name="budget_utilization" widget="percentage"/>
+                                </div>
+                            </group>
+                        </group>
+                        
+                        <field name="expense_budget_ids">
+                            <tree decoration-success="state=='active'" 
+                                  decoration-warning="state=='expired'" 
+                                  decoration-danger="state=='cancelled'">
+                                <field name="period_type"/>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                                <field name="amount_allocated" widget="monetary"/>
+                                <field name="amount_spent" widget="monetary"/>
+                                <field name="amount_remaining" widget="monetary"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="state"/>
+                                <button name="action_view_expenses" type="object" 
+                                        icon="fa-list" title="View Expenses"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+        <!-- Extend Employee Tree View -->
+        <record id="view_employee_tree_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.tree.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_tree"/>
+            <field name="arch" type="xml">
+                <field name="work_phone" position="after">
+                    <field name="current_budget_id"/>
+                    <field name="total_budget_allocated" widget="monetary"/>
+                    <field name="total_budget_spent" widget="monetary"/>
+                    <field name="total_budget_remaining" widget="monetary"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Extend Employee Kanban View -->
+        <record id="view_employee_kanban_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.kanban.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.hr_kanban_view_employees"/>
+            <field name="arch" type="xml">
+                <div class="oe_kanban_details" position="inside">
+                    <field name="current_budget_id" invisible="1"/>
+                    <div invisible="current_budget_id == False">
+                        <div class="text-muted small">
+                            <span>Current Budget: </span>
+                            <field name="current_budget_amount_allocated" widget="monetary"/>
+                        </div>
+                        <div class="text-muted small">
+                            <span>Remaining: </span>
+                            <field name="current_budget_amount_remaining" widget="monetary"/>
+                        </div>
+                    </div>
+                </div>
+            </field>
+        </record>
+
+        <!-- Extend Employee Search View -->
+        <record id="view_employee_filter_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.filter.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_filter"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="current_budget_id"/>
+                </field>
+                <separator position="after">
+                    <filter name="has_budget" string="Has Active Budget" 
+                            domain="[('current_budget_id', '!=', False)]"/>
+                    <filter name="no_budget" string="No Active Budget" 
+                            domain="[('current_budget_id', '=', False)]"/>
+                </separator>
+                <group position="inside">
+                    <filter name="group_current_budget" string="Current Budget" context="{'group_by': 'current_budget_id'}"/>
+                </group>
+            </field>
+        </record>
+
+        <!-- Employee Budget Pivot View -->
+        <record id="view_employee_budget_pivot" model="ir.ui.view">
+            <field name="name">hr.employee.budget.pivot</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <pivot string="Employee Budget Analysis">
+                    <field name="department_id" type="row"/>
+                    <field name="company_id" type="row"/>
+                    <field name="total_budget_allocated" type="measure"/>
+                    <field name="total_budget_spent" type="measure"/>
+                    <field name="total_budget_remaining" type="measure"/>
+                    <field name="budget_utilization" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+    </data>
+</odoo>
