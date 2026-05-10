@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_payslip_excel_export,hr.payslip.excel.export,model_surepay_payroll_hr_payslip,hr.group_hr_user,1,0,0,0
+access_payroll_export_template_user,payroll.export.template.user,model_payroll_export_template,hr.group_hr_user,1,0,0,0
+access_payroll_export_template_manager,payroll.export.template.manager,model_payroll_export_template,hr.group_hr_manager,1,1,1,1
+access_payroll_export_wizard,payroll.export.wizard,model_payroll_export_wizard,base.group_user,1,1,1,1
+access_staff_export_template_user,staff.export.template.user,model_staff_export_template,hr.group_hr_user,1,0,0,0
+access_staff_export_template_manager,staff.export.template.manager,model_staff_export_template,hr.group_hr_manager,1,1,1,1
+access_staff_import_batch_user,staff.import.batch.user,model_staff_import_batch,hr.group_hr_user,1,0,0,0
+access_staff_import_batch_manager,staff.import.batch.manager,model_staff_import_batch,hr.group_hr_manager,1,1,1,1
+access_staff_import_data_user,staff.import.data.user,model_staff_import_data,hr.group_hr_user,1,0,0,0
+access_staff_import_data_manager,staff.import.data.manager,model_staff_import_data,hr.group_hr_manager,1,1,1,1
+access_staff_export_wizard,staff.export.wizard,model_staff_export_wizard,base.group_user,1,1,1,1
+access_staff_import_wizard,staff.import.wizard,model_staff_import_wizard,base.group_user,1,1,1,1

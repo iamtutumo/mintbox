@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_medical_insurance_plan_user,medical.insurance.plan.user,model_medical_insurance_plan,hr.group_hr_user,1,0,0,0
+access_medical_insurance_plan_manager,medical.insurance.plan.manager,model_medical_insurance_plan,hr.group_hr_manager,1,1,1,1
+access_medical_insurance_claim_user,medical.insurance.claim.user,model_medical_insurance_claim,hr.group_hr_user,1,1,1,0
+access_medical_insurance_claim_manager,medical.insurance.claim.manager,model_medical_insurance_claim,hr.group_hr_manager,1,1,1,1
+access_hr_contract_medical_insurance,hr.contract.medical.insurance,model_hr_contract,hr.group_hr_user,1,1,1,0
+access_hr_employee_medical_insurance,hr.employee.medical.insurance,model_hr_employee,hr.group_hr_user,1,1,1,0
+access_hr_payslip_medical_insurance,hr.payslip.medical.insurance,model_surepay_payroll_hr_payslip,hr.group_hr_user,1,0,0,0

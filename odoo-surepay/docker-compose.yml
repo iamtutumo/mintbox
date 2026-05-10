@@ -1,0 +1,38 @@
+version: "2"
+
+services:
+  biva_db:
+    container_name: biva_odoo_db
+    image: postgres:16
+    ports:
+      - "5432:5432" 
+    environment:
+      - POSTGRES_DB=biva_postgres
+      - POSTGRES_USER=biva_odoo
+      - POSTGRES_PASSWORD=biva_odoo_2024
+    volumes:
+      - biva-db-data:/var/lib/postgresql/data
+
+  biva_odoo:
+    container_name: biva_odoo_web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8069:8069"
+    environment:
+      - DB_HOST=biva_db
+      - DB_PORT=5432
+      - DB_USER=biva_odoo
+      - DB_PASSWORD=biva_odoo_2024
+      - DB_NAME=biva_postgres
+    volumes:
+      - ./customs:/customs
+      - ./odoo.conf:/etc/odoo/odoo.conf
+      - biva-web-data:/var/lib/odoo
+    depends_on:
+      - biva_db
+
+volumes:
+  biva-web-data:
+  biva-db-data:

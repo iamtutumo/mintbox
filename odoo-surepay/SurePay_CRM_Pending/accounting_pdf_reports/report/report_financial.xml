@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_financial_report">
+        <t t-call="web.html_container">
+            <t t-set="data_report_margin_top" t-value="12"/>
+            <t t-set="data_report_header_spacing" t-value="9"/>
+            <t t-set="data_report_dpi" t-value="110"/>
+            <t t-call="web.internal_layout">
+                <div class="page">
+                    <!-- Professional Document Header -->
+                    <div class="text-center mb-4">
+                        <div class="badge bg-info text-white p-2 mb-2">
+                            <h1 class="mb-0" style="font-size: 24px; font-weight: bold;">FINANCIAL REPORT</h1>
+                        </div>
+                        <h3 class="text-muted mb-0" t-field="res_company.name" style="font-size: 18px;"/>
+                        <div class="text-muted small">
+                            Generated on <span t-esc="datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
+                        </div>
+                    </div>
+
+                    <!-- Report Filters and Parameters -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Report Parameters</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <strong class="text-info">Report Type:</strong><br/>
+                                    <span class="badge bg-secondary">
+                                        <span t-if="data['enable_filter']">Comparative Report</span>
+                                        <span t-if="not data['enable_filter']">Standard Report</span>
+                                    </span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <strong class="text-info">Target Moves:</strong><br/>
+                                    <span class="badge bg-info">
+                                        <span t-if="data['target_move'] == 'all'">All Entries</span>
+                                        <span t-if="data['target_move'] == 'posted'">Posted Entries Only</span>
+                                    </span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <strong class="text-info">Date Range:</strong><br/>
+                                    <span class="text-muted">
+                                        <t t-if="data['date_from']"><span t-esc="data['date_from']"/></t>
+                                        <t t-if="not data['date_from']">Beginning</t>
+                                        to 
+                                        <t t-if="data['date_to']"><span t-esc="data['date_to']"/></t>
+                                        <t t-if="not data['date_to']">Present</t>
+                                    </span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong class="text-info">Journals:</strong><br/>
+                                    <span class="text-muted" t-esc="', '.join([ lt or '' for lt in print_journal ]) or 'All Journals'"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <t t-if="analytic_account_ids">
+                                        <strong class="text-info">Analytic Accounts:</strong><br/>
+                                        <span class="text-muted" t-esc="', '.join([aa.name or '' for aa in analytic_account_ids ])"/>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Report Table -->
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover table-sm">
+                            <thead class="table-info">
+                                <tr>
+                                    <th>Account Name</th>
+                                    <th style="width: 120px;" class="text-end">Balance</th>
+                                    <t t-if="data['enable_filter'] == 1 and not data['debit_credit']">
+                                        <th style="width: 120px;" class="text-end"><span t-esc="data['label_filter']"/></th>
+                                    </t>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="get_account_lines" t-as="a">
+                                    <t t-if="a['level'] != 0">
+                                        <t t-if="int(a.get('level')) &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                        <t t-if="not int(a.get('level')) &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+                                        
+                                        <tr class="align-middle">
+                                            <td>
+                                                <span class="ms-2" t-esc="'  ' * int(a.get('level', 0))"/>
+                                                <span t-att-style="style" t-esc="a.get('name')"/>
+                                            </td>
+                                            <td class="text-end fw-bold">
+                                                <span t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                            </td>
+                                            <t t-if="data['enable_filter'] == 1 and not data['debit_credit']">
+                                                <td class="text-end">
+                                                    <span t-att-style="style" t-esc="a.get('balance_cmp')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                                </td>
+                                            </t>
+                                        </tr>
+                                    </t>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Financial Report Summary -->
+                    <t t-if="get_account_lines">
+                        <div class="card mt-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Financial Summary</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 text-center">
+                                        <div class="border rounded p-3 bg-info bg-opacity-10">
+                                            <h6 class="text-info mb-2">Total Balance</h6>
+                                            <h3 class="mb-0 text-info" t-esc="sum(a.get('balance', 0) for a in get_account_lines if a['level'] != 0)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </div>
+                                    </div>
+                                    <t t-if="data['enable_filter'] == 1 and not data['debit_credit']">
+                                        <div class="col-md-6 text-center">
+                                            <div class="border rounded p-3 bg-warning bg-opacity-10">
+                                                <h6 class="text-warning mb-2">Comparison Total</h6>
+                                                <h3 class="mb-0 text-warning" t-esc="sum(a.get('balance_cmp', 0) for a in get_account_lines if a['level'] != 0)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <t t-if="not data['enable_filter'] or data['debit_credit']">
+                                        <div class="col-md-6 text-center">
+                                            <div class="border rounded p-3">
+                                                <h6 class="text-primary mb-2">Total Accounts</h6>
+                                                <h3 class="mb-0 text-primary" t-esc="len([a for a in get_account_lines if a['level'] != 0])"/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- Empty State -->
+                    <t t-if="not get_account_lines">
+                        <div class="text-center py-5">
+                            <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No Financial Report Data</h4>
+                            <p class="text-muted">No accounts found for the selected criteria.</p>
+                        </div>
+                    </t>
+
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

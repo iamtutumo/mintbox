@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Inherit Job Form to Add Requirements Section -->
+    <record id="view_hr_job_form_requirements" model="ir.ui.view">
+        <field name="name">hr.job.form.requirements</field>
+        <field name="model">hr.job</field>
+        <field name="inherit_id" ref="hr.view_hr_job_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Requirements Notebook Page -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Job Requirements" name="requirements">
+                    <group>
+                        <group string="Auto-Screening Configuration">
+                            <field name="auto_screen_enabled"/>
+                            <field name="strict_screening" invisible="not auto_screen_enabled"/>
+                        </group>
+                        <group string="Screening Notes">
+                            <field name="screening_notes" nolabel="1" placeholder="Additional notes about screening criteria..." invisible="not auto_screen_enabled"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Experience Requirements" invisible="not auto_screen_enabled">
+                        <field name="min_years_experience"/>
+                    </group>
+                    
+                    <group string="Education Requirements" invisible="not auto_screen_enabled">
+                        <field name="required_education_level"/>
+                        <field name="required_field_of_study" placeholder="e.g., Computer Science, Business Administration"/>
+                    </group>
+                    
+                    <group string="Skills Requirements" invisible="not auto_screen_enabled">
+                        <field name="required_skill_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
+                        <field name="min_required_skills"/>
+                    </group>
+                    
+                    <div class="alert alert-info" role="alert" invisible="not auto_screen_enabled">
+                        <h4>How Auto-Screening Works:</h4>
+                        <ul>
+                            <li><strong>Strict Mode:</strong> Applicant must meet ALL requirements to pass</li>
+                            <li><strong>Lenient Mode:</strong> Applicant must meet at least ONE requirement to pass</li>
+                            <li>Failed applicants are automatically moved to "Rejected" stage</li>
+                            <li>Eligibility rejection email is sent automatically</li>
+                            <li>Screening logs are created for audit trail</li>
+                        </ul>
+                    </div>
+                </page>
+            </xpath>
+            
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Payroll Export Template Tree View -->
+        <record id="view_payroll_export_template_tree" model="ir.ui.view">
+            <field name="name">payroll.export.template.tree</field>
+            <field name="model">payroll.export.template</field>
+            <field name="arch" type="xml">
+                <tree string="Export Templates">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="template_type"/>
+                    <field name="company_id"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Payroll Export Template Form View -->
+        <record id="view_payroll_export_template_form" model="ir.ui.view">
+            <field name="name">payroll.export.template.form</field>
+            <field name="model">payroll.export.template</field>
+            <field name="arch" type="xml">
+                <form string="Export Template">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="template_type"/>
+                                <field name="company_id"/>
+                                <field name="active"/>
+                            </group>
+                            <group>
+                                <field name="file_prefix"/>
+                                <field name="include_company_logo"/>
+                                <field name="include_summary_sheet"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Description">
+                                <field name="description" placeholder="Template description..."/>
+                            </page>
+                            
+                            <page string="Content Configuration">
+                                <group>
+                                    <field name="include_employee_info"/>
+                                    <field name="include_salary_details"/>
+                                    <field name="include_deductions"/>
+                                    <field name="include_allowances"/>
+                                    <field name="include_taxes"/>
+                                    <field name="include_net_salary"/>
+                                </group>
+                            </page>
+                            
+                            <page string="Formatting">
+                                <group>
+                                    <field name="header_color"/>
+                                    <field name="header_font_size"/>
+                                    <field name="data_font_size"/>
+                                </group>
+                            </page>
+                            
+                            <page string="Custom Fields">
+                                <field name="custom_fields_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="field_description"/>
+                                        <field name="model"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Payroll Export Template Search View -->
+        <record id="view_payroll_export_template_search" model="ir.ui.view">
+            <field name="name">payroll.export.template.search</field>
+            <field name="model">payroll.export.template</field>
+            <field name="arch" type="xml">
+                <search string="Export Templates">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="template_type"/>
+                    <separator/>
+                    <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                    <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_template_type" string="Template Type" context="{'group_by': 'template_type'}"/>
+                        <filter name="group_company" string="Company" context="{'group_by': 'company_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Payroll Export Template Action -->
+        <record id="action_payroll_export_template" model="ir.actions.act_window">
+            <field name="name">Export Templates</field>
+            <field name="res_model">payroll.export.template</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_active': True}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create export templates
+                </p>
+                <p>
+                    Export templates define how payroll data should be formatted when exported to Excel.
+                    You can create different templates for different export needs.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu items for Payroll Export -->
+        <menuitem id="menu_payroll_export_root"
+                  name="Excel Export"
+                  parent="surepay_payroll.menu_surepay_payroll_root"
+                  sequence="90"/>
+
+        <menuitem id="menu_payroll_export_templates"
+                  name="Export Templates"
+                  parent="menu_payroll_export_root"
+                  action="action_payroll_export_template"
+                  sequence="10"/>
+
+        <menuitem id="menu_payroll_export_wizard"
+                  name="Export Payroll"
+                  parent="menu_payroll_export_root"
+                  action="action_payroll_export_wizard"
+                  sequence="20"/>
+
+    </data>
+</odoo>

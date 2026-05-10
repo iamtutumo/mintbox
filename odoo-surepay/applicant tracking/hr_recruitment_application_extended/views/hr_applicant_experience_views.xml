@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Experience Form View -->
+    <record id="view_hr_applicant_experience_form" model="ir.ui.view">
+        <field name="name">hr.applicant.experience.form</field>
+        <field name="model">hr.applicant.experience</field>
+        <field name="arch" type="xml">
+            <form string="Work Experience">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="position" placeholder="e.g., Software Developer"/>
+                            <field name="company" placeholder="e.g., ABC Company Ltd"/>
+                            <field name="start_date"/>
+                            <field name="currently_working"/>
+                        </group>
+                        <group>
+                            <field name="end_date" invisible="currently_working"/>
+                            <field name="duration_months" string="Duration (Months)"/>
+                            <field name="reason_for_leaving" invisible="currently_working" placeholder="e.g., Career growth"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="responsibilities" placeholder="Describe your key responsibilities in this role..."/>
+                    </group>
+                    <group>
+                        <field name="achievements" placeholder="List your key achievements and accomplishments..."/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Experience Tree View -->
+    <record id="view_hr_applicant_experience_tree" model="ir.ui.view">
+        <field name="name">hr.applicant.experience.tree</field>
+        <field name="model">hr.applicant.experience</field>
+        <field name="arch" type="xml">
+            <tree string="Work Experience">
+                <field name="position"/>
+                <field name="company"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="currently_working"/>
+                <field name="duration_months"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit hr.payslip form view to add Provident Fund information -->
+        <record id="hr_payslip_view_form_inherit_provident_fund" model="ir.ui.view">
+            <field name="name">hr.payslip.form.inherit.provident.fund</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+            <field name="inherit_id" ref="surepay_payroll.hr_payslip_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/group" position="inside">
+                    <group string="Provident Fund">
+                        <field name="provident_fund_amount" readonly="1"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit hr.payslip tree view to add Provident Fund column -->
+        <record id="hr_payslip_view_tree_inherit_provident_fund" model="ir.ui.view">
+            <field name="name">hr.payslip.tree.inherit.provident.fund</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+            <field name="inherit_id" ref="surepay_payroll.hr_payslip_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="provident_fund_amount" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit hr.payslip search view to add Provident Fund filters -->
+        <record id="hr_payslip_view_search_inherit_provident_fund" model="ir.ui.view">
+            <field name="name">hr.payslip.search.inherit.provident.fund</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+            <field name="inherit_id" ref="surepay_payroll.hr_payslip_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='done']" position="after">
+                    <separator/>
+                    <filter name="has_provident_fund" string="Has Provident Fund" domain="[('provident_fund_amount', '>', 0)]"/>
+                    <filter name="no_provident_fund" string="No Provident Fund" domain="[('provident_fund_amount', '=', 0)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_provident_fund" string="Provident Fund Amount" context="{'group_by': 'provident_fund_amount'}"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit hr.payslip kanban view to add Provident Fund badge -->
+        <record id="hr_payslip_view_kanban_inherit_provident_fund" model="ir.ui.view">
+            <field name="name">hr.payslip.kanban.inherit.provident.fund</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+            <field name="inherit_id" ref="surepay_payroll.hr_payslip_view_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="provident_fund_amount"/>
+                </xpath>
+                <xpath expr="//div[hasclass('row')]/div[last()]" position="after">
+                    <div class="col-12" t-if="record.provident_fund_amount.value > 0">
+                        <span class="text-muted">
+                            <i class="fa fa-piggy-bank"/> PF: <field name="provident_fund_amount" widget="monetary"/>
+                        </span>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

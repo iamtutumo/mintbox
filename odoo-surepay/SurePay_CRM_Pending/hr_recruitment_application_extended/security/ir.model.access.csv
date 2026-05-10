@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_applicant_education_user,hr.applicant.education.user,model_hr_applicant_education,hr_recruitment.group_hr_recruitment_user,1,1,1,1
+access_hr_applicant_education_manager,hr.applicant.education.manager,model_hr_applicant_education,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
+access_hr_applicant_education_public,hr.applicant.education.public,model_hr_applicant_education,base.group_public,1,1,1,0
+access_hr_applicant_experience_user,hr.applicant.experience.user,model_hr_applicant_experience,hr_recruitment.group_hr_recruitment_user,1,1,1,1
+access_hr_applicant_experience_manager,hr.applicant.experience.manager,model_hr_applicant_experience,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
+access_hr_applicant_experience_public,hr.applicant.experience.public,model_hr_applicant_experience,base.group_public,1,1,1,0
+access_hr_applicant_referee_user,hr.applicant.referee.user,model_hr_applicant_referee,hr_recruitment.group_hr_recruitment_user,1,1,1,1
+access_hr_applicant_referee_manager,hr.applicant.referee.manager,model_hr_applicant_referee,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
+access_hr_applicant_referee_public,hr.applicant.referee.public,model_hr_applicant_referee,base.group_public,1,1,1,0

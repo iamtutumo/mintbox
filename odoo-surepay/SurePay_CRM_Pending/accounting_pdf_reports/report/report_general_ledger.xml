@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_general_ledger">
+        <t t-call="web.html_container">
+            <t t-set="data_report_margin_top" t-value="12"/>
+            <t t-set="data_report_header_spacing" t-value="9"/>
+            <t t-set="data_report_dpi" t-value="110"/>
+            <t t-call="web.internal_layout">
+                <div class="page">
+                    <!-- Professional Document Header -->
+                    <div class="text-center mb-4">
+                        <div class="badge bg-primary text-white p-2 mb-2">
+                            <h1 class="mb-0" style="font-size: 24px; font-weight: bold;">GENERAL LEDGER</h1>
+                        </div>
+                        <h3 class="text-muted mb-0" t-field="res_company.name" style="font-size: 18px;"/>
+                        <div class="text-muted small">
+                            Generated on <span t-esc="datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
+                        </div>
+                    </div>
+
+                    <!-- Report Filters and Parameters -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Report Parameters</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <strong class="text-primary">Journals:</strong><br/>
+                                    <span class="text-muted" t-esc="', '.join([ lt or '' for lt in print_journal ]) or 'All Journals'"/>
+                                </div>
+                                <t groups="analytic.group_analytic_accounting">
+                                    <t t-if="analytic_account_ids">
+                                        <div class="col-md-4 mb-3">
+                                            <strong class="text-primary">Analytic Accounts:</strong><br/>
+                                            <span class="text-muted" t-esc="', '.join([aa.name or '' for aa in analytic_account_ids ])"/>
+                                        </div>
+                                    </t>
+                                </t>
+                                <div class="col-md-4 mb-3">
+                                    <strong class="text-primary">Display Account:</strong><br/>
+                                    <span class="badge bg-secondary">
+                                        <span t-if="data['display_account'] == 'all'">All Accounts</span>
+                                        <span t-if="data['display_account'] == 'movement'">With Movements</span>
+                                        <span t-if="data['display_account'] == 'not_zero'">With Balance ≠ 0</span>
+                                    </span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <strong class="text-primary">Target Moves:</strong><br/>
+                                    <span class="badge bg-info">
+                                        <span t-if="data['target_move'] == 'all'">All Entries</span>
+                                        <span t-if="data['target_move'] == 'posted'">Posted Entries Only</span>
+                                    </span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <strong class="text-primary">Sorted By:</strong><br/>
+                                    <span class="badge bg-warning text-dark">
+                                        <span t-if="data['sortby'] == 'sort_date'">Date</span>
+                                        <span t-if="data['sortby'] == 'sort_journal_partner'">Journal & Partner</span>
+                                    </span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <strong class="text-primary">Date Range:</strong><br/>
+                                    <span class="text-muted">
+                                        <t t-if="data['date_from']"><span t-esc="data['date_from']"/></t>
+                                        <t t-if="not data['date_from']">Beginning</t>
+                                        to 
+                                        <t t-if="data['date_to']"><span t-esc="data['date_to']"/></t>
+                                        <t t-if="not data['date_to']">Present</t>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- General Ledger Table -->
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover table-sm">
+                            <thead class="table-dark">
+                                <tr class="text-center">
+                                    <th style="width: 80px;">Date</th>
+                                    <th style="width: 60px;">JRNL</th>
+                                    <th style="width: 120px;">Partner</th>
+                                    <th style="width: 80px;">Ref</th>
+                                    <th style="width: 100px;">Move</th>
+                                    <t groups="analytic.group_analytic_accounting">
+                                        <th style="width: 120px;">Analytic Account</th>
+                                    </t>
+                                    <th>Entry Label</th>
+                                    <th style="width: 100px;" class="text-end">Debit</th>
+                                    <th style="width: 100px;" class="text-end">Credit</th>
+                                    <th style="width: 100px;" class="text-end">Balance</th>
+                                    <th groups="base.group_multi_currency" style="width: 80px;">Currency</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="Accounts" t-as="account">
+                                    <!-- Account Header Row -->
+                                    <tr class="table-primary fw-bold">
+                                        <td colspan="6" class="ps-3">
+                                            <i class="fas fa-folder me-2"></i>
+                                            <span class="badge bg-dark me-2" t-esc="account['code']"/>
+                                            <span t-esc="account['name']"/>
+                                        </td>
+                                        <t groups="analytic.group_analytic_accounting">
+                                            <td></td>
+                                        </t>
+                                        <td class="text-end fw-bold">
+                                            <span t-esc="account['debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </td>
+                                        <td class="text-end fw-bold">
+                                            <span t-esc="account['credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </td>
+                                        <td class="text-end fw-bold">
+                                            <span t-esc="account['balance']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </td>
+                                        <td groups="base.group_multi_currency"></td>
+                                    </tr>
+                                    
+                                    <!-- Account Move Lines -->
+                                    <t t-foreach="account['move_lines']" t-as="line">
+                                        <tr class="align-middle">
+                                            <td class="text-muted small"><span t-esc="line['ldate']"/></td>
+                                            <td><span class="badge bg-secondary" t-esc="line['lcode']"/></td>
+                                            <td class="small"><span t-esc="line['partner_name']"/></td>
+                                            <td class="small"><span t-if="line['lref']" t-esc="line['lref']"/></td>
+                                            <td><span class="text-primary" t-esc="line['move_name']"/></td>
+                                            <t groups="analytic.group_analytic_accounting">
+                                                <td class="small"><span t-esc="line['analytic_account_id']"/></td>
+                                            </t>
+                                            <td class="small"><span t-esc="line['lname']"/></td>
+                                            <td class="text-end">
+                                                <span t-if="line['debit']" t-esc="line['debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <span t-if="line['credit']" t-esc="line['credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <span t-esc="line['balance']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                            </td>
+                                            <td groups="base.group_multi_currency" class="text-center small">
+                                                <span t-if="line['currency_id']" t-esc="line['currency_id']"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Report Summary -->
+                    <t t-if="Accounts">
+                        <div class="card mt-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Report Summary</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 text-center">
+                                        <div class="border rounded p-3">
+                                            <h6 class="text-success mb-2">Total Debits</h6>
+                                            <h4 class="mb-0" t-esc="sum(acc['debit'] for acc in Accounts)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="border rounded p-3">
+                                            <h6 class="text-danger mb-2">Total Credits</h6>
+                                            <h4 class="mb-0" t-esc="sum(acc['credit'] for acc in Accounts)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="border rounded p-3">
+                                            <h6 class="text-primary mb-2">Net Balance</h6>
+                                            <h4 class="mb-0" t-esc="sum(acc['balance'] for acc in Accounts)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- Empty State -->
+                    <t t-if="not Accounts">
+                        <div class="text-center py-5">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No Data Found</h4>
+                            <p class="text-muted">No general ledger entries found for the selected criteria.</p>
+                        </div>
+                    </t>
+
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

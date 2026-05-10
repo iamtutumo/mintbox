@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- HR Contract Form View Inheritance -->
+        <record id="hr_contract_view_form_inherit_medical_insurance" model="ir.ui.view">
+            <field name="name">hr.contract.form.inherit.medical.insurance</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Medical Insurance">
+                        <group>
+                            <group>
+                                <field name="medical_insurance_eligible"/>
+                                <field name="medical_insurance_plan_id" 
+                                       invisible="medical_insurance_eligible == False"/>
+                                <field name="medical_insurance_start_date" 
+                                       invisible="medical_insurance_eligible == False"/>
+                                <field name="medical_insurance_end_date" 
+                                       invisible="medical_insurance_eligible == False"/>
+                            </group>
+                            <group>
+                                <field name="employee_contribution_amount" 
+                                       invisible="medical_insurance_eligible == False"/>
+                                <field name="employer_contribution_amount" 
+                                       invisible="medical_insurance_eligible == False"/>
+                                <field name="total_medical_contribution" 
+                                       invisible="medical_insurance_eligible == False"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- HR Contract Tree View Inheritance -->
+        <record id="hr_contract_view_tree_inherit_medical_insurance" model="ir.ui.view">
+            <field name="name">hr.contract.tree.inherit.medical.insurance</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='wage']" position="after">
+                    <field name="medical_insurance_eligible"/>
+                    <field name="medical_insurance_plan_id"/>
+                    <field name="total_medical_contribution"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- HR Contract Search View Inheritance -->
+        <record id="hr_contract_view_search_inherit_medical_insurance" model="ir.ui.view">
+            <field name="name">hr.contract.search.inherit.medical.insurance</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='running']" position="after">
+                    <separator/>
+                    <filter name="medical_insurance_eligible" string="Medical Insurance Eligible" 
+                            domain="[('medical_insurance_eligible', '=', True)]"/>
+                    <filter name="no_medical_insurance" string="No Medical Insurance" 
+                            domain="[('medical_insurance_eligible', '=', False)]"/>
+                    <separator/>
+                    <field name="medical_insurance_plan_id"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

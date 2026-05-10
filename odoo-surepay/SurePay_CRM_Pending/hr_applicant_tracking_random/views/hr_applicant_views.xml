@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Applicant Form View -->
+    <record id="view_applicant_form_tracking" model="ir.ui.view">
+        <field name="name">hr.applicant.form.tracking</field>
+        <field name="model">hr.applicant</field>
+        <field name="priority" eval="1"/>
+        <field name="arch" type="xml">
+            <form string="Application Form">
+                <header>
+                    <field name="stage_id" widget="statusbar" options="{'clickable': '1'}" class="oe_edit_only"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_attachments" type="object" class="oe_stat_button" icon="fa-book" invisible="attachment_number == 0">
+                            <field name="attachment_number" widget="statinfo" string="Documents"/>
+                        </button>
+                        <button name="action_send_tracking_link" type="object" class="oe_stat_button" icon="fa-envelope" invisible="not email_from">
+                            <span>Send Tracking Link</span>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="e.g. Application for Software Developer"/>
+                        </h1>
+                        <h2>
+                            <field name="partner_name" placeholder="Applicant's Name"/>
+                        </h2>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="email_from" string="Email" widget="email"/>
+                            <field name="partner_phone" string="Phone"/>
+                            <field name="partner_mobile" string="Mobile"/>
+                        </group>
+                        <group>
+                            <label for="tracking_id" string="Tracking ID" class="fw-bold"/>
+                            <div class="o_row">
+                                <field name="tracking_id" readonly="1" placeholder="Not generated yet" class="text-primary"/>
+                            </div>
+                            <label for="public_application_url" string="Public Link"/>
+                            <div class="o_row">
+                                <field name="public_application_url" readonly="1" widget="url" placeholder="Will be generated"/>
+                            </div>
+                            <field name="job_id"/>
+                            <field name="department_id"/>
+                            <field name="company_id"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Application Summary">
+                            <field name="description" placeholder="Application Summary"/>
+                        </page>
+                        
+                        <page string="Status History" name="tracking">
+                            <group>
+                                <field name="last_status_update" string="Last Status Update" readonly="1"/>
+                            </group>
+                            <field name="status_history" string="Status History" readonly="1" nolabel="1">
+                                <tree>
+                                    <field name="status_date"/>
+                                    <field name="status"/>
+                                    <field name="message"/>
+                                    <field name="user_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Add tracking_id to search view -->
+    <record id="view_applicant_search_inherit_tracking" model="ir.ui.view">
+        <field name="name">hr.applicant.search.inherit.tracking</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="tracking_id" string="Tracking ID"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Server action to send tracking link -->
+    <record id="action_send_tracking_link" model="ir.actions.server">
+        <field name="name">Send Tracking Link</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="binding_model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = records.action_send_tracking_link()
+        </field>
+    </record>
+</odoo>

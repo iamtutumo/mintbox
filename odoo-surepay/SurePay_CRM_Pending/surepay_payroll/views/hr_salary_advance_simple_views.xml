@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Salary Advance Tree View -->
+        <record id="view_hr_salary_advance_simple_tree" model="ir.ui.view">
+            <field name="name">hr.salary.advance.simple.tree</field>
+            <field name="model">surepay_payroll.hr.salary.advance</field>
+            <field name="arch" type="xml">
+                <tree string="Salary Advances" decoration-info="status=='draft'" 
+                      decoration-warning="status=='submitted'" 
+                      decoration-success="status in ['approved','active']" 
+                      decoration-muted="status in ['completed','paid']"
+                      decoration-danger="status=='rejected'">
+                    <field name="employee_id"/>
+                    <field name="amount_requested"/>
+                    <field name="outstanding_balance"/>
+                    <field name="date_requested"/>
+                    <field name="deduction_start_date"/>
+                    <field name="status"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Salary Advance Form View -->
+        <record id="view_hr_salary_advance_simple_form" model="ir.ui.view">
+            <field name="name">hr.salary.advance.simple.form</field>
+            <field name="model">surepay_payroll.hr.salary.advance</field>
+            <field name="arch" type="xml">
+                <form string="Salary Advance">
+                    <header>
+                        <button name="action_submit" string="Submit" type="object" 
+                                class="btn-primary" invisible="status != 'draft'">
+                            <i class="fa fa-paper-plane" title="Submit for Approval"/>
+                        </button>
+                        <button name="action_approve" string="Approve" type="object" 
+                                class="btn-success" invisible="status != 'submitted'" 
+                                groups="surepay_payroll.group_surepay_payroll_user">
+                            <i class="fa fa-check" title="Approve"/>
+                        </button>
+                        <button name="action_reject" string="Reject" type="object" 
+                                class="btn-danger" invisible="status not in ['submitted', 'approved']" 
+                                groups="surepay_payroll.group_surepay_payroll_user">
+                            <i class="fa fa-times" title="Reject"/>
+                        </button>
+                        <button name="action_mark_paid" string="Complete" type="object" 
+                                class="btn-info" invisible="status != 'approved'" 
+                                groups="surepay_payroll.group_surepay_payroll_user">
+                            <i class="fa fa-money" title="Mark as Paid"/>
+                        </button>
+                        <field name="status" widget="statusbar" statusbar_visible="draft,submitted,approved,paid"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="amount_requested"/>
+                                <field name="date_requested"/>
+                                <field name="deduction_start_date"/>
+                            </group>
+                            <group>
+                                <field name="currency_id"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Deductions">
+                                <field name="payslip_line_ids">
+                                    <tree>
+                                        <field name="slip_id"/>
+                                        <field name="total"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Salary Advance Search View -->
+        <record id="view_hr_salary_advance_simple_search" model="ir.ui.view">
+            <field name="name">hr.salary.advance.simple.search</field>
+            <field name="model">surepay_payroll.hr.salary.advance</field>
+            <field name="arch" type="xml">
+                <search string="Salary Advances">
+                    <field name="employee_id"/>
+                    <field name="status"/>
+                    <field name="date_requested"/>
+                    <separator/>
+                    <filter name="draft" string="Draft" domain="[('status', '=', 'draft')]"/>
+                    <filter name="submitted" string="Submitted" domain="[('status', '=', 'submitted')]"/>
+                    <filter name="approved" string="Approved" domain="[('status', '=', 'approved')]"/>
+                    <filter name="active" string="Active" domain="[('status', '=', 'active')]"/>
+                    <filter name="completed" string="Completed" domain="[('status', '=', 'completed')]"/>
+                    <filter name="rejected" string="Rejected" domain="[('status', '=', 'rejected')]"/>
+                    <separator/>
+                    <filter name="my_advances" string="My Advances" domain="[('employee_id.user_id', '=', uid)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                        <filter name="group_date" string="Date" context="{'group_by': 'date_requested'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Salary Advance Action -->
+        <record id="action_hr_salary_advance_simple" model="ir.actions.act_window">
+            <field name="name">Salary Advances</field>
+            <field name="res_model">surepay_payroll.hr.salary.advance</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_my_advances': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first salary advance
+                </p>
+                <p>
+                    Request salary advances that will be automatically deducted from your payroll.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

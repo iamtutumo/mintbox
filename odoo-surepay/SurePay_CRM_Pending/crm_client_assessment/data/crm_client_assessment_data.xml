@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Data for Services and Distribution Channels -->
+    <record id="service_1" model="crm.client.assessment.service">
+        <field name="name">Payment Processing</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="service_2" model="crm.client.assessment.service">
+        <field name="name">E-commerce Integration</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="service_3" model="crm.client.assessment.service">
+        <field name="name">POS Solutions</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="dist_1" model="crm.client.assessment.distribution">
+        <field name="name">Online</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="dist_2" model="crm.client.assessment.distribution">
+        <field name="name">Retail</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="dist_3" model="crm.client.assessment.distribution">
+        <field name="name">Wholesale</field>
+        <field name="sequence">30</field>
+    </record>
+</odoo>

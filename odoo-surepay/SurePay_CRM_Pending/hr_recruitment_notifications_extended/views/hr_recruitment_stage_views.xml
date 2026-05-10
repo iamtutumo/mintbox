@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Inherit Recruitment Stage Form to Add Email Settings -->
+    <record id="view_hr_recruitment_stage_form_email" model="ir.ui.view">
+        <field name="name">hr.recruitment.stage.form.email</field>
+        <field name="model">hr.recruitment.stage</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_recruitment_stage_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Email Notification Settings -->
+            <xpath expr="//group[@name='stage_definition']" position="after">
+                <group string="Email Notifications" name="email_notifications">
+                    <field name="send_email_on_enter"/>
+                    <field name="email_template_id" invisible="not send_email_on_enter"/>
+                    <field name="email_description" invisible="not send_email_on_enter" placeholder="Describe what email will be sent when applicants enter this stage..."/>
+                </group>
+            </xpath>
+            
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Main Form View -->
+        <record id="crm_case_form_view_leads" model="ir.ui.view">
+            <field name="name">crm.lead.form</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
+            <field name="arch" type="xml">
+                <!-- Add Product Interest Field -->
+                <xpath expr="//field[@name='tag_ids']" position="before">
+                    <field name="product_interest" widget="radio" options='{"horizontal": true}'/>
+                    <field name="priority"/>
+                    <field name="source"/>
+                    <field name="location"/>
+                    <field name="expected_closing_date"/>
+                    <field name="additional_info"/>
+                </xpath>
+
+                <!-- Add Stage Buttons -->
+                <xpath expr="//header" position="inside">
+                    <button name="action_open_preparation_form" 
+                            type="object" 
+                            string="Prepare" 
+                            class="oe_highlight"
+                            invisible="stage_id.name not in ['New', 'Prospecting & Assessment'] or not product_interest"/>
+                    <button name="action_open_closing_form" 
+                            type="object" 
+                            string="Close Deal" 
+                            class="oe_highlight"
+                            invisible="stage_id.name != 'Closing' or not product_interest"/>
+                    <button name="action_open_lost_form" 
+                            type="object" 
+                            string="Mark as Lost" 
+                            class="oe_highlight"
+                            invisible="stage_id.name in ['Won', 'Lost', 'Cold Lead'] or not product_interest"/>
+                    <button name="action_open_cold_form" 
+                            type="object" 
+                            string="Mark as Cold" 
+                            class="oe_highlight"
+                            invisible="stage_id.name in ['Won', 'Lost', 'Cold Lead'] or not product_interest"/>
+                </xpath>
+
+                <!-- Add Product-Specific Fields -->
+                <xpath expr="//page[@name='sales']//group" position="inside">
+                    <group name="product_details" string="Product Details" attrs="{'invisible': [('product_interest', '=', False)]}">
+                        <!-- SIMS Fields -->
+                        <group name="sims_details" string="SIMS Details" attrs="{'invisible': [('product_interest', '!=', 'sims')]}">
+                            <field name="number_of_students"/>
+                            <field name="school_code"/>
+                        </group>
+
+                        <!-- SureBanker Fields -->
+                        <group name="surebanker_details" string="SureBanker Details" attrs="{'invisible': [('product_interest', '!=', 'surebanker')]}">
+                            <field name="number_of_members"/>
+                            <field name="number_of_branches"/>
+                            <field name="package"/>
+                            <field name="sacco_id"/>
+                        </group>
+
+                        <!-- Other Product Fields -->
+                        <group name="other_details" string="Other Product Details" attrs="{'invisible': [('product_interest', '!=', 'other')]}">
+                        </group>
+                    </group>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- Preparation Form View -->
+        <record id="crm_lead_preparation_form_view" model="ir.ui.view">
+            <field name="name">crm.lead.preparation.form</field>
+            <field name="model">crm.lead</field>
+            <field name="arch" type="xml">
+                <form string="Lead Preparation">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" readonly="1"/>
+                                <field name="partner_id" readonly="1"/>
+                                <field name="product_interest" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="expected_revenue" readonly="1"/>
+                                <field name="stage_id" invisible="1"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Requirements">
+                                <group>
+                                    <field name="description" placeholder="Enter detailed requirements..."/>
+                                </group>
+                            </page>
+                            <page string="Next Steps" attrs="{'invisible': [('product_interest', '!=', 'sims')]}">
+                                <group>
+                                    <field name="number_of_students" required="1"/>
+                                    <field name="location" required="1"/>
+                                    <field name="expected_closing_date" required="1"/>
+                                    <field name="additional_info"/>
+                                </group>
+                            </page>
+                            <page string="Next Steps" attrs="{'invisible': [('product_interest', '!=', 'surebanker')]}">
+                                <group>
+                                    <field name="number_of_members" required="1"/>
+                                    <field name="number_of_branches" required="1"/>
+                                    <field name="package" required="1"/>
+                                    <field name="location" required="1"/>
+                                    <field name="expected_closing_date" required="1"/>
+                                    <field name="additional_info"/>
+                                </group>
+                            </page>
+                        </notebook>
+                        
+                        <footer>
+                            <button name="write" string="Save" type="object" class="btn-primary"/>
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                            <button name="action_set_won_rainbowman"
+                                    string="Move to Preparation"
+                                    type="object"
+                                    class="oe_highlight"
+                                    context="{'default_stage_id': ref('surepay_enhanced_crm.stage_lead_preparation')}"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Closing Form View -->
+        <record id="crm_lead_closing_form_view" model="ir.ui.view">
+            <field name="name">crm.lead.closing.form</field>
+            <field name="model">crm.lead</field>
+            <field name="arch" type="xml">
+                <form string="Close Deal">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" readonly="1"/>
+                                <field name="partner_id" readonly="1"/>
+                                <field name="expected_revenue" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="school_code" attrs="{'invisible': [('product_interest', '!=', 'sims')], 'required': [('product_interest', '=', 'sims')]}"/>
+                                <field name="sacco_id" attrs="{'invisible': [('product_interest', '!=', 'surebanker')], 'required': [('product_interest', '=', 'surebanker')]}"/>
+                            </group>
+                        </group>
+                        
+                        <label for="description" string="Deal Summary"/>
+                        <field name="description" placeholder="Enter deal summary..."/>
+                        
+                        <footer>
+                            <button name="write" string="Save" type="object" class="btn-primary"/>
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                            <button name="action_set_won_rainbowman"
+                                    string="Mark as Won"
+                                    type="object"
+                                    class="oe_highlight"
+                                    context="{'default_stage_id': ref('surepay_enhanced_crm.stage_lead_won')}"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Lost Form View -->
+        <record id="crm_lead_lost_form_view" model="ir.ui.view">
+            <field name="name">crm.lead.lost.form</field>
+            <field name="model">crm.lead</field>
+            <field name="arch" type="xml">
+                <form string="Mark as Lost">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" readonly="1"/>
+                                <field name="partner_id" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="expected_revenue" readonly="1"/>
+                            </group>
+                        </group>
+
+                        <label for="reason_for_loss" string="Reason for Loss/Failure to Close"/>
+                        <field name="reason_for_loss" required="1" placeholder="Enter reason for loss..."/>
+                        
+                        <footer>
+                            <button name="action_set_lost" 
+                                    string="Confirm Lost" 
+                                    type="object" 
+                                    class="oe_highlight"
+                                    context="{'default_lost_reason_id': lost_reason_id}"/>
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Cold Lead Form View -->
+        <record id="crm_lead_cold_form_view" model="ir.ui.view">
+            <field name="name">crm.lead.cold.form</field>
+            <field name="model">crm.lead</field>
+            <field name="arch" type="xml">
+                <form string="Mark as Cold Lead">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" readonly="1"/>
+                                <field name="partner_id" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="expected_revenue" readonly="1"/>
+                            </group>
+                        </group>
+
+                        <label for="reason_for_cold" string="Reason for Marking Lead as Cold"/>
+                        <field name="reason_for_cold" required="1" placeholder="Enter reason for marking as cold..."/>
+                        <label for="next_course_of_action" string="Recommended Next Course of Action"/>
+                        <field name="next_course_of_action" placeholder="Enter recommended next course of action..."/>
+                        
+                        <footer>
+                            <button name="action_set_cold" 
+                                    string="Mark as Cold" 
+                                    type="object" 
+                                    class="oe_highlight"
+                                    context="{'default_stage_id': ref('surepay_enhanced_crm.stage_lead_cold')}"/>
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

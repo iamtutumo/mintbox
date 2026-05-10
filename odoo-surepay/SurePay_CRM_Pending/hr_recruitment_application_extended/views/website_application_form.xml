@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Job Application Form Template -->
+    <record id="job_application_form_template" model="ir.ui.view">
+        <field name="name">Job Application Form</field>
+        <field name="type">qweb</field>
+        <field name="key">hr_recruitment_application_extended.job_application_form_template</field>
+        <field name="arch" type="xml">
+            <t t-name="hr_recruitment_application_extended.job_application_form_template">
+                <t t-call="website.layout">
+                    <div id="wrap" class="oe_structure">
+                        <div class="container mt-5 mb-5">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-10">
+                                    <div class="card shadow-sm">
+                                        <div class="card-header bg-primary text-white">
+                                            <h2 class="h3 mb-0">Apply for <t t-esc="job.name"/></h2>
+                                            <p class="mb-0 mt-2"><small><t t-esc="job.department_id.name"/> Department</small></p>
+                                        </div>
+                                        <div class="card-body p-4">
+                                            
+                                            <form t-attf-action="/jobs/apply/#{job.id}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <input type="hidden" name="job_id" t-att-value="job.id"/>
+                                                <input type="hidden" name="job_name" t-att-value="job.name"/>
+                                                
+                                                <!-- Personal Information -->
+                                                <h4 class="border-bottom pb-2 mb-3">Personal Information</h4>
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="partner_name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                                        <input type="text" class="form-control" id="partner_name" name="partner_name" required="required"/>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="email_from" class="form-label">Email Address <span class="text-danger">*</span></label>
+                                                        <input type="email" class="form-control" id="email_from" name="email_from" required="required"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="partner_phone" class="form-label">Phone Number</label>
+                                                        <input type="tel" class="form-control" id="partner_phone" name="partner_phone"/>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="partner_mobile" class="form-label">Mobile Number</label>
+                                                        <input type="tel" class="form-control" id="partner_mobile" name="partner_mobile"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Application Summary -->
+                                                <h4 class="border-bottom pb-2 mb-3 mt-4">Tell Us About Yourself</h4>
+                                                <div class="mb-3">
+                                                    <label for="application_summary" class="form-label">Why are you interested in this position?</label>
+                                                    <textarea class="form-control" id="application_summary" name="application_summary" rows="4" placeholder="Tell us why you're interested in this role and what makes you a great fit..." required="required"></textarea>
+                                                </div>
+                                                
+                                                <!-- Cover Letter -->
+                                                <h4 class="border-bottom pb-2 mb-3 mt-4">Cover Letter</h4>
+                                                <div class="mb-3">
+                                                    <label for="cover_letter" class="form-label">Cover Letter / Motivation Letter</label>
+                                                    <textarea class="form-control" id="cover_letter" name="cover_letter" rows="6" placeholder="Tell us why you're interested in this position and why you'd be a great fit..."></textarea>
+                                                    <small class="form-text text-muted">Explain your interest in the position and how your experience aligns with the role.</small>
+                                                </div>
+                                                
+                                                <!-- Education Section -->
+                                                <h4 class="border-bottom pb-2 mb-3 mt-4">Education</h4>
+                                                <div id="education_section">
+                                                    <div class="education-entry border p-3 mb-3 rounded">
+                                                        <div class="row">
+                                                            <div class="col-md-6 mb-2">
+                                                                <label class="form-label">Institution</label>
+                                                                <input type="text" class="form-control" name="education_institution_0" placeholder="e.g., University of..."/>
+                                                            </div>
+                                                            <div class="col-md-6 mb-2">
+                                                                <label class="form-label">Degree/Certificate</label>
+                                                                <input type="text" class="form-control" name="education_degree_0" placeholder="e.g., Bachelor of Science"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-6 mb-2">
+                                                                <label class="form-label">Field of Study</label>
+                                                                <input type="text" class="form-control" name="education_field_0" placeholder="e.g., Computer Science"/>
+                                                            </div>
+                                                            <div class="col-md-3 mb-2">
+                                                                <label class="form-label">Start Year</label>
+                                                                <input type="number" class="form-control" name="education_start_0" min="1900" max="2099"/>
+                                                            </div>
+                                                            <div class="col-md-3 mb-2">
+                                                                <label class="form-label">End Year (or expected)</label>
+                                                                <input type="number" class="form-control" name="education_end_0" min="1900" max="2099"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" id="education_count" name="education_count" value="1"/>
+                                                <button type="button" class="btn btn-sm btn-outline-primary mb-3" onclick="addEducation()">
+                                                    <i class="fa fa-plus"></i> Add Another Education
+                                                </button>
+                                                <input type="hidden" id="education_count" name="education_count" value="1"/>
+                                                <button type="button" class="btn btn-sm btn-outline-primary mb-3" onclick="addEducation()">
+                                                    <i class="fa fa-plus"></i> Add Another Education
+                                                </button>
+                                                
+                                                <!-- Work Experience -->
+                                                <h4 class="border-bottom pb-2 mb-3 mt-4">Work Experience</h4>
+                                                <div id="experience_section">
+                                                    <div class="experience-entry border p-3 mb-3 rounded">
+                                                        <div class="row">
+                                                            <div class="col-md-6 mb-2">
+                                                                <label class="form-label">Position/Job Title</label>
+                                                                <input type="text" class="form-control" name="experience_position_0" placeholder="e.g., Software Developer"/>
+                                                            </div>
+                                                            <div class="col-md-6 mb-2">
+                                                                <label class="form-label">Company</label>
+                                                                <input type="text" class="form-control" name="experience_company_0" placeholder="e.g., ABC Company Ltd"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4 mb-2">
+                                                                <label class="form-label">Start Date</label>
+                                                                <input type="date" class="form-control" name="experience_start_0"/>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                <label class="form-label">End Date</label>
+                                                                <input type="date" class="form-control" name="experience_end_0"/>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                <label class="form-label">Currently Working</label>
+                                                                <div class="form-check mt-2">
+                                                                    <input type="checkbox" class="form-check-input" name="experience_current_0"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <label class="form-label">Key Responsibilities</label>
+                                                            <textarea class="form-control" name="experience_responsibilities_0" rows="2" placeholder="Describe your main duties..."></textarea>
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <label class="form-label">Key Achievements</label>
+                                                            <textarea class="form-control" name="experience_achievements_0" rows="2" placeholder="List your accomplishments..."></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" id="experience_count" name="experience_count" value="1"/>
+                                                <button type="button" class="btn btn-sm btn-outline-primary mb-3" onclick="addExperience()">
+                                                    <i class="fa fa-plus"></i> Add Another Experience
+                                                </button>
+                                                
+                                                <!-- Submit Button -->
+                                                <div class="text-center mt-4">
+                                                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                                                        <i class="fa fa-paper-plane"></i> Submit Application
+                                                    </button>
+                                                </div>
+                                                
+                                                <!-- Submit Button -->
+                                                <div class="text-center mt-4">
+                                                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                                                        <i class="fa fa-paper-plane"></i> Submit Application
+                                                    </button>
+                                                </div>
+                                            </form>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- JavaScript for Dynamic Form Fields -->
+                    <script type="text/javascript">
+                        function addEducation() {
+                            var count = parseInt(document.getElementById('education_count').value);
+                            var section = document.getElementById('education_section');
+                            var newEntry = document.querySelector('.education-entry').cloneNode(true);
+                            
+                            // Update field names
+                            newEntry.querySelectorAll('input').forEach(function(input) {
+                                var name = input.getAttribute('name');
+                                if (name) {
+                                    input.setAttribute('name', name.replace(/_\d+$/, '_' + count));
+                                    input.value = '';
+                                    if (input.type === 'checkbox') {
+                                        input.checked = false;
+                                    }
+                                }
+                            });
+                            
+                            section.appendChild(newEntry);
+                            document.getElementById('education_count').value = count + 1;
+                        }
+                        
+                        function addExperience() {
+                            var count = parseInt(document.getElementById('experience_count').value);
+                            var section = document.getElementById('experience_section');
+                            var newEntry = document.querySelector('.experience-entry').cloneNode(true);
+                            
+                            // Update field names
+                            newEntry.querySelectorAll('input, textarea').forEach(function(input) {
+                                var name = input.getAttribute('name');
+                                if (name) {
+                                    input.setAttribute('name', name.replace(/_\d+$/, '_' + count));
+                                    input.value = '';
+                                    if (input.type === 'checkbox') {
+                                        input.checked = false;
+                                    }
+                                }
+                            });
+                            
+                            section.appendChild(newEntry);
+                            document.getElementById('experience_count').value = count + 1;
+                        }
+                        
+                        function addReferee() {
+                            var count = parseInt(document.getElementById('referee_count').value);
+                            var section = document.getElementById('referee_section');
+                            var newEntry = document.querySelector('.referee-entry').cloneNode(true);
+                            
+                            // Update field names
+                            newEntry.querySelectorAll('input, select').forEach(function(input) {
+                                var name = input.getAttribute('name');
+                                if (name) {
+                                    input.setAttribute('name', name.replace(/_\d+$/, '_' + count));
+                                    input.value = '';
+                                    if (input.type === 'checkbox') {
+                                        input.checked = true; // Default can_contact to true
+                                    }
+                                }
+                            });
+                            
+                            section.appendChild(newEntry);
+                            document.getElementById('referee_count').value = count + 1;
+                        }
+                    </script>
+                </t>
+            </t>
+        </field>
+    </record>
+
+    <!-- Success Page Template -->
+    <record id="job_application_success_template" model="ir.ui.view">
+        <field name="name">Job Application Success</field>
+        <field name="type">qweb</field>
+        <field name="key">hr_recruitment_application_extended.job_application_success_template</field>
+        <field name="arch" type="xml">
+            <t t-name="hr_recruitment_application_extended.job_application_success_template">
+                <t t-call="website.layout">
+                    <div id="wrap" class="oe_structure">
+                        <div class="container mt-5 mb-5">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-8">
+                                    <div class="card shadow-sm">
+                                        <div class="card-header bg-primary text-white text-center">
+                                            <h2 class="h3 mb-0">Application Submitted Successfully!</h2>
+                                        </div>
+                                        <div class="card-body text-center p-5">
+                                            <t t-if="success and applicant">
+                                                <i class="fa fa-check-circle text-primary" style="font-size: 5rem; margin-bottom: 1.5rem;"></i>
+                                                <h3 class="h4 mb-3">Thank You for Your Application!</h3>
+                                                <p class="lead">We've received your application and will review it shortly.</p>
+                                                
+                                                <!-- Application Summary - Simplified -->
+                                                <div class="alert alert-light mt-4 text-start">
+                                                    <h5 class="mb-3"><i class="fa fa-info-circle"></i> Application Details</h5>
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-2">
+                                                            <strong>Name:</strong> <t t-esc="applicant.partner_name"/>
+                                                        </div>
+                                                        <div class="col-md-6 mb-2">
+                                                            <strong>Email:</strong> <t t-esc="applicant.email_from"/>
+                                                        </div>
+                                                        <div class="col-md-6 mb-2">
+                                                            <strong>Position:</strong> <t t-esc="applicant.job_id.name"/>
+                                                        </div>
+                                                        <div class="col-md-6 mb-2">
+                                                            <strong>Department:</strong> <t t-esc="applicant.department_id.name"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <t t-if="tracking_id">
+                                                    <div class="alert alert-primary mt-4">
+                                                        <i class="fa fa-envelope"></i>
+                                                        <strong>Email Sent!</strong> We've sent a confirmation email with your tracking link to <strong t-esc="applicant.email_from"/>.
+                                                    </div>
+                                                    
+                                                    <div class="alert alert-info mt-3">
+                                                        <h4 class="h5">Your Tracking ID</h4>
+                                                        <p class="mb-1 h3 text-primary"><strong><t t-esc="tracking_id"/></strong></p>
+                                                        <p class="mb-0">Please save this tracking ID to check your application status.</p>
+                                                    </div>
+                                                    
+                                                    <div class="mt-4">
+                                                        <p>You can check your application status anytime using the link below:</p>
+                                                        <a href="/job/status" class="btn btn-primary mt-2">
+                                                            <i class="fa fa-search"></i> Check Application Status
+                                                        </a>
+                                                    </div>
+                                                </t>
+                                                
+                                                <div class="mt-4 pt-3 border-top">
+                                                    <a href="/jobs" class="btn btn-outline-primary me-2">
+                                                        <i class="fa fa-list"></i> View Other Jobs
+                                                    </a>
+                                                    <a href="/" class="btn btn-outline-secondary">
+                                                        <i class="fa fa-home"></i> Back to Home
+                                                    </a>
+                                                </div>
+                                            </t>
+                                            
+                                            <t t-else="">
+                                                <i class="fa fa-exclamation-triangle text-warning" style="font-size: 5rem; margin-bottom: 1.5rem;"></i>
+                                                <h3 class="h4 mb-3">Oops! Something Went Wrong</h3>
+                                                <p class="lead">We couldn't process your application at this time.</p>
+                                                
+                                                <div class="alert alert-warning mt-4">
+                                                    <i class="fa fa-info-circle"></i>
+                                                    <strong>What to do next:</strong><br/>
+                                                    Please try submitting your application again. If the problem persists, contact our HR department.
+                                                </div>
+                                                
+                                                <div class="mt-4">
+                                                    <a href="/jobs" class="btn btn-primary">
+                                                        <i class="fa fa-arrow-left"></i> Back to Jobs
+                                                    </a>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </field>
+    </record>
+
+</odoo>

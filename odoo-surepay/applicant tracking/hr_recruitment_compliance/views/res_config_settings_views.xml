@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- GDPR Configuration Settings Form View (Standalone) -->
+    <record id="view_gdpr_config_settings_form" model="ir.ui.view">
+        <field name="name">gdpr.config.settings.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="arch" type="xml">
+            <form string="GDPR Compliance Settings" class="oe_form_configuration">
+                <header>
+                    <button string="Save" type="object" name="execute" class="oe_highlight"/>
+                    <button string="Cancel" type="object" name="cancel" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="app_settings_block">
+                        <h2>GDPR Compliance Settings</h2>
+                        
+                        <!-- Data Retention Settings -->
+                        <group string="Data Retention">
+                            <field name="default_retention_period_days"/>
+                            <field name="enable_auto_anonymization"/>
+                        </group>
+                        
+                        <!-- Consent Settings -->
+                        <group string="Consent Management">
+                            <field name="auto_consent_web_form"/>
+                        </group>
+                        
+                        <!-- Audit Log Settings -->
+                        <group string="Audit Logging">
+                            <field name="enable_audit_logging"/>
+                            <field name="log_ip_addresses"/>
+                        </group>
+                        
+                        <!-- Export Settings -->
+                        <group string="Data Export">
+                            <field name="export_format"/>
+                        </group>
+                        
+                        <!-- Notification Settings -->
+                        <group string="Notifications">
+                            <field name="notify_before_anonymization"/>
+                            <field name="anonymization_notice_days" invisible="not notify_before_anonymization"/>
+                        </group>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Configuration Action -->
+    <record id="action_gdpr_config_settings" model="ir.actions.act_window">
+        <field name="name">GDPR Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_gdpr_config_settings_form"/>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'hr_recruitment_compliance', 'bin_size': False}</field>
+    </record>
+    
+    <!-- Configuration Menu -->
+    <menuitem id="menu_hr_recruitment_config"
+              name="Configuration"
+              parent="hr_recruitment.menu_hr_recruitment_root"
+              sequence="100"/>
+    
+    <menuitem id="menu_gdpr_config_settings"
+              name="GDPR Settings"
+              parent="menu_hr_recruitment_config"
+              action="action_gdpr_config_settings"
+              sequence="10"/>
+
+</odoo>

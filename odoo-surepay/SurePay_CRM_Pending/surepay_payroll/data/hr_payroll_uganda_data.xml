@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- SurePay Payroll Structure -->
+        <record id="structure_surepay_payroll" model="surepay_payroll.hr.payroll.structure">
+            <field name="name">SurePay Payroll Structure</field>
+            <field name="code">SUREPAY_PAYROLL</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="note">Standard Payroll Structure with statutory compliance and advance management</field>
+            <field name="parent_id" ref="surepay_payroll.structure_base"/>
+            <field name="rule_ids" eval="[
+                (4, ref('surepay_payroll.BASIC')),
+                (4, ref('surepay_payroll.HRA')),
+                (4, ref('surepay_payroll.TRANSPORT')),
+                (4, ref('surepay_payroll.MEAL')),
+                (4, ref('surepay_payroll.NSSF_EMP')),
+                (4, ref('surepay_payroll.NSSF_EMPL')),
+                (4, ref('surepay_payroll.PAYE')),
+                (4, ref('surepay_payroll.LST')),
+                (4, ref('surepay_payroll.ADVANCE')),
+                (4, ref('surepay_payroll.LOAN')),
+                (4, ref('surepay_payroll.OTHER_DED')),
+                (4, ref('surepay_payroll.NET'))
+            ]"/>
+        </record>
+        
+        <!-- Salary Rule Categories -->
+        <record id="salary_rule_category_basic" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Basic Pay</field>
+            <field name="code">BASIC</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <record id="salary_rule_category_allowances" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Allowances</field>
+            <field name="code">ALW</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <record id="salary_rule_category_nssf" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">NSSF Contributions</field>
+            <field name="code">NSSF</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <record id="salary_rule_category_tax" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Tax Deductions</field>
+            <field name="code">TAX</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <record id="salary_rule_category_deductions" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Other Deductions</field>
+            <field name="code">DED</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <record id="salary_rule_category_net" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Net Salary</field>
+            <field name="code">NET</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <!-- Basic Salary Rule -->
+        <record id="BASIC" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Basic Pay</field>
+            <field name="code">BASIC</field>
+            <field name="category_id" ref="salary_rule_category_basic"/>
+            <field name="contribution_register_id" ref="contribution_register_basic"/>
+            <field name="sequence">1</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute"><![CDATA[
+result = contract.wage
+            ]]></field>
+            <field name="appears_on_payslip">True</field>
+            <field name="active">True</field>
+            <field name="condition_select">none</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <!-- House Rent Allowance -->
+        <record id="HRA" model="surepay_payroll.hr.salary.rule">
+            <field name="name">House Rent Allowance</field>
+            <field name="code">HRA</field>
+            <field name="category_id" ref="salary_rule_category_allowances"/>
+            <field name="contribution_register_id" ref="contribution_register_allowances"/>
+            <field name="sequence">10</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute"><![CDATA[
+result = contract.hra or 0
+            ]]></field>
+            <field name="appears_on_payslip">True</field>
+            <field name="active">True</field>
+            <field name="condition_select">none</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <!-- Transport Allowance -->
+        <record id="TRANSPORT" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Transport Allowance</field>
+            <field name="code">TRANSPORT</field>
+            <field name="category_id" ref="salary_rule_category_allowances"/>
+            <field name="contribution_register_id" ref="contribution_register_allowances"/>
+            <field name="sequence">20</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute"><![CDATA[
+result = contract.transport_allowance or 0
+            ]]></field>
+            <field name="appears_on_payslip">True</field>
+            <field name="active">True</field>
+            <field name="condition_select">none</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <!-- Meal Allowance -->
+        <record id="MEAL" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Meal Allowance</field>
+            <field name="code">MEAL</field>
+            <field name="category_id" ref="salary_rule_category_allowances"/>
+            <field name="contribution_register_id" ref="contribution_register_allowances"/>
+            <field name="sequence">30</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute"><![CDATA[
+result = contract.meal_allowance or 0
+            ]]></field>
+            <field name="appears_on_payslip">True</field>
+            <field name="active">True</field>
+            <field name="condition_select">none</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <!-- NSSF Employee Contribution (5%) -->
+        <record id="NSSF_EMP" model="surepay_payroll.hr.salary.rule">
+            <field name="name">NSSF Employee (5%)</field>
+            <field name="code">NSSF_EMP</field>
+            <field name="category_id" ref="salary_rule_category_nssf"/>
+            <field name="contribution_register_id" ref="contribution_register_nssf"/>
+            <field name="sequence">100</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+# NSSF Employee Contribution: 5% of gross salary
+gross_salary = categories.BASIC + categories.ALW
+result = gross_salary * 0.05
+            </field>
+            <field name="appears_on_payslip">True</field>
+            <field name="active">True</field>
+            <field name="condition_select">none</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <!-- NSSF Employer Contribution (10%) -->
+        <record id="NSSF_EMPL" model="surepay_payroll.hr.salary.rule">
+            <field name="name">NSSF Employer (10%)</field>
+            <field name="code">NSSF_EMPL</field>
+            <field name="category_id" ref="salary_rule_category_nssf"/>
+            <field name="contribution_register_id" ref="contribution_register_nssf"/>
+            <field name="sequence">110</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+# NSSF Employer Contribution: 10% of gross salary
+gross_salary = categories.BASIC + categories.ALW
+result = gross_salary * 0.10
+            </field>
+            <field name="appears_on_payslip">False</field>
+            <field name="active">True</field>
+            <field name="condition_select">none</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <!-- PAYE Tax Calculation -->
+        <record id="PAYE" model="surepay_payroll.hr.salary.rule">
+            <field name="name">PAYE Tax</field>
+            <field name="code">PAYE</field>
+            <field name="category_id" ref="salary_rule_category_tax"/>
+            <field name="contribution_register_id" ref="contribution_register_tax"/>
+            <field name="sequence">120</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+# PAYE Tax Calculation using URA brackets (Resident Taxpayer)
+gross_salary = categories.BASIC + categories.ALW
+nssf_emp = categories.NSSF_EMP
+taxable_income = gross_salary - nssf_emp
+
+# URA Tax Brackets for Resident Taxpayers (Monthly)
+if taxable_income <= 235000:
+    result = 0
+elif taxable_income <= 335000:
+    result = (taxable_income - 235000) * 0.10
+elif taxable_income <= 410000:
+    result = 10000 + ((taxable_income - 335000) * 0.20)
+elif taxable_income <= 10000000:
+    result = 25000 + ((taxable_income - 410000) * 0.30)
+else:
+    # For income above 10,000,000: 30% on amount above 410,000 + 25,000 + 10% on amount above 10,000,000
+    result = (25000 + ((taxable_income - 410000) * 0.30)) + ((taxable_income - 10000000) * 0.10)
+            </field>
+            <field name="appears_on_payslip">True</field>
+            <field name="active">True</field>
+            <field name="condition_select">none</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <!-- Local Service Tax (LST) -->
+        <record id="LST" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Local Service Tax</field>
+            <field name="code">LST</field>
+            <field name="category_id" ref="salary_rule_category_tax"/>
+            <field name="contribution_register_id" ref="contribution_register_tax"/>
+            <field name="sequence">130</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+# Local Service Tax - configurable per employee/location
+result = employee.lst_amount or 0
+            </field>
+            <field name="appears_on_payslip">True</field>
+            <field name="active">True</field>
+            <field name="condition_select">none</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <!-- Salary Advance Deduction -->
+        <record id="ADVANCE" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Salary Advance</field>
+            <field name="code">ADVANCE</field>
+            <field name="category_id" ref="salary_rule_category_deductions"/>
+            <field name="contribution_register_id" ref="contribution_register_deductions"/>
+            <field name="sequence">140</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+# Salary Advance Deduction - Get from active advances
+advance_deductions = 0
+advance_records = env['surepay_payroll.hr.salary.advance'].search([
+    ('employee_id', '=', employee.id),
+    ('state', '=', 'active'),
+    ('outstanding_balance', '>', 0)
+])
+for advance in advance_records:
+    advance_deductions += advance.installment_amount
+result = advance_deductions
+            </field>
+            <field name="appears_on_payslip">True</field>
+            <field name="active">True</field>
+            <field name="condition_select">none</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <!-- Loan Deduction -->
+        <record id="LOAN" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Loan Deduction</field>
+            <field name="code">LOAN</field>
+            <field name="category_id" ref="salary_rule_category_deductions"/>
+            <field name="contribution_register_id" ref="contribution_register_deductions"/>
+            <field name="sequence">150</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+# Loan Deduction - Get from active loans
+loan_deductions = 0
+loan_records = env['surepay_payroll.hr.loan'].search([
+    ('employee_id', '=', employee.id),
+    ('state', '=', 'active'),
+    ('outstanding_balance', '>', 0),
+    ('advance_loan_type', '=', 'loan')
+])
+for loan in loan_records:
+    loan_deductions += loan.installment_amount
+result = loan_deductions
+            </field>
+            <field name="appears_on_payslip">True</field>
+            <field name="active">True</field>
+            <field name="condition_select">none</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <!-- Other Deductions -->
+        <record id="OTHER_DED" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Other Deductions</field>
+            <field name="code">OTHER_DED</field>
+            <field name="category_id" ref="salary_rule_category_deductions"/>
+            <field name="contribution_register_id" ref="contribution_register_deductions"/>
+            <field name="sequence">160</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+# Other Deductions
+result = employee.other_deductions or 0
+            </field>
+            <field name="appears_on_payslip">True</field>
+            <field name="active">True</field>
+            <field name="condition_select">none</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+        <!-- Net Salary -->
+        <record id="NET" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Net Salary</field>
+            <field name="code">NET</field>
+            <field name="category_id" ref="salary_rule_category_net"/>
+            <field name="contribution_register_id" ref="contribution_register_net"/>
+            <field name="sequence">200</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+# Net Salary Calculation
+gross_salary = categories.BASIC + categories.ALW
+total_deductions = categories.NSSF_EMP + categories.PAYE + categories.LST + categories.DED
+result = gross_salary - total_deductions
+            </field>
+            <field name="appears_on_payslip">True</field>
+            <field name="active">True</field>
+            <field name="condition_select">none</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        
+    </data>
+</odoo>

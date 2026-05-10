@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Employee Form View Extension -->
+        <record id="hr_employee_view_form_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <div class="oe_button_box" name="button_box" position="inside">
+                    <!-- Exit Clearance Smart Button -->
+                    <button name="action_view_exit_clearances" class="oe_stat_button" type="object" icon="fa-sign-out">
+                        <field string="Exit Clearances" name="exit_clearance_count" widget="statinfo"/>
+                    </button>
+                    <!-- Grievances Smart Button -->
+                    <button name="action_view_grievances" class="oe_stat_button" type="object" icon="fa-exclamation-triangle">
+                        <field string="Grievances" name="grievance_count" widget="statinfo"/>
+                    </button>
+                    <!-- Leave Balance Smart Button -->
+                    <button name="action_view_leave_balance" class="oe_stat_button" type="object" icon="fa-calendar">
+                        <field string="Leave Balance" name="leave_balance_count" widget="statinfo"/>
+                    </button>
+                </div>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Unsuccessful at Eligibility Screening -->
+    <record id="email_unsuccessful_eligibility" model="mail.template">
+        <field name="name">Unsuccessful at Eligibility Screening</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Application Update – ${object.job_id.name or 'Position'}</field>
+        <field name="email_from" expression="user.email_formatted"/>
+        <field name="email_to" expression="object.email_from"/>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333333;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <img src="/web/image/res.company/1/logo/200x60" alt="SurePay Ltd" style="max-width: 200px; height: auto;"/>
+                </div>
+                <p>Dear <t t-esc="object.partner_name or 'Applicant'" />,</p>
+                
+                <p>Thank you for applying for the <strong><t t-esc="object.job_id.name or 'Position'" /></strong> role at SurePay Ltd. After reviewing your application, we regret to inform you that you do not meet the minimum requirements for this position.</p>
+                
+                <p>We truly appreciate the time and effort you invested in your application and encourage you to apply for future opportunities with us that better match your qualifications.</p>
+                
+                <p>We wish you every success in your career journey.</p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a t-att-href="object.get_share_url()" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">View Application Status</a>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #007bff;">
+                    <p style="margin: 0 0 8px 0; font-weight: bold;">Your Application Details:</p>
+                    <p style="margin: 4px 0;">
+                        <strong>Tracking ID:</strong> <t t-esc="object.tracking_id or 'N/A'" /><br/>
+                        <strong>Position:</strong> <t t-esc="object.job_id.name or 'N/A'" /><br/>
+                        <t t-if="object.create_date">
+                            <strong>Application Date:</strong> <t t-esc="format_datetime(object.create_date, tz=user.tz, dt_format='long')" />
+                        </t>
+                        <t t-else="">
+                            <strong>Application Date:</strong> N/A
+                        </t>
+                    </p>
+                </div>
+                
+                <p>Best regards,<br/>
+                SurePay Ltd HR Team</p>
+                
+                <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee; font-size: 12px; color: #777;">
+                    <p>This email was sent to <t t-esc="object.email_from or 'your email address'" />.</p>
+                    <p>If you believe you received this email in error, please contact us at <a href="mailto:hr@surepayltd.com" style="color: #007bff;">hr@surepayltd.com</a>.</p>
+                </div>
+            </div>
+        ]]>
+        </field>
+    </record>
+
+    <!-- Unsuccessful After Shortlisting -->
+    <record id="email_unsuccessful_shortlisting" model="mail.template">
+        <field name="name">Unsuccessful After Shortlisting</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Application Outcome – ${object.job_id.name or 'Position'}</field>
+        <field name="email_from" expression="user.email_formatted"/>
+        <field name="email_to" expression="object.email_from"/>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333333;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <img src="/web/image/res.company/1/logo/200x60" alt="SurePay Ltd" style="max-width: 200px; height: auto;"/>
+                </div>
+                <p>Dear ${object.partner_name or 'Applicant'},</p>
+                
+                <p>Thank you for your interest in the <strong>${object.job_id.name or 'Position'}</strong> role at SurePay Ltd. We greatly appreciate the time you took to apply and go through the selection process.</p>
+                
+                <p>After careful consideration, we regret to inform you that you have not been selected to move forward in the recruitment process.</p>
+                
+                <p>We encourage you to stay connected with us and explore other opportunities that may be a better fit in the future.</p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="${object.get_share_url()}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">View Application Status</a>
+                </div>
+                
+                <p>Thank you once again, and we wish you success in your professional journey.</p>
+                
+                <p>Best regards,<br/>
+                SurePay Ltd HR Team</p>
+                
+                <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee; font-size: 12px; color: #777;">
+                    <p>This email was sent to ${object.email_from}.</p>
+                    <p>If you believe you received this email in error, please contact us at <a href="mailto:hr@surepayltd.com" style="color: #007bff;">hr@surepayltd.com</a>.</p>
+                </div>
+            </div>
+        ]]>
+        </field>
+    </record>
+</odoo>

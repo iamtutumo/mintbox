@@ -1,0 +1,118 @@
+/* Purchase Requisition Print Stylesheet */
+/* Optimized for PDF generation and proper layout */
+
+/* Base print styles */
+@media print {
+    /* Ensure proper table rendering */
+    table {
+        border-collapse: collapse !important;
+        border-spacing: 0 !important;
+        width: 100% !important;
+        table-layout: fixed !important;
+        page-break-inside: auto !important;
+    }
+    
+    /* Table cell styling */
+    th, td {
+        border: 1px solid #ddd !important;
+        padding: 8px !important;
+        text-align: left !important;
+        vertical-align: middle !important;
+        page-break-inside: avoid !important;
+    }
+    
+    /* Table header styling */
+    thead {
+        display: table-header-group !important;
+        background-color: #f8f9fa !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    /* Table row styling */
+    tr {
+        page-break-inside: avoid !important;
+    }
+    
+    /* Card styling */
+    .card {
+        border: 1px solid #ddd !important;
+        margin-bottom: 20px !important;
+        page-break-inside: avoid !important;
+    }
+    
+    .card-header {
+        background-color: #f8f9fa !important;
+        border-bottom: 1px solid #ddd !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    /* Page styling */
+    .page {
+        margin: 0 !important;
+        padding: 20px !important;
+    }
+    
+    /* Status badge styling */
+    .status-badge {
+        padding: 4px 8px !important;
+        border-radius: 4px !important;
+        font-weight: bold !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    .status-draft {
+        background-color: #fff3cd !important;
+        color: #856404 !important;
+    }
+    
+    .status-submitted {
+        background-color: #cce5ff !important;
+        color: #004085 !important;
+    }
+    
+    .status-approved {
+        background-color: #d4edda !important;
+        color: #155724 !important;
+    }
+    
+    .status-rejected {
+        background-color: #f8d7da !important;
+        color: #721c24 !important;
+    }
+    
+    /* Header styling */
+    .confidential {
+        color: #d32f2f !important;
+        font-weight: bold !important;
+        text-align: right !important;
+        margin-bottom: 10px !important;
+    }
+    
+    /* Footer styling */
+    .footer {
+        border-top: 1px solid #ddd !important;
+        margin-top: 30px !important;
+        padding-top: 15px !important;
+        text-align: center !important;
+        font-size: 12px !important;
+        color: #666 !important;
+    }
+    
+    /* Avoid page breaks */
+    .avoid-page-break {
+        page-break-inside: avoid !important;
+    }
+    
+    /* Section titles */
+    .section-title {
+        font-size: 16px !important;
+        font-weight: bold !important;
+        color: #333 !important;
+        margin: 25px 0 15px 0 !important;
+        padding-bottom: 5px !important;
+        border-bottom: 1px solid #ddd !important;
+    }
+}

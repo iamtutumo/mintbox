@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Medical Insurance Claim Tree View -->
+        <record id="medical_insurance_claim_view_tree" model="ir.ui.view">
+            <field name="name">medical.insurance.claim.tree</field>
+            <field name="model">medical.insurance.claim</field>
+            <field name="arch" type="xml">
+                <tree string="Medical Insurance Claims" decoration-info="claim_status=='draft'" 
+                      decoration-warning="claim_status=='submitted'" decoration-success="claim_status=='approved'" 
+                      decoration-danger="claim_status=='rejected'">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="insurance_plan_id"/>
+                    <field name="claim_date"/>
+                    <field name="treatment_date"/>
+                    <field name="claim_type"/>
+                    <field name="total_amount"/>
+                    <field name="approved_amount"/>
+                    <field name="claim_status"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Medical Insurance Claim Form View -->
+        <record id="medical_insurance_claim_view_form" model="ir.ui.view">
+            <field name="name">medical.insurance.claim.form</field>
+            <field name="model">medical.insurance.claim</field>
+            <field name="arch" type="xml">
+                <form string="Medical Insurance Claim">
+                    <header>
+                        <button name="action_submit" type="object" string="Submit" 
+                                class="btn-primary" invisible="claim_status != 'draft'"/>
+                        <button name="action_approve" type="object" string="Approve" 
+                                class="btn-success" invisible="claim_status not in ['submitted', 'under_review']"/>
+                        <button name="action_reject" type="object" string="Reject" 
+                                class="btn-danger" invisible="claim_status not in ['submitted', 'under_review']"/>
+                        <button name="action_process" type="object" string="Process" 
+                                class="btn-info" invisible="claim_status != 'approved'"/>
+                        <button name="action_reset_to_draft" type="object" string="Reset to Draft" 
+                                class="btn-secondary" invisible="claim_status in ['draft', 'processed']"/>
+                        <field name="claim_status" widget="statusbar" statusbar_visible="draft,submitted,approved"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="insurance_plan_id"/>
+                                <field name="claim_date"/>
+                                <field name="treatment_date"/>
+                                <field name="claim_type"/>
+                            </group>
+                            <group>
+                                <field name="total_amount"/>
+                                <field name="approved_amount" readonly="claim_status == 'draft'"/>
+                                <field name="employee_share" readonly="1"/>
+                                <field name="insurance_share" readonly="1"/>
+                                <field name="deductible_applied" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Claim Details">
+                                <group>
+                                    <group>
+                                        <field name="hospital_name"/>
+                                        <field name="doctor_name"/>
+                                        <field name="diagnosis"/>
+                                    </group>
+                                    <group>
+                                        <field name="supporting_documents" filename="supporting_documents_filename"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <field name="description"/>
+                                </group>
+                            </page>
+                            <page string="Rejection Details" invisible="claim_status != 'rejected'">
+                                <group>
+                                    <field name="rejection_reason"/>
+                                </group>
+                            </page>
+                            <page string="Other Information">
+                                <group>
+                                    <field name="notes"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Medical Insurance Claim Search View -->
+        <record id="medical_insurance_claim_view_search" model="ir.ui.view">
+            <field name="name">medical.insurance.claim.search</field>
+            <field name="model">medical.insurance.claim</field>
+            <field name="arch" type="xml">
+                <search string="Medical Insurance Claims">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="insurance_plan_id"/>
+                    <field name="claim_type"/>
+                    <field name="hospital_name"/>
+                    <field name="doctor_name"/>
+                    <separator/>
+                    <filter name="draft" string="Draft" domain="[('claim_status', '=', 'draft')]"/>
+                    <filter name="submitted" string="Submitted" domain="[('claim_status', '=', 'submitted')]"/>
+                    <filter name="under_review" string="Under Review" domain="[('claim_status', '=', 'under_review')]"/>
+                    <filter name="approved" string="Approved" domain="[('claim_status', '=', 'approved')]"/>
+                    <filter name="rejected" string="Rejected" domain="[('claim_status', '=', 'rejected')]"/>
+                    <filter name="processed" string="Processed" domain="[('claim_status', '=', 'processed')]"/>
+                    <separator/>
+                    <filter name="my_claims" string="My Claims" domain="[('employee_id.user_id', '=', uid)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_plan" string="Insurance Plan" context="{'group_by': 'insurance_plan_id'}"/>
+                        <filter name="group_type" string="Claim Type" context="{'group_by': 'claim_type'}"/>
+                        <filter name="group_status" string="Status" context="{'group_by': 'claim_status'}"/>
+                        <filter name="group_company" string="Company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Medical Insurance Claim Kanban View -->
+        <record id="medical_insurance_claim_view_kanban" model="ir.ui.view">
+            <field name="name">medical.insurance.claim.kanban</field>
+            <field name="model">medical.insurance.claim</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="claim_type"/>
+                    <field name="total_amount"/>
+                    <field name="approved_amount"/>
+                    <field name="claim_status"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                    <div class="o_kanban_tags_section">
+                                        <span class="badge badge-pill badge-info">
+                                            <field name="claim_type"/>
+                                        </span>
+                                        <span t-attf-class="badge badge-pill #{kanban_color(claim_status)}">
+                                            <field name="claim_status"/>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <field name="employee_id"/>
+                                    </div>
+                                    <div>
+                                        Total: <field name="total_amount"/> | 
+                                        Approved: <field name="approved_amount"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Medical Insurance Claim Action -->
+        <record id="action_medical_insurance_claim" model="ir.actions.act_window">
+            <field name="name">Medical Insurance Claims</field>
+            <field name="res_model">medical.insurance.claim</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="context">{'search_default_draft': 1, 'search_default_submitted': 1, 'search_default_under_review': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first medical insurance claim
+                </p>
+                <p>
+                    Medical insurance claims allow employees to request reimbursement 
+                    for medical expenses. Track claim status, amounts, and approvals 
+                    through the claims workflow.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Items -->
+        <menuitem id="menu_medical_insurance_claim" 
+                  name="Insurance Claims" 
+                  parent="menu_medical_insurance_root" 
+                  action="action_medical_insurance_claim" 
+                  sequence="20"/>
+
+    </data>
+</odoo>

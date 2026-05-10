@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Applicant Form View to Add Extended Fields -->
+    <record id="view_applicant_form_extended" model="ir.ui.view">
+        <field name="name">hr.applicant.form.extended</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_applicant_tracking_random.view_applicant_form_tracking"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Smart Buttons -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_education" type="object" class="oe_stat_button" icon="fa-graduation-cap">
+                    <field name="education_count" widget="statinfo" string="Education"/>
+                </button>
+                <button name="action_view_experience" type="object" class="oe_stat_button" icon="fa-briefcase">
+                    <field name="experience_count" widget="statinfo" string="Experience"/>
+                </button>
+                <button name="action_view_referees" type="object" class="oe_stat_button" icon="fa-users">
+                    <field name="referee_count" widget="statinfo" string="Referees"/>
+                </button>
+            </xpath>
+            
+            <!-- Add Summary Fields in Main Group -->
+            <xpath expr="//sheet/group" position="after">
+                <group string="Qualifications Summary">
+                    <field name="highest_education"/>
+                    <field name="total_experience_years"/>
+                    <field name="skill_count" invisible="1"/>
+                </group>
+            </xpath>
+            
+            <!-- Add Cover Letter Page -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Cover Letter" name="cover_letter">
+                    <field name="cover_letter" placeholder="Applicant's cover letter or motivation letter..."/>
+                </page>
+            </xpath>
+            
+            <!-- Add Education Page -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Education" name="education">
+                    <field name="education_ids" nolabel="1">
+                        <tree>
+                            <field name="degree"/>
+                            <field name="institution"/>
+                            <field name="field_of_study"/>
+                            <field name="year_completed"/>
+                            <field name="currently_studying"/>
+                        </tree>
+                        <form>
+                            <group>
+                                <group>
+                                    <field name="degree"/>
+                                    <field name="institution"/>
+                                    <field name="field_of_study"/>
+                                </group>
+                                <group>
+                                    <field name="year_completed"/>
+                                    <field name="grade"/>
+                                    <field name="currently_studying"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="notes"/>
+                            </group>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+            
+            <!-- Add Work Experience Page -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Work Experience" name="experience">
+                    <field name="experience_ids" nolabel="1">
+                        <tree>
+                            <field name="position"/>
+                            <field name="company"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="currently_working"/>
+                            <field name="duration_months"/>
+                        </tree>
+                        <form>
+                            <group>
+                                <group>
+                                    <field name="position"/>
+                                    <field name="company"/>
+                                    <field name="start_date"/>
+                                    <field name="currently_working"/>
+                                </group>
+                                <group>
+                                    <field name="end_date" invisible="currently_working"/>
+                                    <field name="duration_months"/>
+                                    <field name="reason_for_leaving" invisible="currently_working"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="responsibilities"/>
+                            </group>
+                            <group>
+                                <field name="achievements"/>
+                            </group>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+            
+            <!-- Add Skills Page -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Skills" name="skills">
+                    <field name="skill_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
+                </page>
+            </xpath>
+            
+            <!-- Add Referees Page -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Referees" name="referees">
+                    <field name="referee_ids" nolabel="1">
+                        <tree>
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="position"/>
+                            <field name="company"/>
+                            <field name="relationship"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="can_contact"/>
+                            <field name="contacted"/>
+                        </tree>
+                        <form>
+                            <group>
+                                <group>
+                                    <field name="name"/>
+                                    <field name="position"/>
+                                    <field name="company"/>
+                                    <field name="relationship"/>
+                                </group>
+                                <group>
+                                    <field name="email" widget="email"/>
+                                    <field name="phone" widget="phone"/>
+                                    <field name="years_known"/>
+                                    <field name="can_contact"/>
+                                </group>
+                            </group>
+                            <group string="Contact Information" invisible="not contacted">
+                                <field name="contacted"/>
+                                <field name="contacted_date" invisible="not contacted"/>
+                            </group>
+                            <group string="Feedback" invisible="not contacted">
+                                <field name="feedback"/>
+                            </group>
+                            <group>
+                                <field name="notes"/>
+                            </group>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+            
+        </field>
+    </record>
+
+</odoo>

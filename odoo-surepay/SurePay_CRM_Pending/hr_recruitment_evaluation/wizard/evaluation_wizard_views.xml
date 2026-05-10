@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Evaluation Wizard Form -->
+    <record id="view_evaluation_wizard_form" model="ir.ui.view">
+        <field name="name">evaluation.wizard.form</field>
+        <field name="model">evaluation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Evaluate Applicant">
+                <group>
+                    <group>
+                        <field name="applicant_name" readonly="1"/>
+                        <field name="job_id" readonly="1"/>
+                        <field name="reviewer_role"/>
+                    </group>
+                    <group>
+                        <field name="interview_date"/>
+                        <field name="recommendation"/>
+                    </group>
+                </group>
+                
+                <group string="Scoring (0-10 scale)">
+                    <field name="technical_score"/>
+                    <field name="cultural_fit_score"/>
+                    <field name="communication_score"/>
+                </group>
+                
+                <group string="Feedback">
+                    <field name="strengths" placeholder="Key strengths..."/>
+                    <field name="weaknesses" placeholder="Areas for improvement..."/>
+                    <field name="notes" placeholder="Additional notes..."/>
+                </group>
+                
+                <footer>
+                    <button name="action_submit_evaluation" string="Submit Evaluation" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

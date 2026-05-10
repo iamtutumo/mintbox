@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Employee Record Rules -->
+        <!-- Employees can only see their own budgets -->
+        <record id="hr_expense_budget_rule_employee" model="ir.rule">
+            <field name="name">HR Expense Budget: Employee Own</field>
+            <field name="model_id" ref="model_hr_expense_budget"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Managers can see budgets of their department employees -->
+        <record id="hr_expense_budget_rule_manager" model="ir.rule">
+            <field name="name">HR Expense Budget: Manager Department</field>
+            <field name="model_id" ref="model_hr_expense_budget"/>
+            <field name="domain_force">[('employee_id.department_id.manager_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('hr.group_hr_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- HR Officers can see all budgets -->
+        <record id="hr_expense_budget_rule_hr_officer" model="ir.rule">
+            <field name="name">HR Expense Budget: HR Officer All</field>
+            <field name="model_id" ref="model_hr_expense_budget"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('hr.group_hr_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- HR Managers can see all budgets -->
+        <record id="hr_expense_budget_rule_hr_manager" model="ir.rule">
+            <field name="name">HR Expense Budget: HR Manager All</field>
+            <field name="model_id" ref="model_hr_expense_budget"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('hr.group_hr_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Finance Accountants can see all budgets -->
+        <record id="hr_expense_budget_rule_account_manager" model="ir.rule">
+            <field name="name">HR Expense Budget: Account Manager All</field>
+            <field name="model_id" ref="model_hr_expense_budget"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('account.group_account_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Expense Record Rules -->
+        <!-- Employees can only see their own expenses -->
+        <record id="hr_expense_rule_employee" model="ir.rule">
+            <field name="name">HR Expense: Employee Own</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Managers can see expenses of their department employees -->
+        <record id="hr_expense_rule_manager" model="ir.rule">
+            <field name="name">HR Expense: Manager Department</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense"/>
+            <field name="domain_force">[('employee_id.department_id.manager_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('hr.group_hr_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- HR Officers can see all expenses -->
+        <record id="hr_expense_rule_hr_officer" model="ir.rule">
+            <field name="name">HR Expense: HR Officer All</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('hr.group_hr_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- HR Managers can see all expenses -->
+        <record id="hr_expense_rule_hr_manager" model="ir.rule">
+            <field name="name">HR Expense: HR Manager All</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('hr.group_hr_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Finance Accountants can see all expenses -->
+        <record id="hr_expense_rule_account_manager" model="ir.rule">
+            <field name="name">HR Expense: Account Manager All</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('account.group_account_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- HR Employee Form View Inheritance -->
+        <record id="hr_employee_view_form_inherit_medical_insurance" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit.medical.insurance</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Medical Insurance">
+                        <group>
+                            <group>
+                                <field name="medical_insurance_eligible"/>
+                                <field name="medical_insurance_plan_id" 
+                                       invisible="medical_insurance_eligible == False"/>
+                                <field name="medical_insurance_number" 
+                                       invisible="medical_insurance_eligible == False"/>
+                                <field name="dependents_covered" 
+                                       invisible="medical_insurance_eligible == False"/>
+                            </group>
+                            <group>
+                                <field name="medical_insurance_start_date" 
+                                       invisible="medical_insurance_eligible == False"/>
+                                <field name="medical_insurance_end_date" 
+                                       invisible="medical_insurance_eligible == False"/>
+                                <field name="medical_insurance_card_issued" 
+                                       invisible="medical_insurance_eligible == False"/>
+                                <field name="medical_insurance_card_issue_date" 
+                                       invisible="medical_insurance_eligible == False and medical_insurance_card_issued == False"/>
+                            </group>
+                        </group>
+                        <group string="Claim Statistics">
+                            <group>
+                                <field name="total_claims_amount"/>
+                                <field name="approved_claims_amount"/>
+                            </group>
+                            <group>
+                                <field name="pending_claims_count"/>
+                                <field name="rejected_claims_count"/>
+                            </group>
+                        </group>
+                        <group string="Actions">
+                            <button name="action_view_medical_claims" type="object" 
+                                    string="View Medical Claims" class="btn-primary"
+                                    invisible="medical_insurance_eligible == False"/>
+                            <button name="action_issue_medical_card" type="object" 
+                                    string="Issue Medical Card" class="btn-secondary"
+                                    invisible="medical_insurance_eligible == False and medical_insurance_card_issued == True"/>
+                            <button name="action_revoke_medical_card" type="object" 
+                                    string="Revoke Medical Card" class="btn-danger"
+                                    invisible="medical_insurance_card_issued == False"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- HR Employee Tree View Inheritance -->
+        <record id="hr_employee_view_tree_inherit_medical_insurance" model="ir.ui.view">
+            <field name="name">hr.employee.tree.inherit.medical.insurance</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='work_phone']" position="after">
+                    <field name="medical_insurance_eligible"/>
+                    <field name="medical_insurance_plan_id"/>
+                    <field name="medical_insurance_number"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- HR Employee Kanban View Inheritance -->
+        <record id="hr_employee_view_kanban_inherit_medical_insurance" model="ir.ui.view">
+            <field name="name">hr.employee.kanban.inherit.medical.insurance</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.hr_kanban_view_employees"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_kanban_details']" position="inside">
+                    <div class="oe_kanban_details">
+                        <field name="medical_insurance_eligible" invisible="1"/>
+                        <field name="medical_insurance_plan_id" invisible="1"/>
+                        <div t-if="record.medical_insurance_eligible.raw_value">
+                            <div class="text-muted">
+                                <i class="fa fa-heartbeat"/> Medical Insurance: 
+                                <field name="medical_insurance_plan_id"/>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- HR Employee Search View Inheritance -->
+        <record id="hr_employee_view_search_inherit_medical_insurance" model="ir.ui.view">
+            <field name="name">hr.employee.search.inherit.medical.insurance</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="." position="inside">
+                    <separator/>
+                    <filter name="medical_insurance_eligible" string="Medical Insurance Eligible" 
+                            domain="[('medical_insurance_eligible', '=', True)]"/>
+                    <filter name="no_medical_insurance" string="No Medical Insurance" 
+                            domain="[('medical_insurance_eligible', '=', False)]"/>
+                    <filter name="medical_card_issued" string="Medical Card Issued" 
+                            domain="[('medical_insurance_card_issued', '=', True)]"/>
+                    <separator/>
+                    <field name="medical_insurance_plan_id"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,3 @@
+id,name,model_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crm_client_assessment_service,access.crm.client.assessment.service,model_crm_client_assessment_service,1,1,1,1
+access_crm_client_assessment_distribution,access.crm.client.assessment.distribution,model_crm_client_assessment_distribution,1,1,1,1

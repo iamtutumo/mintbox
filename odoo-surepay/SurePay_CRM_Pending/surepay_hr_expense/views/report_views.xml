@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Budget Analysis Report View -->
+        <record id="view_hr_expense_budget_report_tree" model="ir.ui.view">
+            <field name="name">hr.expense.budget.report.tree</field>
+            <field name="model">hr.expense.budget</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Analysis" decoration-success="amount_remaining &gt; 0" 
+                      decoration-warning="amount_remaining &lt;= 0 and amount_remaining &gt;= -amount_allocated * 0.1" 
+                      decoration-danger="amount_remaining &lt; -amount_allocated * 0.1">
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="period_type"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="amount_allocated" widget="monetary"/>
+                    <field name="amount_spent" widget="monetary"/>
+                    <field name="amount_remaining" widget="monetary"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="state"/>
+                    <field name="expense_count"/>
+                    <field name="budget_utilization" widget="percentpie"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Budget vs Actual Report View -->
+        <record id="view_hr_expense_budget_vs_actual_tree" model="ir.ui.view">
+            <field name="name">hr.expense.budget.vs.actual.tree</field>
+            <field name="model">hr.expense.budget</field>
+            <field name="arch" type="xml">
+                <tree string="Budget vs Actual" create="false" edit="false">
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="period_type"/>
+                    <field name="amount_allocated" widget="monetary" sum="Total Allocated"/>
+                    <field name="amount_spent" widget="monetary" sum="Total Spent"/>
+                    <field name="amount_remaining" widget="monetary" sum="Total Remaining"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="budget_utilization" widget="percentpie"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Budget Utilization Report View -->
+        <record id="view_hr_expense_budget_utilization_tree" model="ir.ui.view">
+            <field name="name">hr.expense.budget.utilization.tree</field>
+            <field name="model">hr.expense.budget</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Utilization" create="false" edit="false">
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="period_type"/>
+                    <field name="amount_allocated" widget="monetary"/>
+                    <field name="amount_spent" widget="monetary"/>
+                    <field name="budget_utilization" widget="percentpie"/>
+                    <field name="state"/>
+                    <field name="expense_count"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Over Budget Report View -->
+        <record id="view_hr_expense_over_budget_tree" model="ir.ui.view">
+            <field name="name">hr.expense.over.budget.tree</field>
+            <field name="model">hr.expense.budget</field>
+            <field name="arch" type="xml">
+                <tree string="Over Budget Employees" create="false" edit="false" decoration-danger="amount_remaining &lt; 0">
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="period_type"/>
+                    <field name="amount_allocated" widget="monetary"/>
+                    <field name="amount_spent" widget="monetary"/>
+                    <field name="amount_remaining" widget="monetary"/>
+                    <field name="budget_utilization" widget="percentpie"/>
+                    <field name="over_budget_amount" widget="monetary"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Under Budget Report View -->
+        <record id="view_hr_expense_under_budget_tree" model="ir.ui.view">
+            <field name="name">hr.expense.under.budget.tree</field>
+            <field name="model">hr.expense.budget</field>
+            <field name="arch" type="xml">
+                <tree string="Under Budget Employees" create="false" edit="false" decoration-success="budget_utilization &lt; 50">
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="period_type"/>
+                    <field name="amount_allocated" widget="monetary"/>
+                    <field name="amount_spent" widget="monetary"/>
+                    <field name="amount_remaining" widget="monetary"/>
+                    <field name="budget_utilization" widget="percentpie"/>
+                    <field name="under_budget_amount" widget="monetary"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Expense by Budget Report View -->
+        <record id="view_hr_expense_by_budget_tree" model="ir.ui.view">
+            <field name="name">hr.expense.by.budget.tree</field>
+            <field name="model">hr.expense</field>
+            <field name="arch" type="xml">
+                <tree string="Expenses by Budget" create="false" edit="false">
+                    <field name="employee_id"/>
+                    <field name="budget_id"/>
+                    <field name="date"/>
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="total_amount" widget="monetary" sum="Total Amount"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="state"/>
+                    <field name="requires_override_approval"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Budget Analysis Pivot View -->
+        <record id="view_hr_expense_budget_analysis_pivot" model="ir.ui.view">
+            <field name="name">hr.expense.budget.analysis.pivot</field>
+            <field name="model">hr.expense.budget</field>
+            <field name="arch" type="xml">
+                <pivot string="Budget Analysis">
+                    <field name="employee_id" type="row"/>
+                    <field name="department_id" type="row"/>
+                    <field name="period_type" type="col"/>
+                    <field name="amount_allocated" type="measure"/>
+                    <field name="amount_spent" type="measure"/>
+                    <field name="amount_remaining" type="measure"/>
+                    <field name="expense_count" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Budget Analysis Graph View -->
+        <record id="view_hr_expense_budget_analysis_graph" model="ir.ui.view">
+            <field name="name">hr.expense.budget.analysis.graph</field>
+            <field name="model">hr.expense.budget</field>
+            <field name="arch" type="xml">
+                <graph string="Budget Analysis">
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="amount_allocated" type="measure"/>
+                    <field name="amount_spent" type="measure"/>
+                    <field name="amount_remaining" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Expense Analysis Pivot View -->
+        <record id="view_hr_expense_analysis_pivot" model="ir.ui.view">
+            <field name="name">hr.expense.analysis.pivot</field>
+            <field name="model">hr.expense</field>
+            <field name="arch" type="xml">
+                <pivot string="Expense Analysis">
+                    <field name="employee_id" type="row"/>
+                    <field name="budget_id" type="row"/>
+                    <field name="product_id" type="row"/>
+                    <field name="date" type="col" interval="month"/>
+                    <field name="total_amount" type="measure"/>
+                    <field name="quantity" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Expense Analysis Graph View -->
+        <record id="view_hr_expense_analysis_graph" model="ir.ui.view">
+            <field name="name">hr.expense.analysis.graph</field>
+            <field name="model">hr.expense</field>
+            <field name="arch" type="xml">
+                <graph string="Expense Analysis">
+                    <field name="employee_id"/>
+                    <field name="budget_id"/>
+                    <field name="total_amount" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Report Search Views -->
+        <record id="view_hr_expense_budget_report_search" model="ir.ui.view">
+            <field name="name">hr.expense.budget.report.search</field>
+            <field name="model">hr.expense.budget</field>
+            <field name="arch" type="xml">
+                <search string="Search Budget Reports">
+                    <field name="employee_id"/>
+                    <field name="period_type"/>
+                    <field name="state"/>
+                    <separator/>
+                    <filter name="active" string="Active" domain="[('state', '=', 'active')]"/>
+                    <filter name="over_budget" string="Over Budget" domain="[('amount_remaining', '&lt;', 0)]"/>
+                    <filter name="under_budget" string="Under Budget" domain="[('budget_utilization', '&lt;', 50)]"/>
+                    <filter name="high_utilization" string="High Utilization" domain="[('budget_utilization', '>=', 80)]"/>
+                    <separator/>
+                    <filter name="week" string="Weekly" domain="[('period_type', '=', 'week')]"/>
+                    <filter name="month" string="Monthly" domain="[('period_type', '=', 'month')]"/>
+                    <filter name="year" string="Yearly" domain="[('period_type', '=', 'year')]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_department" string="Department" context="{'group_by': 'department_id'}"/>
+                        <filter name="group_period_type" string="Period Type" context="{'group_by': 'period_type'}"/>
+                        <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Report Actions -->
+        <record id="action_hr_expense_budget_analysis" model="ir.actions.act_window">
+            <field name="name">Budget Analysis</field>
+            <field name="res_model">hr.expense.budget</field>
+            <field name="view_mode">tree,pivot,graph</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('view_hr_expense_budget_report_tree')}),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_hr_expense_budget_analysis_pivot')}),
+                (0, 0, {'view_mode': 'graph', 'view_id': ref('view_hr_expense_budget_analysis_graph')})
+            ]"/>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Analyze budget performance
+                </p>
+                <p>
+                    View budget allocation, spending, and utilization across employees and departments.
+                </p>
+            </field>
+        </record>
+
+        <record id="action_hr_expense_over_budget" model="ir.actions.act_window">
+            <field name="name">Over Budget Employees</field>
+            <field name="res_model">hr.expense.budget</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_hr_expense_over_budget_tree"/>
+            <field name="domain">[('amount_remaining', '&lt;', 0)]</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No employees over budget
+                </p>
+                <p>
+                    Employees who have exceeded their allocated budget amounts.
+                </p>
+            </field>
+        </record>
+
+        <record id="action_hr_expense_under_budget" model="ir.actions.act_window">
+            <field name="name">Under Budget Employees</field>
+            <field name="res_model">hr.expense.budget</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_hr_expense_under_budget_tree"/>
+            <field name="domain">[('budget_utilization', '&lt;', 50), ('amount_allocated', '&gt;', 0)]</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No employees under budget
+                </p>
+                <p>
+                    Employees who are utilizing less than 50% of their allocated budget.
+                </p>
+            </field>
+        </record>
+
+        <record id="action_hr_expense_by_budget" model="ir.actions.act_window">
+            <field name="name">Expenses by Budget</field>
+            <field name="res_model">hr.expense</field>
+            <field name="view_mode">tree,pivot,graph</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('view_hr_expense_by_budget_tree')}),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_hr_expense_analysis_pivot')}),
+                (0, 0, {'view_mode': 'graph', 'view_id': ref('view_hr_expense_analysis_graph')})
+            ]"/>
+            <field name="domain">[('budget_id', '!=', False)]</field>
+            <field name="context">{'search_default_group_budget': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No expenses with budgets
+                </p>
+                <p>
+                    View expenses organized by their associated budgets.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

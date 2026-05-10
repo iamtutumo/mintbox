@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Payroll Export Wizard Form View -->
+        <record id="view_payroll_export_wizard_form" model="ir.ui.view">
+            <field name="name">payroll.export.wizard.form</field>
+            <field name="model">payroll.export.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Export Payroll to Excel">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="export_type"/>
+                                <field name="template_id"/>
+                                <field name="company_id" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="file_name"/>
+                                <field name="include_header"/>
+                                <field name="include_footer"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Filters" invisible="export_type == 'selected'">
+                                <group>
+                                    <group string="Date Range" invisible="export_type != 'by_period'">
+                                        <field name="date_from"/>
+                                        <field name="date_to"/>
+                                    </group>
+                                    
+                                    <group string="Department" invisible="export_type != 'by_department'">
+                                        <field name="department_id"/>
+                                    </group>
+                                    
+                                    <group string="Employee" invisible="export_type != 'by_employee'">
+                                        <field name="employee_id"/>
+                                    </group>
+                                </group>
+                            </page>
+                            
+                            <page string="Status Filters">
+                                <group>
+                                    <field name="include_draft"/>
+                                    <field name="include_paid"/>
+                                    <field name="include_done"/>
+                                </group>
+                            </page>
+                            
+                            <page string="Selected Payslips" invisible="export_type != 'selected'">
+                                <field name="payslip_ids">
+                                    <tree>
+                                        <field name="employee_id"/>
+                                        <field name="date_from"/>
+                                        <field name="date_to"/>
+                                        <field name="gross_wage"/>
+                                        <field name="net_wage"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    
+                    <footer>
+                        <button name="action_preview" 
+                                type="object" 
+                                string="Preview" 
+                                class="btn-secondary"/>
+                        <button name="action_export" 
+                                type="object" 
+                                string="Export" 
+                                class="btn-primary"/>
+                        <button special="cancel" 
+                                string="Cancel" 
+                                class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

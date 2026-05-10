@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Disciplinary Action Form View -->
+        <record id="hr_disciplinary_action_view_form" model="ir.ui.view">
+            <field name="name">hr.disciplinary.action.form</field>
+            <field name="model">hr.disciplinary.action</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_confirm" type="object" string="Confirm" class="btn-primary" invisible="state != 'draft'"/>
+                        <button name="action_activate" type="object" string="Activate" class="btn-primary" invisible="state not in ['confirmed', 'resolved']"/>
+                        <button name="action_resolve" type="object" string="Resolve" class="btn-success" invisible="state != 'active'"/>
+                        <button name="action_cancel" type="object" string="Cancel" class="btn-danger" invisible="state in ['resolved', 'cancelled']"/>
+                        <button name="action_set_to_draft" type="object" string="Set to Draft" class="btn-secondary" invisible="state not in ['cancelled', 'confirmed']"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,active,resolved"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_attachments" type="object" class="oe_stat_button" icon="fa-paperclip">
+                                <field name="attachment_count" widget="statinfo" string="Attachments"/>
+                            </button>
+                            <button name="action_add_attachment" type="object" class="oe_stat_button" icon="fa-plus">
+                                <string>Add Attachment</string>
+                            </button>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="action_type"/>
+                                <field name="date"/>
+                                <field name="title"/>
+                            </group>
+                            <group>
+                                <field name="confirmed_by"/>
+                                <field name="confirmed_date"/>
+                                <field name="active"/>
+                                <field name="resolution_date"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="description" string="Description">
+                                <field name="description" widget="text"/>
+                            </page>
+                            <page name="impact" string="Impact">
+                                <group>
+                                    <group>
+                                        <field name="affects_salary_advance"/>
+                                        <field name="affects_probation"/>
+                                        <field name="probation_extension_days" invisible="affects_probation == False"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="notes" string="Additional Notes">
+                                <field name="notes" widget="text"/>
+                            </page>
+                            <page name="resolution" string="Resolution">
+                                <group>
+                                    <field name="resolution_notes" widget="text"/>
+                                </group>
+                            </page>
+                            <page name="attachments" string="Attachments">
+                                <field name="attachment_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="file_size"/>
+                                        <field name="mimetype"/>
+                                        <field name="create_date"/>
+                                        <field name="create_uid"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Disciplinary Action Tree View -->
+        <record id="hr_disciplinary_action_view_tree" model="ir.ui.view">
+            <field name="name">hr.disciplinary.action.tree</field>
+            <field name="model">hr.disciplinary.action</field>
+            <field name="arch" type="xml">
+                <tree decoration-danger="active" decoration-success="state == 'resolved'" decoration-muted="state == 'cancelled'">
+                    <field name="employee_id"/>
+                    <field name="action_type"/>
+                    <field name="title"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                    <field name="active"/>
+                    <field name="confirmed_by"/>
+                    <field name="confirmed_date"/>
+                    <field name="resolution_date"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Disciplinary Action Kanban View -->
+        <record id="hr_disciplinary_action_view_kanban" model="ir.ui.view">
+            <field name="name">hr.disciplinary.action.kanban</field>
+            <field name="model">hr.disciplinary.action</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="employee_id"/>
+                    <field name="action_type"/>
+                    <field name="title"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                    <field name="active"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="oe_kanban_card">
+                                    <div class="oe_kanban_content">
+                                        <div class="oe_kanban_details">
+                                            <strong class="o_kanban_record_title">
+                                                <field name="employee_id" readonly="1"/>
+                                            </strong>
+                                            <div class="o_kanban_tags_section">
+                                                <div class="oe_kanban_tags">
+                                                    <span class="badge badge-pill badge-danger" t-if="active">Active</span>
+                                                    <span class="badge badge-pill badge-success" t-if="state == 'resolved'">Resolved</span>
+                                                    <span class="badge badge-pill badge-secondary" t-if="state == 'cancelled'">Cancelled</span>
+                                                    <span class="badge badge-pill badge-warning" t-if="state == 'draft'">Draft</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <strong>Action:</strong> <field name="action_type" readonly="1"/><br/>
+                                                <strong>Title:</strong> <field name="title" readonly="1"/><br/>
+                                                <strong>Date:</strong> <field name="date" readonly="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        
+        <!-- Disciplinary Action Search View -->
+        <record id="hr_disciplinary_action_view_search" model="ir.ui.view">
+            <field name="name">hr.disciplinary.action.search</field>
+            <field name="model">hr.disciplinary.action</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="employee_id"/>
+                    <field name="action_type"/>
+                    <field name="title"/>
+                    <field name="description"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                    <separator/>
+                    <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                    <filter name="confirmed" string="Confirmed" domain="[('state', '=', 'confirmed')]"/>
+                    <filter name="active" string="Active" domain="[('state', '=', 'active')]"/>
+                    <filter name="resolved" string="Resolved" domain="[('state', '=', 'resolved')]"/>
+                    <filter name="cancelled" string="Cancelled" domain="[('state', '=', 'cancelled')]"/>
+                    <separator/>
+                    <filter name="is_active" string="Active Actions" domain="[('active', '=', True)]"/>
+                    <filter name="inactive" string="Inactive Actions" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter name="affects_salary_advance" string="Affects Salary Advance" domain="[('affects_salary_advance', '=', True)]"/>
+                    <filter name="affects_probation" string="Affects Probation" domain="[('affects_probation', '=', True)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_action_type" string="Action Type" context="{'group_by': 'action_type'}"/>
+                        <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                        <filter name="group_date" string="Date" context="{'group_by': 'date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Disciplinary Action Pivot View -->
+        <record id="hr_disciplinary_action_view_pivot" model="ir.ui.view">
+            <field name="name">hr.disciplinary.action.pivot</field>
+            <field name="model">hr.disciplinary.action</field>
+            <field name="arch" type="xml">
+                <pivot string="Disciplinary Actions Analysis">
+                    <field name="employee_id" type="row"/>
+                    <field name="action_type" type="col"/>
+                    <field name="date" type="row" interval="month"/>
+                    <field name="state" type="col"/>
+                </pivot>
+            </field>
+        </record>
+        
+        <!-- Disciplinary Action Graph View -->
+        <record id="hr_disciplinary_action_view_graph" model="ir.ui.view">
+            <field name="name">hr.disciplinary.action.graph</field>
+            <field name="model">hr.disciplinary.action</field>
+            <field name="arch" type="xml">
+                <graph string="Disciplinary Actions Statistics">
+                    <field name="date" type="row" interval="month"/>
+                    <field name="action_type" type="col"/>
+                    <field name="employee_id" type="measure"/>
+                </graph>
+            </field>
+        </record>
+        
+        <!-- Disciplinary Action Action -->
+        <record id="action_hr_disciplinary_action" model="ir.actions.act_window">
+            <field name="name">Disciplinary Actions</field>
+            <field name="res_model">hr.disciplinary.action</field>
+            <field name="view_mode">tree,kanban,form,pivot,graph</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No disciplinary actions found
+                </p>
+                <p>
+                    Create disciplinary actions to track employee conduct issues and their resolution.
+                </p>
+            </field>
+        </record>
+        
+        <!-- Disciplinary Action by Employee Action -->
+        <record id="action_hr_disciplinary_action_by_employee" model="ir.actions.act_window">
+            <field name="name">Disciplinary Actions by Employee</field>
+            <field name="res_model">hr.disciplinary.action</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="context">{'search_default_group_employee': 1}</field>
+        </record>
+        
+    </data>
+</odoo>

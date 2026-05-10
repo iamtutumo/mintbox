@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit hr.contract form view to add Prorata configuration -->
+        <record id="hr_contract_view_form_inherit_prorata" model="ir.ui.view">
+            <field name="name">hr.contract.form.inherit.prorata</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/group" position="inside">
+                    <group string="Prorata Salary Configuration">
+                        <field name="prorata_calculation_method"/>
+                        <field name="include_weekends_in_prorata" 
+                               invisible="prorata_calculation_method != 'working_days'"/>
+                        <field name="prorata_rounding_method"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit hr.contract tree view to add Prorata method column -->
+        <record id="hr_contract_view_tree_inherit_prorata" model="ir.ui.view">
+            <field name="name">hr.contract.tree.inherit.prorata</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='wage']" position="after">
+                    <field name="prorata_calculation_method" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit hr.contract search view to add Prorata filters -->
+        <record id="hr_contract_view_search_inherit_prorata" model="ir.ui.view">
+            <field name="name">hr.contract.search.inherit.prorata</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='running']" position="after">
+                    <separator/>
+                    <filter name="working_days_prorata" string="Working Days Prorata" domain="[('prorata_calculation_method', '=', 'working_days')]"/>
+                    <filter name="calendar_days_prorata" string="Calendar Days Prorata" domain="[('prorata_calculation_method', '=', 'calendar_days')]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_prorata_method" string="Prorata Method" context="{'group_by': 'prorata_calculation_method'}"/>
+                        <filter name="group_rounding_method" string="Rounding Method" context="{'group_by': 'prorata_rounding_method'}"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

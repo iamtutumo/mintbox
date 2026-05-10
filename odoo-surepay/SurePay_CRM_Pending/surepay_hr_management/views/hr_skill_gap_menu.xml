@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Skill Gap Management Menu -->
+        <menuitem id="menu_hr_skill_gap_root" 
+                  name="Skill Gap Management" 
+                  parent="hr.menu_hr_root" 
+                  sequence="80"
+                  groups="hr.group_hr_user,hr.group_hr_manager"/>
+
+        <!-- Skill Gaps Menu -->
+        <menuitem id="menu_hr_skill_gap" 
+                  name="Skill Gaps" 
+                  parent="menu_hr_skill_gap_root" 
+                  action="action_hr_skill_gap" 
+                  sequence="10"/>
+
+        <!-- Skill Gap Analysis Menu -->
+        <menuitem id="menu_hr_skill_gap_analysis" 
+                  name="Skill Gap Analysis" 
+                  parent="menu_hr_skill_gap_root" 
+                  action="action_hr_skill_gap_analysis" 
+                  sequence="20"/>
+
+        <!-- Skill Gap Configuration Menu -->
+        <menuitem id="menu_hr_skill_gap_config" 
+                  name="Configuration" 
+                  parent="menu_hr_skill_gap_root" 
+                  sequence="90"/>
+
+        <!-- Skill Gap Types Menu (under Configuration) -->
+        <menuitem id="menu_hr_skill_gap_config_types" 
+                  name="Skill Gap Types" 
+                  parent="menu_hr_skill_gap_config" 
+                  action="surepay_hr_management.action_hr_skill_type" 
+                  sequence="10"/>
+
+        <!-- Skill Gap Priorities Menu (under Configuration) -->
+        <menuitem id="menu_hr_skill_gap_config_priorities" 
+                  name="Skill Gap Priorities" 
+                  parent="menu_hr_skill_gap_config" 
+                  sequence="20"/>
+
+    </data>
+</odoo>

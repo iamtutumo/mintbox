@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Tree View -->
+        <record id="view_risk_register_tree" model="ir.ui.view">
+            <field name="name">risk.register.tree</field>
+            <field name="model">risk.register</field>
+            <field name="arch" type="xml">
+                <tree string="Risk Register" decoration-info="status=='draft'" 
+                      decoration-warning="status=='active'" 
+                      decoration-success="status=='mitigated'"
+                      decoration-muted="status=='closed'">
+                    <field name="name"/>
+                    <field name="identification_date"/>
+                    <field name="days_active"/>
+                    <field name="risk_level"/>
+                    <field name="impact"/>
+                    <field name="likelihood"/>
+                    <field name="risk_score_display" string="Risk Score"/>
+                    <field name="department_id"/>
+                    <field name="owner_id"/>
+                    <field name="assigned_to"/>
+                    <field name="escalate_to_head"/>
+                    <field name="status"/>
+                    <field name="create_date"/>
+                    <field name="created_by"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Form View -->
+        <record id="view_risk_register_form" model="ir.ui.view">
+            <field name="name">risk.register.form</field>
+            <field name="model">risk.register</field>
+            <field name="arch" type="xml">
+                <form string="Risk Register">
+                    <header>
+                        <button name="action_set_active" string="Set Active" type="object" 
+                                class="btn-primary" invisible="status != 'draft'"/>
+                        <button name="action_set_mitigated" string="Set Mitigated" type="object" 
+                                class="btn-warning" invisible="status != 'active'"/>
+                        <button name="action_set_closed" string="Set Closed" type="object" 
+                                class="btn-success" invisible="status not in ['active', 'mitigated']"/>
+                        <button name="action_save_and_return_to_dashboard" string="Save &amp; Return to Dashboard" type="object" 
+                                class="btn-info"/>
+                        <button name="action_save_and_create_new" string="Save &amp; Create New" type="object" 
+                                class="btn-secondary"/>
+                        <field name="status" widget="statusbar" statusbar_visible="draft,active,mitigated"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_export_pdf" string="Export PDF" type="object" 
+                                    class="oe_stat_button" icon="fa-file-pdf-o"/>
+                            <button name="action_export_excel" string="Export Excel" type="object" 
+                                    class="oe_stat_button" icon="fa-file-excel-o"/>
+                            <button name="action_export_csv" string="Export CSV" type="object" 
+                                    class="oe_stat_button" icon="fa-file-text-o"/>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Risk Title..."/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="identification_date"/>
+                                <field name="days_active" readonly="1"/>
+                                <label for="risk_level"/>
+                                <div class="oe_inline">
+                                    <field name="risk_level" widget="selection" class="oe_inline" nolabel="1"/>
+                                    <span class="ml8 text-muted small">- Low: Minimal impact, Medium: Moderate impact, High: Significant impact, Critical: Severe impact</span>
+                                </div>
+                                <label for="impact"/>
+                                <div class="oe_inline">
+                                    <field name="impact" widget="selection" class="oe_inline" nolabel="1"/>
+                                    <span class="ml8 text-muted small">- Low: Minor effect, Medium: Moderate effect, High: Major effect</span>
+                                </div>
+                                <label for="likelihood"/>
+                                <div class="oe_inline">
+                                    <field name="likelihood" widget="selection" class="oe_inline" nolabel="1"/>
+                                    <span class="ml8 text-muted small">- Rare: Unlikely to occur, Possible: Might occur, Likely: Probably will occur, Almost Certain: Very likely to occur</span>
+                                </div>
+                                <label for="risk_score"/>
+                                <div class="oe_inline">
+                                    <field name="risk_score" readonly="1" class="oe_inline" nolabel="1"/>
+                                    <span class="ml8 text-muted small">- Score: Impact × Likelihood (1-12)</span>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="department_id"/>
+                                <field name="owner_id"/>
+                                <field name="assigned_to"/>
+                                <field name="escalate_to_head"/>
+                                <field name="created_by" readonly="1"/>
+                                <field name="create_date" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Description">
+                                <field name="description" placeholder="Describe the risk in detail..."/>
+                            </page>
+                            <page string="Mitigation Plan">
+                                <field name="mitigation_plan" placeholder="Describe the mitigation plan..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Kanban View -->
+        <record id="view_risk_register_kanban" model="ir.ui.view">
+            <field name="name">risk.register.kanban</field>
+            <field name="model">risk.register</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="name"/>
+                    <field name="identification_date"/>
+                    <field name="days_active"/>
+                    <field name="risk_level"/>
+                    <field name="impact"/>
+                    <field name="likelihood"/>
+                    <field name="status"/>
+                    <field name="department_id"/>
+                    <field name="owner_id"/>
+                    <field name="assigned_to"/>
+                    <field name="escalate_to_head"/>
+                    <field name="risk_score_display"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card oe_kanban_global_click">
+                                <div class="oe_kanban_content">
+                                    <div class="oe_kanban_title">
+                                        <strong>
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+                                    <div class="oe_kanban_subtitle">
+                                        <field name="department_id"/> - <field name="owner_id"/>
+                                    </div>
+                                    <div class="oe_kanban_subtitle">
+                                        <small>Identified: <field name="identification_date"/></small>
+                                        <br/><small>Days Active: <field name="days_active"/></small>
+                                        <t t-if="record.assigned_to.value">
+                                            <br/><small>Assigned to: <field name="assigned_to"/></small>
+                                        </t>
+                                        <t t-if="record.escalate_to_head.value">
+                                            <br/><small class="text-danger">⚠️ Escalated to Head</small>
+                                        </t>
+                                    </div>
+                                    <div class="oe_kanban_details">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <span class="badge badge-pill" 
+                                                      t-att-class="{
+                                                          'low': 'badge-success',
+                                                          'medium': 'badge-warning',
+                                                          'high': 'badge-danger',
+                                                          'critical': 'badge-dark'
+                                                      }[record.risk_level.value]">
+                                                    <field name="risk_level"/>
+                                                </span>
+                                            </div>
+                                            <div class="col-6">
+                                                <span class="badge badge-pill" 
+                                                      t-att-class="{
+                                                          'draft': 'badge-secondary',
+                                                          'active': 'badge-primary',
+                                                          'mitigated': 'badge-warning',
+                                                          'closed': 'badge-success'
+                                                      }[record.status.value]">
+                                                    <field name="status"/>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col-12">
+                                                <small>Impact: <field name="impact"/></small><br/>
+                                                <small>Likelihood: <field name="likelihood"/></small><br/>
+                                                <small>Score: <field name="risk_score_display"/></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        
+        <!-- Search View -->
+        <record id="view_risk_register_search" model="ir.ui.view">
+            <field name="name">risk.register.search</field>
+            <field name="model">risk.register</field>
+            <field name="arch" type="xml">
+                <search string="Risk Register">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="identification_date"/>
+                    <field name="risk_level"/>
+                    <field name="impact"/>
+                    <field name="likelihood"/>
+                    <field name="status"/>
+                    <field name="department_id"/>
+                    <field name="owner_id"/>
+                    <field name="assigned_to"/>
+                    <field name="created_by"/>
+                    <field name="days_active"/>
+                    <separator/>
+                    <filter name="draft" string="Draft" domain="[('status', '=', 'draft')]"/>
+                    <filter name="active" string="Active" domain="[('status', '=', 'active')]"/>
+                    <filter name="mitigated" string="Mitigated" domain="[('status', '=', 'mitigated')]"/>
+                    <filter name="closed" string="Closed" domain="[('status', '=', 'closed')]"/>
+                    <separator/>
+                    <filter name="low_risk" string="Low Risk" domain="[('risk_level', '=', 'low')]"/>
+                    <filter name="medium_risk" string="Medium Risk" domain="[('risk_level', '=', 'medium')]"/>
+                    <filter name="high_risk" string="High Risk" domain="[('risk_level', '=', 'high')]"/>
+                    <filter name="critical_risk" string="Critical Risk" domain="[('risk_level', '=', 'critical')]"/>
+                    <separator/>
+                    <filter name="my_department" string="My Department" 
+                            domain="['|', ('department_id', '=', False), ('owner_id', '=', uid)]"/>
+                    <filter name="my_risks" string="My Risks" domain="[('owner_id', '=', uid)]"/>
+                    <filter name="assigned_to_me" string="Assigned to Me" 
+                            domain="[('assigned_to', '=', uid)]"/>
+                    <filter name="escalated" string="Escalated to Head" 
+                            domain="[('escalate_to_head', '=', True)]"/>
+                    <filter name="overdue" string="Overdue (30+ days)" 
+                            domain="[('days_active', '>=', 30)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                        <filter name="group_risk_level" string="Risk Level" context="{'group_by': 'risk_level'}"/>
+                        <filter name="group_impact" string="Impact" context="{'group_by': 'impact'}"/>
+                        <filter name="group_likelihood" string="Likelihood" context="{'group_by': 'likelihood'}"/>
+                        <filter name="group_department" string="Department" context="{'group_by': 'department_id'}"/>
+                        <filter name="group_owner" string="Owner" context="{'group_by': 'owner_id'}"/>
+                        <filter name="group_assigned_to" string="Assigned To" context="{'group_by': 'assigned_to'}"/>
+                        <filter name="group_created_by" string="Created By" context="{'group_by': 'created_by'}"/>
+                        <filter name="group_identification_date" string="Identification Date" context="{'group_by': 'identification_date'}"/>
+                        <filter name="group_create_date" string="Create Date" context="{'group_by': 'create_date'}"/>
+                        <filter name="group_days_active" string="Days Active" context="{'group_by': 'days_active'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Action -->
+        <record id="action_risk_register" model="ir.actions.act_window">
+            <field name="name">Risk Register</field>
+            <field name="res_model">risk.register</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="context">{'search_default_my_department': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first risk!
+                </p>
+                <p>
+                    Use the risk register to identify, assess, and manage risks within your organization.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

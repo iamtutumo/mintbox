@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Main HR Menu Extension - Now under Employees menu -->
+        <menuitem id="menu_surepay_hr_root" name="SurePay HR Management" parent="hr.menu_hr_root" sequence="60" groups="hr.group_hr_manager"/>
+        
+        <!-- Skills Management Menu -->
+        <menuitem id="menu_skills_management" name="Skills Management" parent="menu_surepay_hr_root" sequence="10"/>
+        
+        <menuitem id="menu_skills" name="Skills" parent="menu_skills_management" action="action_hr_skill" sequence="10"/>
+        <menuitem id="menu_skill_levels" name="Skill Levels" parent="menu_skills_management" action="action_hr_skill_level" sequence="15"/>
+        <menuitem id="menu_skill_categories" name="Skill Categories" parent="menu_skills_management" action="action_hr_skill_type" sequence="20"/>
+        <menuitem id="menu_employee_skills" name="Employee Skills" parent="menu_skills_management" action="action_hr_employee_skill" sequence="30"/>
+        <menuitem id="menu_skill_gap_report" name="Skill Gap Report" parent="menu_skills_management" action="action_hr_skill_gap_report" sequence="40"/>
+        
+        <!-- Disciplinary Actions Menu -->
+        <menuitem id="menu_disciplinary_actions" name="Disciplinary Actions" parent="menu_surepay_hr_root" sequence="20"/>
+        
+        <menuitem id="menu_disciplinary_action_list" name="Disciplinary Actions" parent="menu_disciplinary_actions" action="action_hr_disciplinary_action" sequence="10"/>
+        <menuitem id="menu_disciplinary_action_by_employee" name="By Employee" parent="menu_disciplinary_actions" action="action_hr_disciplinary_action_by_employee" sequence="20"/>
+        
+        <!-- Contract Management Menu -->
+        <menuitem id="menu_contract_management" name="Contract Management" parent="menu_surepay_hr_root" sequence="30"/>
+        
+        <menuitem id="menu_expiring_contracts" name="Expiring Contracts" parent="menu_contract_management" action="action_hr_contract_expiring" sequence="10"/>
+        
+        <!-- Analytics & Reporting Menu -->
+        <menuitem id="menu_analytics_reporting" name="Analytics &amp; Reporting" parent="menu_surepay_hr_root" sequence="40"/>
+        
+        <menuitem id="menu_employee_analytics" name="Employee Analytics" parent="menu_analytics_reporting" action="action_hr_employee_analytics" sequence="10"/>
+        <menuitem id="menu_employee_status_report" name="Employee Status Report" parent="menu_analytics_reporting" action="action_hr_employee_status_report" sequence="20"/>
+        <menuitem id="menu_dashboard_widgets" name="Dashboard Widgets" parent="menu_analytics_reporting" action="action_hr_dashboard_widget" sequence="30"/>
+        
+        <!-- Employee Self-Service Menu - Now under Employees menu -->
+        <menuitem id="menu_employee_self_service" name="Employee Self-Service" parent="hr.menu_hr_root" sequence="90" groups="base.group_user"/>
+        
+        <menuitem id="menu_my_skills" name="My Skills" parent="menu_employee_self_service" action="action_hr_employee_skill" sequence="10"/>
+        <menuitem id="menu_my_disciplinary_actions" name="My Disciplinary Actions" parent="menu_employee_self_service" action="action_hr_disciplinary_action" sequence="20"/>
+        
+        <!-- Configuration Menu -->
+        <menuitem id="menu_surepay_hr_config" name="SurePay HR Configuration" parent="hr.menu_human_resources_configuration" sequence="90" groups="hr.group_hr_manager"/>
+        
+        <menuitem id="menu_skill_config" name="Skills Configuration" parent="menu_surepay_hr_config" sequence="10"/>
+        <menuitem id="menu_skill_config_skills" name="Skills" parent="menu_skill_config" action="action_hr_skill" sequence="10"/>
+        <menuitem id="menu_skill_config_levels" name="Skill Levels" parent="menu_skill_config" action="action_hr_skill_level" sequence="15"/>
+        <menuitem id="menu_skill_config_categories" name="Skill Categories" parent="menu_skill_config" action="action_hr_skill_type" sequence="20"/>
+        
+        <menuitem id="menu_disciplinary_config" name="Disciplinary Configuration" parent="menu_surepay_hr_config" sequence="20"/>
+        <menuitem id="menu_disciplinary_config_actions" name="Disciplinary Actions" parent="menu_disciplinary_config" action="action_hr_disciplinary_action" sequence="10"/>
+        
+        <menuitem id="menu_analytics_config" name="Analytics Configuration" parent="menu_surepay_hr_config" sequence="30"/>
+        <menuitem id="menu_analytics_config_widgets" name="Dashboard Widgets" parent="menu_analytics_config" action="action_hr_dashboard_widget" sequence="10"/>
+        
+        <!-- HR Officer Menu (Extended) -->
+        <menuitem id="menu_hr_officer_extended" name="Extended HR" parent="hr.menu_hr_root" sequence="80" groups="hr.group_hr_user"/>
+        
+        <menuitem id="menu_hr_officer_skills" name="Skills" parent="menu_hr_officer_extended" sequence="10"/>
+        <menuitem id="menu_hr_officer_employee_skills" name="Employee Skills" parent="menu_hr_officer_skills" action="action_hr_employee_skill" sequence="10"/>
+        <menuitem id="menu_hr_officer_skill_gaps" name="Skill Gaps" parent="menu_hr_officer_skills" action="action_hr_skill_gap_report" sequence="20"/>
+        
+        <menuitem id="menu_hr_officer_disciplinary" name="Disciplinary Actions" parent="menu_hr_officer_extended" sequence="20"/>
+        <menuitem id="menu_hr_officer_disciplinary_actions" name="Disciplinary Actions" parent="menu_hr_officer_disciplinary" action="action_hr_disciplinary_action" sequence="10"/>
+        
+        <menuitem id="menu_hr_officer_contracts" name="Contracts" parent="menu_hr_officer_extended" sequence="30"/>
+        <menuitem id="menu_hr_officer_expiring_contracts" name="Expiring Contracts" parent="menu_hr_officer_contracts" action="action_hr_contract_expiring" sequence="10"/>
+        
+        <menuitem id="menu_hr_officer_analytics" name="Analytics" parent="menu_hr_officer_extended" sequence="40"/>
+        <menuitem id="menu_hr_officer_employee_analytics" name="Employee Analytics" parent="menu_hr_officer_analytics" action="action_hr_employee_analytics" sequence="10"/>
+        <menuitem id="menu_hr_officer_status_report" name="Status Report" parent="menu_hr_officer_analytics" action="action_hr_employee_status_report" sequence="20"/>
+        
+    </data>
+</odoo>

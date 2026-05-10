@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Medical Insurance Report Pivot View -->
+        <record id="medical_insurance_report_view_pivot" model="ir.ui.view">
+            <field name="name">medical.insurance.report.pivot</field>
+            <field name="model">medical.insurance.claim</field>
+            <field name="arch" type="xml">
+                <pivot string="Medical Insurance Analysis">
+                    <field name="claim_date" type="row"/>
+                    <field name="employee_id" type="row"/>
+                    <field name="claim_type" type="col"/>
+                    <field name="total_amount" type="measure"/>
+                    <field name="approved_amount" type="measure"/>
+                    <field name="employee_share" type="measure"/>
+                    <field name="insurance_share" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Medical Insurance Report Graph View -->
+        <record id="medical_insurance_report_view_graph" model="ir.ui.view">
+            <field name="name">medical.insurance.report.graph</field>
+            <field name="model">medical.insurance.claim</field>
+            <field name="arch" type="xml">
+                <graph string="Medical Insurance Analysis">
+                    <field name="claim_date" type="row"/>
+                    <field name="claim_type" type="col"/>
+                    <field name="total_amount" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Medical Insurance Report Tree View -->
+        <record id="medical_insurance_report_view_tree" model="ir.ui.view">
+            <field name="name">medical.insurance.report.tree</field>
+            <field name="model">medical.insurance.claim</field>
+            <field name="arch" type="xml">
+                <tree string="Medical Insurance Report" create="false" edit="false">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="insurance_plan_id"/>
+                    <field name="claim_date"/>
+                    <field name="claim_type"/>
+                    <field name="total_amount"/>
+                    <field name="approved_amount"/>
+                    <field name="employee_share"/>
+                    <field name="insurance_share"/>
+                    <field name="claim_status"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Medical Insurance Report Search View -->
+        <record id="medical_insurance_report_view_search" model="ir.ui.view">
+            <field name="name">medical.insurance.report.search</field>
+            <field name="model">medical.insurance.claim</field>
+            <field name="arch" type="xml">
+                <search string="Medical Insurance Report">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="insurance_plan_id"/>
+                    <field name="claim_type"/>
+                    <field name="claim_date"/>
+                    <field name="claim_status"/>
+                    <separator/>
+                    <filter name="this_month" string="This Month" domain="[('claim_date', '>=', (context_today().strftime('%Y-%m-01')))]"/>
+                    <filter name="last_month" string="Last Month" domain="[('claim_date', '>=', (context_today() - relativedelta(months=1)).strftime('%Y-%m-01')), ('claim_date', '&lt;', context_today().strftime('%Y-%m-01'))]"/>
+                    <filter name="this_year" string="This Year" domain="[('claim_date', '>=', (context_today().strftime('%Y-01-01')))]"/>
+                    <filter name="approved_only" string="Approved Only" domain="[('claim_status', '=', 'approved')]"/>
+                    <filter name="processed_only" string="Processed Only" domain="[('claim_status', '=', 'processed')]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_plan" string="Insurance Plan" context="{'group_by': 'insurance_plan_id'}"/>
+                        <filter name="group_type" string="Claim Type" context="{'group_by': 'claim_type'}"/>
+                        <filter name="group_status" string="Status" context="{'group_by': 'claim_status'}"/>
+                        <filter name="group_month" string="Month" context="{'group_by': 'claim_date:month'}"/>
+                        <filter name="group_year" string="Year" context="{'group_by': 'claim_date:year'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Medical Insurance Report Action -->
+        <record id="action_medical_insurance_report" model="ir.actions.act_window">
+            <field name="name">Medical Insurance Analysis</field>
+            <field name="res_model">medical.insurance.claim</field>
+            <field name="view_mode">pivot,graph,tree</field>
+            <field name="context">{'search_default_approved_only': 1, 'search_default_this_month': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Medical Insurance Reports
+                </p>
+                <p>
+                    Analyze medical insurance claims, costs, and trends. 
+                    Use pivot and graph views to understand claim patterns, 
+                    costs by employee, and insurance utilization.
+                </p>
+            </field>
+        </record>
+
+        <!-- Medical Insurance Summary Report Action -->
+        <record id="action_medical_insurance_summary_report" model="ir.actions.act_window">
+            <field name="name">Medical Insurance Summary</field>
+            <field name="res_model">medical.insurance.plan</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Medical Insurance Summary
+                </p>
+                <p>
+                    View summary of medical insurance plans, employee enrollment, 
+                    and contribution amounts. Track plan utilization and costs.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Items -->
+        <menuitem id="menu_medical_insurance_report" 
+                  name="Reports" 
+                  parent="menu_medical_insurance_root" 
+                  sequence="30"/>
+        
+        <menuitem id="menu_medical_insurance_analysis" 
+                  name="Claims Analysis" 
+                  parent="menu_medical_insurance_report" 
+                  action="action_medical_insurance_report" 
+                  sequence="10"/>
+        
+        <menuitem id="menu_medical_insurance_summary" 
+                  name="Plan Summary" 
+                  parent="menu_medical_insurance_report" 
+                  action="action_medical_insurance_summary_report" 
+                  sequence="20"/>
+
+    </data>
+</odoo>

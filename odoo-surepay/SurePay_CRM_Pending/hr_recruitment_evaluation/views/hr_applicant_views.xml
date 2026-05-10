@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Inherit Applicant Form to Add Evaluation Features -->
+    <record id="view_applicant_form_evaluation" model="ir.ui.view">
+        <field name="name">hr.applicant.form.evaluation</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_applicant_tracking_random.view_applicant_form_tracking"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Evaluation Smart Button -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_evaluations" type="object" class="oe_stat_button" icon="fa-star">
+                    <field name="evaluation_count" widget="statinfo" string="Evaluations"/>
+                </button>
+            </xpath>
+            
+            <!-- Add Average Score Field -->
+            <xpath expr="//sheet/group" position="after">
+                <group string="Evaluation Summary" name="evaluation_summary" invisible="evaluation_count == 0">
+                    <field name="average_score" widget="progressbar"/>
+                    <field name="evaluation_summary" nolabel="1"/>
+                </group>
+            </xpath>
+            
+            <!-- Add Evaluate Button in Header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_create_evaluation" 
+                        string="Evaluate" 
+                        type="object" 
+                        class="btn-primary"
+                        icon="fa-star"/>
+            </xpath>
+            
+            <!-- Add Evaluations Page -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Evaluations" name="evaluations" invisible="evaluation_count == 0">
+                    <field name="evaluation_ids" nolabel="1">
+                        <tree>
+                            <field name="evaluation_date"/>
+                            <field name="reviewer_id"/>
+                            <field name="reviewer_role"/>
+                            <field name="overall_score" widget="progressbar"/>
+                            <field name="recommendation"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+            
+        </field>
+    </record>
+
+</odoo>

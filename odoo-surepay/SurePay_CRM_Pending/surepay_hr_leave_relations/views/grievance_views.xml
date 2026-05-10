@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Grievance Form View -->
+        <record id="view_hr_grievance_form" model="ir.ui.view">
+            <field name="name">hr.grievance.form</field>
+            <field name="model">hr.grievance</field>
+            <field name="arch" type="xml">
+                <form string="Grievance">
+                    <header>
+                        <button name="action_submit" string="Submit" type="object" 
+                                class="btn-primary" invisible="status != 'draft'"/>
+                        <button name="action_assign" string="Assign &amp; Start Review" type="object" 
+                                class="btn-primary" invisible="status != 'submitted'"/>
+                        <button name="action_resolve" string="Resolve" type="object" 
+                                class="btn-success" invisible="status not in ['under_review', 'escalated']"/>
+                        <button name="action_escalate" string="Escalate" type="object" 
+                                class="btn-warning" invisible="status != 'under_review'"/>
+                        <button name="action_close" string="Close" type="object" 
+                                class="btn-secondary" invisible="status != 'resolved'"/>
+                        <button name="action_reject" string="Reject" type="object" 
+                                class="btn-danger" invisible="status not in ['submitted', 'under_review']"/>
+                        <button name="action_reset_draft" string="Reset to Draft" type="object" 
+                                class="btn-secondary" invisible="status != 'rejected'"/>
+                        <field name="status" widget="statusbar" statusbar_visible="draft,submitted,under_review,resolved"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_disciplinary_actions" class="oe_stat_button" icon="fa-gavel" type="object">
+                                <field string="Disciplinary Actions" name="disciplinary_action_count" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="title"/>
+                            </h1>
+                            <h2>
+                                <field name="employee_id"/>
+                            </h2>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="grievance_type"/>
+                                <field name="priority"/>
+                                <field name="submission_date"/>
+                                <field name="days_open"/>
+                                <field name="department_id" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="assigned_to"/>
+                                <field name="expected_resolution_date"/>
+                                <field name="escalation_date"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="description" placeholder="Describe the grievance in detail..."/>
+                        </group>
+                        <group invisible="status in ['draft', 'submitted']">
+                            <field name="resolution_notes" placeholder="Enter resolution notes..."/>
+                        </group>
+                        <notebook>
+                            <page string="Related Disciplinary Actions">
+                                <field name="disciplinary_action_ids">
+                                    <tree>
+                                        <field name="employee_id"/>
+                                        <field name="action_type"/>
+                                        <field name="date"/>
+                                        <field name="title"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Attachments">
+                                <field name="attachment_ids" widget="many2many_binary"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Grievance Tree View -->
+        <record id="view_hr_grievance_tree" model="ir.ui.view">
+            <field name="name">hr.grievance.tree</field>
+            <field name="model">hr.grievance</field>
+            <field name="arch" type="xml">
+                <tree string="Grievances" decoration-info="status=='draft'" 
+                      decoration-warning="status=='submitted'" decoration-success="status=='resolved'" 
+                      decoration-danger="status in ['escalated', 'rejected']">
+                    <field name="employee_id"/>
+                    <field name="title"/>
+                    <field name="grievance_type"/>
+                    <field name="priority"/>
+                    <field name="submission_date"/>
+                    <field name="assigned_to"/>
+                    <field name="status"/>
+                    <field name="days_open"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Grievance Kanban View -->
+        <record id="view_hr_grievance_kanban" model="ir.ui.view">
+            <field name="name">hr.grievance.kanban</field>
+            <field name="model">hr.grievance</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="state">
+                    <field name="status"/>
+                    <field name="employee_id"/>
+                    <field name="title"/>
+                    <field name="grievance_type"/>
+                    <field name="priority"/>
+                    <field name="submission_date"/>
+                    <field name="assigned_to"/>
+                    <field name="days_open"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="oe_kanban_content">
+                                    <div class="oe_kanban_details">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="title"/>
+                                        </strong>
+                                        <div class="o_kanban_tags_section">
+                                            <span class="badge badge-pill badge-info">
+                                                <field name="status"/>
+                                            </span>
+                                            <span t-if="priority == 'urgent'" class="badge badge-pill badge-danger">
+                                                <i class="fa fa-exclamation-triangle"/> Urgent
+                                            </span>
+                                            <span t-if="priority == 'high'" class="badge badge-pill badge-warning">
+                                                <i class="fa fa-arrow-up"/> High
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <i class="fa fa-user"/> <field name="employee_id"/>
+                                        </div>
+                                        <div>
+                                            <i class="fa fa-tag"/> <field name="grievance_type"/>
+                                        </div>
+                                        <div t-if="assigned_to">
+                                            <i class="fa fa-user-circle"/> Assigned: <field name="assigned_to"/>
+                                        </div>
+                                        <div>
+                                            <i class="fa fa-calendar"/> <field name="submission_date"/>
+                                        </div>
+                                        <div t-if="days_open > 0">
+                                            <span class="badge badge-pill badge-secondary">
+                                                <i class="fa fa-clock-o"/> <field name="days_open"/> days
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        
+        <!-- Grievance Search View -->
+        <record id="view_hr_grievance_search" model="ir.ui.view">
+            <field name="name">hr.grievance.search</field>
+            <field name="model">hr.grievance</field>
+            <field name="arch" type="xml">
+                <search string="Grievances">
+                    <field name="employee_id"/>
+                    <field name="title"/>
+                    <field name="grievance_type"/>
+                    <field name="assigned_to"/>
+                    <field name="status"/>
+                    <separator/>
+                    <filter name="draft" string="Draft" domain="[('status', '=', 'draft')]"/>
+                    <filter name="submitted" string="Submitted" domain="[('status', '=', 'submitted')]"/>
+                    <filter name="under_review" string="Under Review" domain="[('status', '=', 'under_review')]"/>
+                    <filter name="resolved" string="Resolved" domain="[('status', '=', 'resolved')]"/>
+                    <filter name="escalated" string="Escalated" domain="[('status', '=', 'escalated')]"/>
+                    <filter name="rejected" string="Rejected" domain="[('status', '=', 'rejected')]"/>
+                    <separator/>
+                    <filter name="priority_urgent" string="Urgent Priority" domain="[('priority', '=', 'urgent')]"/>
+                    <filter name="priority_high" string="High Priority" domain="[('priority', '=', 'high')]"/>
+                    <filter name="priority_medium" string="Medium Priority" domain="[('priority', '=', 'medium')]"/>
+                    <filter name="priority_low" string="Low Priority" domain="[('priority', '=', 'low')]"/>
+                    <separator/>
+                    <filter name="overdue" string="Overdue" domain="[('expected_resolution_date', '&lt;', current_date), ('status', 'not in', ['resolved', 'closed'])]"/>
+                    <filter name="my_grievances" string="My Grievances" domain="[('assigned_to.user_id', '=', uid)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                        <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_type" string="Grievance Type" context="{'group_by': 'grievance_type'}"/>
+                        <filter name="group_priority" string="Priority" context="{'group_by': 'priority'}"/>
+                        <filter name="group_assigned" string="Assigned To" context="{'group_by': 'assigned_to'}"/>
+                        <filter name="group_submission_date" string="Submission Date" context="{'group_by': 'submission_date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Grievance Action -->
+        <record id="action_hr_grievance" model="ir.actions.act_window">
+            <field name="name">Grievances</field>
+            <field name="res_model">hr.grievance</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="context">{'search_default_draft': 1, 'search_default_submitted': 1, 'search_default_under_review': 1, 'search_default_escalated': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first grievance
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

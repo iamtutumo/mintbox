@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Exit Clearance Form View -->
+        <record id="view_hr_exit_clearance_form" model="ir.ui.view">
+            <field name="name">hr.exit.clearance.form</field>
+            <field name="model">hr.exit.clearance</field>
+            <field name="arch" type="xml">
+                <form string="Exit Clearance">
+                    <header>
+                        <button name="action_submit" string="Submit" type="object" 
+                                class="btn-primary" invisible="state != 'draft'"/>
+                        <button name="action_start_clearance" string="Start Clearance" type="object" 
+                                class="btn-primary" invisible="state != 'submitted'"/>
+                        <button name="action_generate_clearance_form" string="Generate Clearance Form" type="object" 
+                                class="btn-primary" invisible="clearance_form_generated == True"/>
+                        <button name="action_approve" string="Approve" type="object" 
+                                class="btn-success" invisible="state != 'in_progress'"/>
+                        <button name="action_reject" string="Reject" type="object" 
+                                class="btn-danger" invisible="state not in ['submitted', 'in_progress']"/>
+                        <button name="action_cancel" string="Cancel" type="object" 
+                                class="btn-secondary" invisible="state in ['draft', 'cancelled']"/>
+                        <button name="action_reset_draft" string="Reset to Draft" type="object" 
+                                class="btn-secondary" invisible="state != 'rejected'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted,in_progress,cleared"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="employee_id"/>
+                            </h1>
+                            <h2>
+                                <field name="state" readonly="1"/>
+                            </h2>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="request_date"/>
+                                <field name="last_working_day"/>
+                                <field name="clearance_form_generated"/>
+                                <field name="all_cleared"/>
+                            </group>
+                            <group>
+                                <field name="exit_reason"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Clearance Lines">
+                                <field name="clearance_line_ids">
+                                    <tree editable="bottom">
+                                        <field name="sequence"/>
+                                        <field name="department"/>
+                                        <field name="department_name"/>
+                                        <field name="status"/>
+                                        <field name="cleared_by"/>
+                                        <field name="clearance_date"/>
+                                        <field name="notes"/>
+                                        <button name="action_clear" string="Clear" type="object" 
+                                                class="btn-success" invisible="status == 'cleared'"/>
+                                        <button name="action_reject" string="Reject" type="object" 
+                                                class="btn-danger" invisible="status in ['cleared', 'rejected']"/>
+                                        <button name="action_reset_pending" string="Reset" type="object" 
+                                                class="btn-secondary" invisible="status == 'pending'"/>
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <group>
+                                                <field name="department"/>
+                                                <field name="department_name"/>
+                                                <field name="status"/>
+                                                <field name="cleared_by"/>
+                                                <field name="clearance_date"/>
+                                            </group>
+                                            <group>
+                                                <field name="notes"/>
+                                            </group>
+                                        </group>
+                                        <group>
+                                            <field name="attachment_ids" widget="many2many_binary"/>
+                                        </group>
+                                        <footer>
+                                            <button name="action_clear" string="Clear" type="object" 
+                                                    class="btn-success" invisible="status == 'cleared'"/>
+                                            <button name="action_reject" string="Reject" type="object" 
+                                                    class="btn-danger" invisible="status in ['cleared', 'rejected']"/>
+                                            <button name="action_reset_pending" string="Reset" type="object" 
+                                                    class="btn-secondary" invisible="status == 'pending'"/>
+                                        </footer>
+                                    </form>
+                                </field>
+                            </page>
+                            <page string="Clearance Form">
+                                <field name="clearance_form_attachment_id" filename="clearance_form_filename"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Exit Clearance Tree View -->
+        <record id="view_hr_exit_clearance_tree" model="ir.ui.view">
+            <field name="name">hr.exit.clearance.tree</field>
+            <field name="model">hr.exit.clearance</field>
+            <field name="arch" type="xml">
+                <tree string="Exit Clearances" decoration-info="state=='draft'" 
+                      decoration-warning="state=='submitted'" decoration-success="state=='cleared'" 
+                      decoration-danger="state=='rejected'">
+                    <field name="employee_id"/>
+                    <field name="request_date"/>
+                    <field name="last_working_day"/>
+                    <field name="state"/>
+                    <field name="all_cleared"/>
+                    <field name="clearance_form_generated"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Exit Clearance Kanban View -->
+        <record id="view_hr_exit_clearance_kanban" model="ir.ui.view">
+            <field name="name">hr.exit.clearance.kanban</field>
+            <field name="model">hr.exit.clearance</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="state">
+                    <field name="state"/>
+                    <field name="employee_id"/>
+                    <field name="request_date"/>
+                    <field name="last_working_day"/>
+                    <field name="all_cleared"/>
+                    <field name="clearance_form_generated"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="oe_kanban_content">
+                                    <div class="oe_kanban_details">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="employee_id"/>
+                                        </strong>
+                                        <div class="o_kanban_tags_section">
+                                            <span class="badge badge-pill badge-info">
+                                                <field name="state"/>
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <i class="fa fa-calendar"/> Request: <field name="request_date"/>
+                                        </div>
+                                        <div>
+                                            <i class="fa fa-calendar-check-o"/> Last Day: <field name="last_working_day"/>
+                                        </div>
+                                        <div t-if="all_cleared">
+                                            <span class="badge badge-pill badge-success">
+                                                <i class="fa fa-check"/> All Cleared
+                                            </span>
+                                        </div>
+                                        <div t-if="clearance_form_generated">
+                                            <span class="badge badge-pill badge-primary">
+                                                <i class="fa fa-file-pdf"/> Form Generated
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        
+        <!-- Exit Clearance Search View -->
+        <record id="view_hr_exit_clearance_search" model="ir.ui.view">
+            <field name="name">hr.exit.clearance.search</field>
+            <field name="model">hr.exit.clearance</field>
+            <field name="arch" type="xml">
+                <search string="Exit Clearances">
+                    <field name="employee_id"/>
+                    <field name="state"/>
+                    <separator/>
+                    <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                    <filter name="submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
+                    <filter name="in_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>
+                    <filter name="cleared" string="Cleared" domain="[('state', '=', 'cleared')]"/>
+                    <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
+                    <separator/>
+                    <filter name="all_cleared" string="All Cleared" domain="[('all_cleared', '=', True)]"/>
+                    <filter name="form_generated" string="Form Generated" domain="[('clearance_form_generated', '=', True)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                        <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_request_date" string="Request Date" context="{'group_by': 'request_date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Exit Clearance Action -->
+        <record id="action_hr_exit_clearance" model="ir.actions.act_window">
+            <field name="name">Exit Clearances</field>
+            <field name="res_model">hr.exit.clearance</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="context">{'search_default_draft': 1, 'search_default_submitted': 1, 'search_default_in_progress': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first exit clearance request
+                </p>
+            </field>
+        </record>
+        
+        <!-- Exit Clearance Line Action -->
+        <record id="action_hr_exit_clearance_line" model="ir.actions.act_window">
+            <field name="name">Exit Clearance Lines</field>
+            <field name="res_model">hr.exit.clearance.line</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_pending': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first exit clearance line
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

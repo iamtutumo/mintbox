@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Dashboard Action -->
+    <record id="action_recruitment_dashboard" model="ir.actions.act_window">
+        <field name="name">Recruitment Dashboard</field>
+        <field name="res_model">hr.recruitment.report</field>
+        <field name="view_mode">graph,pivot,tree</field>
+        <field name="context">{'search_default_this_month': 1}</field>
+    </record>
+
+    <!-- Graph View -->
+    <record id="view_recruitment_report_graph" model="ir.ui.view">
+        <field name="name">hr.recruitment.report.graph</field>
+        <field name="model">hr.recruitment.report</field>
+        <field name="arch" type="xml">
+            <graph string="Recruitment Analysis" type="bar" stacked="True">
+                <field name="create_date" interval="month"/>
+                <field name="applicant_count" type="measure"/>
+                <field name="hired_count" type="measure"/>
+                <field name="rejected_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Pivot View -->
+    <record id="view_recruitment_report_pivot" model="ir.ui.view">
+        <field name="name">hr.recruitment.report.pivot</field>
+        <field name="model">hr.recruitment.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Recruitment Analysis">
+                <field name="job_id" type="row"/>
+                <field name="create_date" interval="month" type="col"/>
+                <field name="applicant_count" type="measure"/>
+                <field name="hired_count" type="measure"/>
+                <field name="conversion_rate" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_recruitment_report_search" model="ir.ui.view">
+        <field name="name">hr.recruitment.report.search</field>
+        <field name="model">hr.recruitment.report</field>
+        <field name="arch" type="xml">
+            <search string="Recruitment Analysis">
+                <field name="job_id"/>
+                <field name="department_id"/>
+                <filter string="This Month" name="this_month" domain="[('create_date','&gt;=', (context_today() - relativedelta(months=1)).strftime('%Y-%m-01'))]"/>
+                <filter string="This Year" name="this_year" domain="[('create_date','&gt;=', time.strftime('%Y-01-01'))]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Job" name="group_job" context="{'group_by':'job_id'}"/>
+                    <filter string="Department" name="group_department" context="{'group_by':'department_id'}"/>
+                    <filter string="Stage" name="group_stage" context="{'group_by':'stage_id'}"/>
+                    <filter string="Month" name="group_month" context="{'group_by':'create_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_recruitment_dashboard"
+              name="Dashboard"
+              parent="hr_recruitment.menu_hr_recruitment_root"
+              action="action_recruitment_dashboard"
+              sequence="1"/>
+
+</odoo>

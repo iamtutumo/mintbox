@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Uganda Payroll Summary Report -->
+    <template id="report_uganda_payroll_summary_document">
+        <!-- Include payroll assets for proper print styling -->
+        <t t-call="surepay_payroll.payroll_report_assets"/>
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page avoid-page-break">
+                        
+                        <!-- Professional Header -->
+                        <div class="text-center mb-4">
+                            <h2 class="mb-2">UGANDA PAYROLL SUMMARY REPORT</h2>
+                            <h4 class="text-muted mb-0" t-field="company.name"/>
+                            <div class="text-muted small">
+                                Period: <span t-esc="docs[0].date_from"/> to <span t-esc="docs[0].date_to"/>
+                            </div>
+                        </div>
+                        
+                        <!-- Report Summary Statistics -->
+                        <div class="row mb-4">
+                            <div class="col-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body text-center">
+                                        <h5 class="mb-2">Total Employees</h5>
+                                        <h2 class="mb-0" t-esc="len(docs.mapped('employee_id'))"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body text-center">
+                                        <h5 class="mb-2">Total Gross Pay</h5>
+                                        <h2 class="mb-0">
+                                            <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.category_id.code in ['BASIC', 'ALW']).mapped('total'))" 
+                                                  t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                        </h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body text-center">
+                                        <h5 class="mb-2">Total PAYE Tax</h5>
+                                        <h2 class="mb-0">
+                                            <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code == 'PAYE').mapped('total'))" 
+                                                  t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                        </h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body text-center">
+                                        <h5 class="mb-2">Total Net Pay</h5>
+                                        <h2 class="mb-0">
+                                            <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.category_id.code == 'NET').mapped('total'))" 
+                                                  t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                        </h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- NSSF Contributions Summary -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0">NSSF CONTRIBUTIONS SUMMARY</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered table-striped">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th width="60%">Contribution Type</th>
+                                                <th width="25%" class="text-right">Amount (UGX)</th>
+                                                <th width="15%" class="text-right">Percentage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Employee Contributions (5%)</td>
+                                                <td class="text-right">
+                                                    <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code == 'NSSF_EMP').mapped('total'))" 
+                                                          t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                                </td>
+                                                <td class="text-right">5%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Employer Contributions (10%)</td>
+                                                <td class="text-right">
+                                                    <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code == 'NSSF_EMPL').mapped('total'))" 
+                                                          t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                                </td>
+                                                <td class="text-right">10%</td>
+                                            </tr>
+                                            <tr class="bg-light font-weight-bold">
+                                                <td>Total NSSF Contributions</td>
+                                                <td class="text-right">
+                                                    <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code in ['NSSF_EMP', 'NSSF_EMPL']).mapped('total'))" 
+                                                          t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                                </td>
+                                                <td class="text-right">15%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- PAYE Tax Summary by Employee -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="mb-0">PAYE TAX SUMMARY BY EMPLOYEE</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered table-striped">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th width="25%">Employee Name</th>
+                                                <th width="15%">NSSF Number</th>
+                                                <th width="15%">TIN Number</th>
+                                                <th width="15%" class="text-right">Gross Pay</th>
+                                                <th width="15%" class="text-right">Taxable Income</th>
+                                                <th width="10%" class="text-right">PAYE Tax</th>
+                                                <th width="5%" class="text-right">LST</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-if="docs">
+                                                <t t-foreach="docs.sorted('employee_id.name')" t-as="payslip">
+                                                    <tr>
+                                                        <td t-field="payslip.employee_id.name"/>
+                                                        <td t-field="payslip.employee_id.nssf_number"/>
+                                                        <td t-field="payslip.employee_id.tin_number"/>
+                                                        <td class="text-right">
+                                                            <span t-esc="sum(payslip.line_ids.filtered(lambda l: l.category_id.code in ['BASIC', 'ALW']).mapped('total'))" 
+                                                                  t-options='{"widget": "monetary", "display_currency": payslip.company_id.currency_id}'/>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <span t-esc="sum(payslip.line_ids.filtered(lambda l: l.category_id.code in ['BASIC', 'ALW']).mapped('total')) - sum(payslip.line_ids.filtered(lambda l: l.code == 'NSSF_EMP').mapped('total'))" 
+                                                                  t-options='{"widget": "monetary", "display_currency": payslip.company_id.currency_id}'/>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <span t-esc="sum(payslip.line_ids.filtered(lambda l: l.code == 'PAYE').mapped('total'))" 
+                                                                  t-options='{"widget": "monetary", "display_currency": payslip.company_id.currency_id}'/>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <span t-esc="sum(payslip.line_ids.filtered(lambda l: l.code == 'LST').mapped('total'))" 
+                                                                  t-options='{"widget": "monetary", "display_currency": payslip.company_id.currency_id}'/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                            <t t-if="not docs">
+                                                <tr>
+                                                    <td colspan="7" class="text-center text-muted">No payslip data available</td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                        <tfoot class="bg-light font-weight-bold">
+                                            <tr>
+                                                <td colspan="3">TOTALS</td>
+                                                <td class="text-right">
+                                                    <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.category_id.code in ['BASIC', 'ALW']).mapped('total'))" 
+                                                          t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.category_id.code in ['BASIC', 'ALW']).mapped('total')) - sum(docs.mapped('line_ids').filtered(lambda l: l.code == 'NSSF_EMP').mapped('total'))" 
+                                                          t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code == 'PAYE').mapped('total'))" 
+                                                          t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code == 'LST').mapped('total'))" 
+                                                          t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Local Service Tax Summary by Location -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-secondary text-white">
+                                <h5 class="mb-0">LOCAL SERVICE TAX SUMMARY</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered table-striped">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th width="30%">Employee Name</th>
+                                                <th width="25%">Department</th>
+                                                <th width="25%">Location</th>
+                                                <th width="20%" class="text-right">LST Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-if="docs">
+                                                <t t-foreach="docs.sorted('employee_id.name')" t-as="payslip">
+                                                    <tr>
+                                                        <td t-field="payslip.employee_id.name"/>
+                                                        <td t-field="payslip.employee_id.department_id.name"/>
+                                                        <td t-field="payslip.employee_id.work_location"/>
+                                                        <td class="text-right">
+                                                            <span t-esc="sum(payslip.line_ids.filtered(lambda l: l.code == 'LST').mapped('total'))" 
+                                                                  t-options='{"widget": "monetary", "display_currency": payslip.company_id.currency_id}'/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                            <t t-if="not docs">
+                                                <tr>
+                                                    <td colspan="4" class="text-center text-muted">No LST data available</td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                        <tfoot class="bg-light font-weight-bold">
+                                            <tr>
+                                                <td colspan="3">TOTAL LST</td>
+                                                <td class="text-right">
+                                                    <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code == 'LST').mapped('total'))" 
+                                                          t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Other Deductions Summary -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-warning text-dark">
+                                <h5 class="mb-0">OTHER DEDUCTIONS SUMMARY</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered table-striped">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th width="30%">Employee Name</th>
+                                                <th width="20%" class="text-right">Salary Advance</th>
+                                                <th width="20%" class="text-right">Loan Deduction</th>
+                                                <th width="15%" class="text-right">Other Deductions</th>
+                                                <th width="15%" class="text-right">Total Deductions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-if="docs">
+                                                <t t-foreach="docs.sorted('employee_id.name')" t-as="payslip">
+                                                    <tr>
+                                                        <td t-field="payslip.employee_id.name"/>
+                                                        <td class="text-right">
+                                                            <span t-esc="sum(payslip.line_ids.filtered(lambda l: l.code == 'ADVANCE').mapped('total'))" 
+                                                                  t-options='{"widget": "monetary", "display_currency": payslip.company_id.currency_id}'/>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <span t-esc="sum(payslip.line_ids.filtered(lambda l: l.code == 'LOAN').mapped('total'))" 
+                                                                  t-options='{"widget": "monetary", "display_currency": payslip.company_id.currency_id}'/>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <span t-esc="sum(payslip.line_ids.filtered(lambda l: l.code == 'OTHER_DED').mapped('total'))" 
+                                                                  t-options='{"widget": "monetary", "display_currency": payslip.company_id.currency_id}'/>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <span t-esc="sum(payslip.line_ids.filtered(lambda l: l.code in ['ADVANCE', 'LOAN', 'OTHER_DED']).mapped('total'))" 
+                                                                  t-options='{"widget": "monetary", "display_currency": payslip.company_id.currency_id}'/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                            <t t-if="not docs">
+                                                <tr>
+                                                    <td colspan="5" class="text-center text-muted">No deduction data available</td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                        <tfoot class="bg-light font-weight-bold">
+                                            <tr>
+                                                <td>TOTALS</td>
+                                                <td class="text-right">
+                                                    <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code == 'ADVANCE').mapped('total'))" 
+                                                          t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code == 'LOAN').mapped('total'))" 
+                                                          t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code == 'OTHER_DED').mapped('total'))" 
+                                                          t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code in ['ADVANCE', 'LOAN', 'OTHER_DED']).mapped('total'))" 
+                                                          t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Compliance Information -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="mb-0">COMPLIANCE INFORMATION</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="alert alert-info mb-3">
+                                            <h5 class="mb-2">URA Tax Compliance</h5>
+                                            <p class="mb-1"><strong>Total PAYE Payable:</strong> 
+                                                <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code == 'PAYE').mapped('total'))" 
+                                                      t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                            </p>
+                                            <p class="mb-1"><strong>Due Date:</strong> 15th of following month</p>
+                                            <p class="mb-0"><strong>Filing Method:</strong> Electronic filing via URA portal</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="alert alert-success mb-3">
+                                            <h5 class="mb-2">NSSF Compliance</h5>
+                                            <p class="mb-1"><strong>Total Employee Contributions:</strong> 
+                                                <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code == 'NSSF_EMP').mapped('total'))" 
+                                                      t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                            </p>
+                                            <p class="mb-1"><strong>Total Employer Contributions:</strong> 
+                                                <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code == 'NSSF_EMPL').mapped('total'))" 
+                                                      t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                            </p>
+                                            <p class="mb-1"><strong>Total NSSF Contributions:</strong> 
+                                                <span t-esc="sum(docs.mapped('line_ids').filtered(lambda l: l.code in ['NSSF_EMP', 'NSSF_EMPL']).mapped('total'))" 
+                                                      t-options='{"widget": "monetary", "display_currency": docs[0].company_id.currency_id}'/>
+                                            </p>
+                                            <p class="mb-0"><strong>Due Date:</strong> 15th of following month</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Report Footer -->
+                        <div class="text-center mt-4 text-muted small">
+                            <p>This is a computer-generated Uganda payroll summary report.</p>
+                            <p>Generated on <span t-esc="datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/></p>
+                            <p>Total Employees: <span t-esc="len(docs.mapped('employee_id'))"/> | 
+                               Total Payslips: <span t-esc="len(docs)"/></p>
+                        </div>
+                        
+                    </div>
+                </t>
+            </t>
+        </template>
+
+</odoo>

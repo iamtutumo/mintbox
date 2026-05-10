@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Payslip Form View - Add Fines Tab -->
+        <record id="hr_payslip_view_form_inherit_fines" model="ir.ui.view">
+            <field name="name">hr.payslip.form.inherit.fines</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+            <field name="inherit_id" ref="surepay_payroll.hr_payslip_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[1]" position="after">
+                    <page name="fines" string="Fines">
+                        <field name="total_fines" invisible="1"/>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" type="object" 
+                                    icon="fa-money" 
+                                    name="action_view_fines"
+                                    invisible="total_fines == 0">
+                                <field name="total_fines" widget="statinfo" string="Total Fines"/>
+                            </button>
+                        </div>
+                        <field name="fine_ids">
+                            <tree decoration-success="state=='deducted'" decoration-danger="state=='cancelled'">
+                                <field name="date"/>
+                                <field name="fine_rule_id"/>
+                                <field name="description"/>
+                                <field name="amount" sum="Total Amount"/>
+                                <field name="state"/>
+                                <field name="disciplinary_action_id"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Payslip Tree View - Add Total Fines Column -->
+        <record id="hr_payslip_view_tree_inherit_fines" model="ir.ui.view">
+            <field name="name">hr.payslip.tree.inherit.fines</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+            <field name="inherit_id" ref="surepay_payroll.hr_payslip_view_tree"/>
+            <field name="arch" type="xml">
+                <field name="state" position="after">
+                    <field name="total_fines" sum="Total Fines"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

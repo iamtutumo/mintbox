@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--    Data file for Contribution Register-->
+        <record id="BASIC" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Basic</field>
+            <field name="code">BASIC</field>
+        </record>
+        <record id="ALW" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Allowance</field>
+            <field name="code">ALW</field>
+        </record>
+        <record id="GROSS" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Gross</field>
+            <field name="code">GROSS</field>
+        </record>
+        <record id="DED" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Deduction</field>
+            <field name="code">DED</field>
+        </record>
+        <record id="NET" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Net</field>
+            <field name="code">NET</field>
+        </record>
+        <record id="COMP" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Company Contribution</field>
+            <field name="code">COMP</field>
+        </record>
+        <record id="HRA" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">House Rent Allowance</field>
+            <field name="code">HRA</field>
+        </record>
+         <record id="DA" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Dearness Allowance</field>
+            <field name="code">DA</field>
+        </record>
+         <record id="Travel" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Travel Allowance</field>
+            <field name="code">Travel</field>
+        </record>
+         <record id="Meal" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Meal Allowance</field>
+            <field name="code">Meal</field>
+        </record>
+        <record id="Medical" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Medical Allowance</field>
+            <field name="code">Medical</field>
+        </record>
+        <record id="Other" model="surepay_payroll.hr.salary.rule.category">
+            <field name="name">Other Allowance</field>
+            <field name="code">Other</field>
+        </record>
+        <record id="hr_rule_basic" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Basic Salary</field>
+            <field name="sequence" eval="1"/>
+            <field name="code">BASIC</field>
+            <field name="category_id" ref="surepay_payroll.BASIC"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute"><![CDATA[
+result = contract.wage
+            ]]></field>
+        </record>
+        <record id="hr_rule_taxable" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Gross</field>
+            <field name="sequence" eval="100"/>
+            <field name="code">GROSS</field>
+            <field name="category_id" ref="surepay_payroll.GROSS"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute"><![CDATA[
+result = categories.BASIC + categories.ALW
+            ]]></field>
+        </record>
+        <record id="hr_rule_net" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Net Salary</field>
+            <field name="sequence" eval="200"/>
+            <field name="code">NET</field>
+            <field name="category_id" ref="surepay_payroll.NET"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute"><![CDATA[
+result = categories.BASIC + categories.ALW + categories.DED
+            ]]></field>
+        </record>
+        <record id="hr_rule_hra" model="surepay_payroll.hr.salary.rule">
+            <field name="name">House Rent Allowance</field>
+            <field name="sequence" eval="1"/>
+            <field name="code">HRA</field>
+            <field name="category_id" ref="surepay_payroll.HRA"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute"><![CDATA[
+result = contract.hra
+            ]]></field>
+        </record>
+        <record id="hr_rule_da" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Dearness Allowance</field>
+            <field name="sequence" eval="1"/>
+            <field name="code">DA</field>
+            <field name="category_id" ref="surepay_payroll.DA"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute"><![CDATA[
+result = contract.da
+            ]]></field>
+        </record>
+        <record id="hr_rule_travel" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Travel Allowance</field>
+            <field name="sequence" eval="1"/>
+            <field name="code">Travel</field>
+            <field name="category_id" ref="surepay_payroll.Travel"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute"><![CDATA[
+result = contract.travel_allowance
+            ]]></field>
+        </record>
+        <record id="hr_rule_meal" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Meal Allowance</field>
+            <field name="sequence" eval="1"/>
+            <field name="code">Meal</field>
+            <field name="category_id" ref="surepay_payroll.Meal"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute"><![CDATA[
+result = contract.meal_allowance
+            ]]></field>
+        </record>
+        <record id="hr_rule_medical" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Medical Allowance</field>
+            <field name="sequence" eval="1"/>
+            <field name="code">Medical</field>
+            <field name="category_id" ref="surepay_payroll.Medical"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute"><![CDATA[
+result = contract.medical_allowance
+            ]]></field>
+        </record>
+        <record id="hr_rule_other" model="surepay_payroll.hr.salary.rule">
+            <field name="name">Other Allowance</field>
+            <field name="sequence" eval="1"/>
+            <field name="code">Other</field>
+            <field name="category_id" ref="surepay_payroll.Other"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute"><![CDATA[
+result = contract.other_allowance
+            ]]></field>
+        </record>
+        <!-- Salary Structure -->
+         <record id="structure_base" model="surepay_payroll.hr.payroll.structure">
+            <field name="code">BASE</field>
+            <field name="name">Base for new structures</field>
+            <field eval="[(6, 0, [ref('hr_rule_basic'), ref('hr_rule_taxable'),ref('hr_rule_net')])]" name="rule_ids"/>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <!-- Decimal Precision - Commented out to avoid duplicate with standard Odoo payroll -->
+        <!-- <record forcecreate="True" id="decimal_payroll" model="decimal.precision">
+            <field name="name">Payroll</field>
+            <field name="digits">2</field>
+        </record> -->
+        <!-- <record forcecreate="True" id="decimal_payroll_rate" model="decimal.precision">
+            <field name="name">Payroll Rate</field>
+            <field name="digits">4</field>
+        </record> -->
+    </data>
+</odoo>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Inherit Applicant Form -->
+    <record id="view_applicant_form_onboarding" model="ir.ui.view">
+        <field name="name">hr.applicant.form.onboarding</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_applicant_tracking_random.view_applicant_form_tracking"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Onboarding Button -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_onboarding" type="object" class="oe_stat_button" icon="fa-rocket" invisible="not onboarding_id">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Onboarding</span>
+                        <span class="o_stat_value"><field name="onboarding_status"/></span>
+                    </div>
+                </button>
+            </xpath>
+            
+            <!-- Add Employee Field -->
+            <xpath expr="//sheet/group" position="after">
+                <group string="Employee Information" invisible="not employee_id">
+                    <field name="employee_id"/>
+                </group>
+            </xpath>
+            
+        </field>
+    </record>
+
+</odoo>

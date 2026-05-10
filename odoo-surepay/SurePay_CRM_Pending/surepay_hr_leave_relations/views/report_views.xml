@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Exit Clearance Pivot View -->
+        <record id="view_hr_exit_clearance_pivot" model="ir.ui.view">
+            <field name="name">hr.exit.clearance.pivot</field>
+            <field name="model">hr.exit.clearance</field>
+            <field name="arch" type="xml">
+                <pivot string="Exit Clearance Analysis">
+                    <field name="employee_id" type="row"/>
+                    <field name="state" type="col"/>
+                    <field name="request_date" type="measure" interval="month"/>
+                    <field name="last_working_day" type="measure" interval="month"/>
+                </pivot>
+            </field>
+        </record>
+        
+        <!-- Exit Clearance Graph View -->
+        <record id="view_hr_exit_clearance_graph" model="ir.ui.view">
+            <field name="name">hr.exit.clearance.graph</field>
+            <field name="model">hr.exit.clearance</field>
+            <field name="arch" type="xml">
+                <graph string="Exit Clearance Analysis" type="bar">
+                    <field name="request_date" type="measure" interval="month"/>
+                    <field name="state" type="col"/>
+                </graph>
+            </field>
+        </record>
+        
+        <!-- Exit Clearance Analysis Action -->
+        <record id="action_hr_exit_clearance_analysis" model="ir.actions.act_window">
+            <field name="name">Exit Clearance Analysis</field>
+            <field name="res_model">hr.exit.clearance</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Analyze exit clearance data
+                </p>
+            </field>
+        </record>
+        
+        <!-- Grievance Pivot View -->
+        <record id="view_hr_grievance_pivot" model="ir.ui.view">
+            <field name="name">hr.grievance.pivot</field>
+            <field name="model">hr.grievance</field>
+            <field name="arch" type="xml">
+                <pivot string="Grievance Analysis">
+                    <field name="employee_id" type="row"/>
+                    <field name="grievance_type" type="col"/>
+                    <field name="priority" type="col"/>
+                    <field name="status" type="col"/>
+                    <field name="submission_date" type="measure" interval="month"/>
+                    <field name="days_open" type="measure" avg="1"/>
+                </pivot>
+            </field>
+        </record>
+        
+        <!-- Grievance Graph View -->
+        <record id="view_hr_grievance_graph" model="ir.ui.view">
+            <field name="name">hr.grievance.graph</field>
+            <field name="model">hr.grievance</field>
+            <field name="arch" type="xml">
+                <graph string="Grievance Analysis" type="bar">
+                    <field name="submission_date" type="measure" interval="month"/>
+                    <field name="grievance_type" type="col"/>
+                    <field name="priority" type="col"/>
+                </graph>
+            </field>
+        </record>
+        
+        <!-- Grievance Analysis Action -->
+        <record id="action_hr_grievance_analysis" model="ir.actions.act_window">
+            <field name="name">Grievance Analysis</field>
+            <field name="res_model">hr.grievance</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Analyze grievance data
+                </p>
+            </field>
+        </record>
+        
+        <!-- Leave Balance Reports - Commented out due to missing hr.leave.balance.report model -->
+        <!-- 
+        <record id="view_hr_leave_balance_pivot" model="ir.ui.view">
+            <field name="name">hr.leave.balance.report.pivot</field>
+            <field name="model">hr.leave.balance.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Leave Balance Analysis">
+                    <field name="employee_id" type="row"/>
+                    <field name="leave_type" type="col"/>
+                    <field name="allocation_year" type="col"/>
+                    <field name="allocated_days" type="measure" sum="1"/>
+                    <field name="taken_days" type="measure" sum="1"/>
+                    <field name="remaining_days" type="measure" sum="1"/>
+                </pivot>
+            </field>
+        </record>
+        
+        <record id="view_hr_leave_balance_graph" model="ir.ui.view">
+            <field name="name">hr.leave.balance.report.graph</field>
+            <field name="model">hr.leave.balance.report</field>
+            <field name="arch" type="xml">
+                <graph string="Leave Balance Analysis" type="bar">
+                    <field name="leave_type" type="col"/>
+                    <field name="allocated_days" type="measure"/>
+                    <field name="taken_days" type="measure"/>
+                    <field name="remaining_days" type="measure"/>
+                </graph>
+            </field>
+        </record>
+        
+        <record id="action_hr_leave_balance_analysis" model="ir.actions.act_window">
+            <field name="name">Leave Balance Analysis</field>
+            <field name="res_model">hr.leave.balance.report</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Analyze leave balance data
+                </p>
+            </field>
+        </record>
+        -->
+        
+        <!-- Reports Menu -->
+        <menuitem id="menu_hr_reports" name="Reports" parent="menu_hr_root" sequence="80"/>
+        
+        <!-- Exit Clearance Reports Menu -->
+        <menuitem id="menu_hr_exit_clearance_reports" name="Exit Clearance Reports" parent="menu_hr_reports" sequence="10" action="action_hr_exit_clearance_analysis"/>
+        
+        <!-- Grievance Reports Menu -->
+        <menuitem id="menu_hr_grievance_reports" name="Grievance Reports" parent="menu_hr_reports" sequence="20" action="action_hr_grievance_analysis"/>
+        
+        <!-- Leave Balance Reports Menu - Commented out due to missing action -->
+        <!-- <menuitem id="menu_hr_leave_balance_reports" name="Leave Balance Reports" parent="menu_hr_reports" sequence="30" action="action_hr_leave_balance_analysis"/> -->
+        
+    </data>
+</odoo>

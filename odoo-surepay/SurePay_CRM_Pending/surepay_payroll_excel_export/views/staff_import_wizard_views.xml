@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Staff Import Wizard Form View -->
+        <record id="view_staff_import_wizard_form" model="ir.ui.view">
+            <field name="name">staff.import.wizard.form</field>
+            <field name="model">staff.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Import Staff Data">
+                    <header>
+                        <button name="action_validate_file" string="Validate File" type="object" class="btn-secondary" invisible="preview_data != False"/>
+                        <field name="has_errors" invisible="1"/>
+                        <field name="error_count" invisible="1"/>
+                        <field name="warning_count" invisible="1"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="import_file" filename="import_filename"/>
+                                <field name="import_filename" invisible="1"/>
+                                <field name="template_id"/>
+                                <field name="company_id"/>
+                            </group>
+                            <group>
+                                <field name="batch_name"/>
+                                <field name="payroll_period_start"/>
+                                <field name="payroll_period_end"/>
+                            </group>
+                        </group>
+                        
+                        <group>
+                            <field name="description"/>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Import Options">
+                                <group>
+                                    <field name="send_payslips_email"/>
+                                    <field name="email_template_id" invisible="send_payslips_email == False"/>
+                                </group>
+                                <group>
+                                    <field name="validate_only"/>
+                                    <field name="skip_validation"/>
+                                    <field name="update_existing_payslips"/>
+                                </group>
+                            </page>
+                            
+                            <page string="Validation Results" invisible="preview_data == False">
+                                <group>
+                                    <group>
+                                        <field name="error_count"/>
+                                        <field name="warning_count"/>
+                                    </group>
+                                </group>
+                                <field name="preview_data" widget="text"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <footer>
+                        <button name="action_import_data" string="Import Data" type="object" class="btn-primary" invisible="preview_data == False"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- Staff Import Wizard Action -->
+        <record id="action_staff_import_wizard" model="ir.actions.act_window">
+            <field name="name">Import Staff Data</field>
+            <field name="res_model">staff.import.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+
+    </data>
+</odoo>

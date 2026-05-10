@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Email Template for Risk Status Change -->
+        <record id="email_template_status_change" model="mail.template">
+            <field name="name">Risk Status Change Notification</field>
+            <field name="model_id" ref="model_risk_register"/>
+            <field name="subject">Risk Status Update: ${object.name}</field>
+            <field name="email_to">${object.owner_id.email}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.owner_id.lang}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.owner_id.name},</p>
+                    <p>The status of risk <strong>${object.name}</strong> has been updated.</p>
+                    
+                    <table style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Risk Title:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Department:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.department_id.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Risk Level:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.risk_level}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Previous Status:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${ctx.get('old_status', 'N/A')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">New Status:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.status}</td>
+                        </tr>
+                    </table>
+                    
+                    <p>You can view the risk details by clicking on the following link:</p>
+                    <p>
+                        <a href="${object.get_base_url()}/web#id=${object.id}&amp;model=risk.register" 
+                           style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
+                            View Risk Details
+                        </a>
+                    </p>
+                    
+                    <p>Best regards,<br/>
+                    ${user.name}<br/>
+                    ${user.company_id.name}</p>
+                </div>
+            </field>
+        </record>
+        
+        <!-- Email Template for New Risk Assignment -->
+        <record id="email_template_new_risk" model="mail.template">
+            <field name="name">New Risk Assignment Notification</field>
+            <field name="model_id" ref="model_risk_register"/>
+            <field name="subject">New Risk Assigned: ${object.name}</field>
+            <field name="email_to">${object.owner_id.email}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.owner_id.lang}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.owner_id.name},</p>
+                    <p>A new risk has been assigned to you.</p>
+                    
+                    <table style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Risk Title:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Department:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.department_id.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Risk Level:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.risk_level}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Impact:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.impact}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Likelihood:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.likelihood}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Created By:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.created_by.name}</td>
+                        </tr>
+                    </table>
+                    
+                    % if object.description:
+                    <p><strong>Description:</strong></p>
+                    <p>${object.description}</p>
+                    % endif
+                    
+                    <p>You can view and manage this risk by clicking on the following link:</p>
+                    <p>
+                        <a href="${object.get_base_url()}/web#id=${object.id}&amp;model=risk.register" 
+                           style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
+                            View Risk Details
+                        </a>
+                    </p>
+                    
+                    <p>Best regards,<br/>
+                    ${user.name}<br/>
+                    ${user.company_id.name}</p>
+                </div>
+            </field>
+        </record>
+        
+        <!-- Email Template for Overdue Risk Notification -->
+        <record id="email_template_overdue_risk" model="mail.template">
+            <field name="name">Overdue Risk Notification</field>
+            <field name="model_id" ref="model_risk_register"/>
+            <field name="subject">URGENT: Overdue Risk - ${object.name} (${object.days_active} days active)</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.owner_id.lang or 'en_US'}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.owner_id.name},</p>
+                    <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; border-radius: 4px; margin: 20px 0;">
+                        <p style="color: #721c24; margin: 0; font-weight: bold;">⚠️ URGENT: Risk Overdue Alert</p>
+                    </div>
+                    <p>The following risk has been active for <strong>${object.days_active} days</strong> and requires your immediate attention.</p>
+                    
+                    <table style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Risk Title:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Department:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.department_id.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Risk Level:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.risk_level}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Date Identified:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.identification_date}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Days Active:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; color: #dc3545; font-weight: bold;">${object.days_active} days</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Current Status:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.status}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Assigned To:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${object.assigned_to.name or 'Not assigned'}</td>
+                        </tr>
+                    </table>
+                    
+                    % if object.description:
+                    <p><strong>Description:</strong></p>
+                    <p>${object.description}</p>
+                    % endif
+                    
+                    % if object.mitigation_plan:
+                    <p><strong>Mitigation Plan:</strong></p>
+                    <p>${object.mitigation_plan}</p>
+                    % endif
+                    
+                    <div style="background-color: #e2e3e5; border: 1px solid #d6d8db; padding: 15px; border-radius: 4px; margin: 20px 0;">
+                        <p style="margin: 0; font-weight: bold;">📋 Required Actions:</p>
+                        <ul style="margin: 10px 0;">
+                            <li>Review the risk details and current status</li>
+                            <li>Update the mitigation plan if necessary</li>
+                            <li>Change the risk status to 'Mitigated' or 'Closed' if resolved</li>
+                            <li>Escalate to department head if additional support is needed</li>
+                        </ul>
+                    </div>
+                    
+                    <p>Please take immediate action to address this overdue risk. You can view and update the risk details by clicking on the following link:</p>
+                    <p>
+                        <a href="${object.get_base_url()}/web#id=${object.id}&amp;model=risk.register" 
+                           style="background-color: #dc3545; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">
+                            View &amp; Update Risk Details
+                        </a>
+                    </p>
+                    
+                    <p>If you have any questions or need assistance, please contact your department head or the risk management team.</p>
+                    
+                    <p>Best regards,<br/>
+                    Risk Management System<br/>
+                    ${user.company_id.name}</p>
+                </div>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

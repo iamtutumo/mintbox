@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Template 1: Application Received Confirmation -->
+    <record id="email_application_received" model="mail.template">
+        <field name="name">Recruitment: Application Received</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject"><![CDATA[Application Received - <t t-esc="object.job_id.name or 'Position'" /> at SurePay Ltd]]></field>
+        <field name="email_from" expression="(object.company_id.email or user.email_formatted)"/>
+        <field name="email_to" expression="object.email_from"/>
+        <field name="body_html"><![CDATA[<div style="margin: 0; padding: 15px; font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="/hr_recruitment_application_extended/static/src/img/logo.svg" alt="SurePay Logo" style="max-height: 60px; width: auto;"/>
+            </div>
+            <p>Dear <t t-esc="object.partner_id and object.partner_id.name or object.partner_name or 'Applicant'" />,</p>
+            
+            <p>Thank you for applying for the <strong t-esc="object.job_id.name or 'the position'" /> at <t t-esc="object.company_id.name or 'SurePay Ltd'" />.</p>
+            
+            <p>We have successfully received your application and it is currently being reviewed by our recruitment team.</p>
+            
+            <div style="background-color: #f8f9fa; border-left: 4px solid #007bff; padding: 12px; margin: 16px 0;">
+                <p style="margin: 0 0 8px 0; font-weight: bold;">Your Application Details:</p>
+                <p style="margin: 4px 0;">
+                    <strong>Position:</strong> <t t-esc="object.job_id.name or 'N/A'" /><br/>
+                    <strong>Department:</strong> <t t-esc="object.department_id.name or 'N/A'" /><br/>
+                    <t t-if="object.create_date">
+                        <strong>Application Date:</strong> <t t-esc="format_datetime(object.create_date, tz=user.tz, dt_format='long')" /><br/>
+                    </t>
+                    <t t-else="">
+                        <strong>Application Date:</strong> N/A<br/>
+                    </t>
+                    <strong>Tracking ID:</strong> <t t-esc="object.tracking_id or 'N/A'" />
+                </p>
+            </div>
+            
+            <p>You can track the status of your application at any time using your tracking ID:</p>
+            <div style="margin: 16px 0; text-align: center;">
+                <div style="margin: 20px 0; text-align: center;">
+                    <a t-attf-href="{{object.get_base_url() or 'https://surepayltd.com'}}/jobs/status?tracking_id={{object.tracking_id or ''}}"
+                       style="background-color: #1a365d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block; font-size: 16px;">
+                        Check Application Status
+                    </a>
+                </div>
+                <p style="margin: 10px 0; font-size: 14px; color: #6c757d;">
+                    Or copy and paste this link into your browser:<br/>
+                    <span style="word-break: break-all;"><t t-esc="object.get_base_url() or 'https://surepayltd.com'" />/jobs/status?tracking_id=<t t-esc="object.tracking_id or ''" /></span>
+                </p>
+            </div>
+            
+            <p><strong>What happens next?</strong></p>
+            <ul>
+                <li>Our team will review your application</li>
+                <li>We will contact shortlisted candidates for the next steps</li>
+                <li>You will receive updates via email as your application progresses</li>
+            </ul>
+            
+            <p>If you have any questions, please don't hesitate to contact our HR department.</p>
+            
+            <p>Best regards,<br/>
+            <strong><t t-esc="object.company_id and object.company_id.name or 'SurePay Ltd'" /> HR Team</strong></p>
+            
+            <div style="margin-top: 32px; font-size: 12px; color: #6c757d; border-top: 1px solid #dee2e6; padding-top: 16px; text-align: center;">
+                <p style="margin: 0 0 8px 0;">This is an automated message. Please do not reply to this email.</p>
+                <p style="margin: 0;">© 2025 <t t-esc="object.company_id and object.company_id.name or 'SurePay Ltd'" />. All rights reserved.</p>
+            </div>
+        </div>]]>
+        </field>
+    </record>
+</odoo>

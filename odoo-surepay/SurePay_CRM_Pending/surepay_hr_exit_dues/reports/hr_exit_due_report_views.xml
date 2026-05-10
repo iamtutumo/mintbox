@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Exit Due Report Action -->
+        <record id="action_hr_exit_due_report" model="ir.actions.act_window">
+            <field name="name">Exit Dues Report</field>
+            <field name="res_model">hr.exit.due</field>
+            <field name="view_mode">pivot,graph,tree</field>
+            <field name="context">{'search_default_pending': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No exit dues data available
+                </p>
+                <p>
+                    This report shows exit dues by department and type.
+                </p>
+            </field>
+        </record>
+
+        <!-- Exit Due Report Pivot View -->
+        <record id="hr_exit_due_view_pivot" model="ir.ui.view">
+            <field name="name">hr.exit.due.pivot</field>
+            <field name="model">hr.exit.due</field>
+            <field name="arch" type="xml">
+                <pivot string="Exit Dues Analysis">
+                    <field name="department_id" type="row"/>
+                    <field name="type" type="col"/>
+                    <field name="amount" type="measure"/>
+                    <field name="state" type="col"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Exit Due Report Graph View -->
+        <record id="hr_exit_due_view_graph" model="ir.ui.view">
+            <field name="name">hr.exit.due.graph</field>
+            <field name="model">hr.exit.due</field>
+            <field name="arch" type="xml">
+                <graph string="Exit Dues Analysis">
+                    <field name="department_id"/>
+                    <field name="amount" type="measure"/>
+                    <field name="type"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Menu Item for Reports -->
+        <menuitem id="menu_hr_exit_due_report"
+                  name="Exit Dues Report"
+                  parent="hr.menu_hr_root"
+                  action="action_hr_exit_due_report"
+                  sequence="71"
+                  groups="hr.group_hr_user"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Search View for CRM Stage - Filter out hidden stages -->
+    <record id="view_crm_stage_search_surepay" model="ir.ui.view">
+        <field name="name">crm.stage.search.surepay</field>
+        <field name="model">crm.stage</field>
+        <field name="arch" type="xml">
+            <search string="CRM Stages">
+                <field name="name"/>
+                <separator/>
+                <filter name="active_stages" string="Active Stages" domain="[('fold', '=', False)]"/>
+                <filter name="surepay_stages" string="SurePay Stages" domain="[('name', 'in', ['Cold Lead', 'Prospecting', 'Preparation', 'Closing', 'Won', 'Lost'])]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_fold" string="Folded" context="{'group_by': 'fold'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+
+
+    <!-- Action for CRM Stage with filtered domain -->
+    <record id="action_crm_stage_surepay" model="ir.actions.act_window">
+        <field name="name">CRM Stages</field>
+        <field name="res_model">crm.stage</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_surepay_stages': 1}</field>
+        <field name="domain">[('fold', '=', False)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first stage
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item for CRM Stage -->
+    <menuitem id="menu_crm_stage_surepay" name="Stages" parent="crm.crm_menu_config" action="action_crm_stage_surepay" sequence="5"/>
+
+</odoo>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Staff Import Data Tree View -->
+        <record id="view_staff_import_data_tree" model="ir.ui.view">
+            <field name="name">staff.import.data.tree</field>
+            <field name="model">staff.import.data</field>
+            <field name="arch" type="xml">
+                <tree string="Staff Import Data" decoration-success="validation_status=='valid'" decoration-warning="validation_status=='warning'" decoration-danger="validation_status=='error'" decoration-muted="is_processed==True">
+                    <field name="import_batch_id"/>
+                    <field name="employee_code"/>
+                    <field name="employee_name"/>
+                    <field name="department"/>
+                    <field name="position"/>
+                    <field name="current_basic_salary"/>
+                    <field name="new_basic_salary"/>
+                    <field name="validation_status"/>
+                    <field name="is_processed"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Staff Import Data Form View -->
+        <record id="view_staff_import_data_form" model="ir.ui.view">
+            <field name="name">staff.import.data.form</field>
+            <field name="model">staff.import.data</field>
+            <field name="arch" type="xml">
+                <form string="Staff Import Data">
+                    <header>
+                        <button name="action_validate_data" string="Validate Data" type="object" class="btn-primary" invisible="validation_status not in ['draft', 'error']"/>
+                        <button name="action_process_data" string="Process Data" type="object" class="btn-primary" invisible="validation_status != 'valid'"/>
+                        <button name="action_process_payroll" string="View Payslip" type="object" class="btn-secondary" invisible="is_processed == False"/>
+                        <field name="validation_status" widget="statusbar" statusbar_visible="draft,valid,warning,error"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="import_batch_id"/>
+                                <field name="employee_id"/>
+                                <field name="employee_code"/>
+                                <field name="employee_name"/>
+                                <field name="department"/>
+                                <field name="position"/>
+                            </group>
+                            <group>
+                                <field name="is_processed"/>
+                                <field name="validation_status"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Current Salary Data">
+                                <group>
+                                    <group>
+                                        <field name="current_basic_salary"/>
+                                        <field name="current_house_allowance"/>
+                                        <field name="current_transport_allowance"/>
+                                        <field name="current_meal_allowance"/>
+                                        <field name="current_other_allowances"/>
+                                    </group>
+                                    <group>
+                                        <field name="current_tax_deduction"/>
+                                        <field name="current_nssf_deduction"/>
+                                        <field name="current_nhif_deduction"/>
+                                        <field name="current_loan_deduction"/>
+                                        <field name="current_fine_deduction"/>
+                                    </group>
+                                </group>
+                            </page>
+                            
+                            <page string="New Salary Data">
+                                <group>
+                                    <group>
+                                        <field name="new_basic_salary"/>
+                                        <field name="new_house_allowance"/>
+                                        <field name="new_transport_allowance"/>
+                                        <field name="new_meal_allowance"/>
+                                        <field name="new_other_allowances"/>
+                                    </group>
+                                    <group>
+                                        <field name="new_fine_deduction"/>
+                                        <field name="new_loan_deduction"/>
+                                        <field name="new_tax_deduction"/>
+                                        <field name="new_nssf_deduction"/>
+                                        <field name="new_nhif_deduction"/>
+                                    </group>
+                                </group>
+                            </page>
+                            
+                            <page string="Additional Information">
+                                <group>
+                                    <group>
+                                        <field name="overtime_hours"/>
+                                        <field name="overtime_rate"/>
+                                        <field name="overtime_amount"/>
+                                    </group>
+                                    <group>
+                                        <field name="bonus_amount"/>
+                                        <field name="commission_amount"/>
+                                        <field name="other_earnings"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group>
+                                        <field name="working_days"/>
+                                        <field name="leave_days"/>
+                                        <field name="sick_days"/>
+                                    </group>
+                                </group>
+                            </page>
+                            
+                            <page string="Validation">
+                                <group>
+                                    <field name="validation_messages" widget="text"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Staff Import Data Search View -->
+        <record id="view_staff_import_data_search" model="ir.ui.view">
+            <field name="name">staff.import.data.search</field>
+            <field name="model">staff.import.data</field>
+            <field name="arch" type="xml">
+                <search string="Staff Import Data">
+                    <field name="employee_code"/>
+                    <field name="employee_name"/>
+                    <field name="department"/>
+                    <field name="import_batch_id"/>
+                    <separator/>
+                    <filter name="draft" string="Draft" domain="[('validation_status', '=', 'draft')]"/>
+                    <filter name="valid" string="Valid" domain="[('validation_status', '=', 'valid')]"/>
+                    <filter name="warning" string="Warning" domain="[('validation_status', '=', 'warning')]"/>
+                    <filter name="error" string="Error" domain="[('validation_status', '=', 'error')]"/>
+                    <filter name="processed" string="Processed" domain="[('is_processed', '=', True)]"/>
+                    <filter name="unprocessed" string="Unprocessed" domain="[('is_processed', '=', False)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_batch" string="Import Batch" context="{'group_by': 'import_batch_id'}"/>
+                        <filter name="group_status" string="Validation Status" context="{'group_by': 'validation_status'}"/>
+                        <filter name="group_department" string="Department" context="{'group_by': 'department'}"/>
+                        <filter name="group_processed" string="Processed" context="{'group_by': 'is_processed'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Staff Import Data Action -->
+        <record id="action_staff_import_data" model="ir.actions.act_window">
+            <field name="name">Staff Import Data</field>
+            <field name="res_model">staff.import.data</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_unprocessed': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No staff import data found
+                </p>
+                <p>
+                    Staff import data contains employee payroll information imported from Excel files.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Exit Due Tree View -->
+        <record id="hr_exit_due_view_tree" model="ir.ui.view">
+            <field name="name">hr.exit.due.tree</field>
+            <field name="model">hr.exit.due</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state=='pending'" decoration-success="state=='settled'" decoration-warning="state=='waived'">
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="date"/>
+                    <field name="type"/>
+                    <field name="description"/>
+                    <field name="amount" sum="Total Amount"/>
+                    <field name="state"/>
+                    <field name="settlement_date"/>
+                    <field name="reference"/>
+                    <button name="action_settle" type="object" 
+                            class="btn btn-sm btn-success" 
+                            icon="fa-check" 
+                            title="Settle"
+                            invisible="state != 'pending'"/>
+                    <button name="action_waive" type="object" 
+                            class="btn btn-sm btn-warning" 
+                            icon="fa-ban" 
+                            title="Waive"
+                            invisible="state != 'pending'"/>
+                    <button name="action_reset_pending" type="object" 
+                            class="btn btn-sm btn-primary" 
+                            icon="fa-undo" 
+                            title="Reset to Pending"
+                            invisible="state == 'pending'"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Exit Due Form View -->
+        <record id="hr_exit_due_view_form" model="ir.ui.view">
+            <field name="name">hr.exit.due.form</field>
+            <field name="model">hr.exit.due</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_settle" type="object" 
+                                class="btn btn-success" 
+                                string="Settle"
+                                invisible="state != 'pending'"/>
+                        <button name="action_waive" type="object" 
+                                class="btn btn-warning" 
+                                string="Waive"
+                                invisible="state != 'pending'"/>
+                        <button name="action_reset_pending" type="object" 
+                                class="btn btn-primary" 
+                                string="Reset to Pending"
+                                invisible="state == 'pending'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="pending,settled"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="department_id"/>
+                                <field name="company_id"/>
+                                <field name="type"/>
+                                <field name="date"/>
+                            </group>
+                            <group>
+                                <field name="amount"/>
+                                <field name="reference"/>
+                                <field name="settlement_date"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                        <group>
+                            <field name="notes"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Exit Due Search View -->
+        <record id="hr_exit_due_view_search" model="ir.ui.view">
+            <field name="name">hr.exit.due.search</field>
+            <field name="model">hr.exit.due</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="employee_id"/>
+                    <field name="description"/>
+                    <field name="reference"/>
+                    <field name="type"/>
+                    <field name="department_id"/>
+                    <separator/>
+                    <filter name="pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                    <filter name="settled" string="Settled" domain="[('state', '=', 'settled')]"/>
+                    <filter name="waived" string="Waived" domain="[('state', '=', 'waived')]"/>
+                    <separator/>
+                    <filter name="salary_balance" string="Salary Balance" domain="[('type', '=', 'salary_balance')]"/>
+                    <filter name="advance" string="Advances" domain="[('type', '=', 'advance')]"/>
+                    <filter name="loan" string="Loans" domain="[('type', '=', 'loan')]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_department" string="Department" context="{'group_by': 'department_id'}"/>
+                        <filter name="group_type" string="Due Type" context="{'group_by': 'type'}"/>
+                        <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                        <filter name="group_date" string="Date" context="{'group_by': 'date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Exit Due Action -->
+        <record id="action_hr_exit_due" model="ir.actions.act_window">
+            <field name="name">Exit Dues</field>
+            <field name="res_model">hr.exit.due</field>
+            <field name="view_mode">tree,form,pivot,graph</field>
+            <field name="context">{'search_default_pending': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No exit dues found
+                </p>
+                <p>
+                    Exit dues will appear here when employees have pending settlements.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Item -->
+        <menuitem id="menu_hr_exit_due"
+                  name="Exit Dues"
+                  parent="hr.menu_hr_root"
+                  action="action_hr_exit_due"
+                  sequence="70"
+                  groups="hr.group_hr_user"/>
+
+    </data>
+</odoo>

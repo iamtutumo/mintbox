@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Loan Tree View -->
+        <record id="view_hr_loan_tree" model="ir.ui.view">
+            <field name="name">hr.loan.tree</field>
+            <field name="model">surepay_payroll.hr.loan</field>
+            <field name="arch" type="xml">
+                <tree string="Employee Loans" decoration-info="status=='draft'" 
+                      decoration-warning="status=='submitted'" 
+                      decoration-success="status in ['approved','active']" 
+                      decoration-muted="status in ['completed','cancelled']"
+                      decoration-danger="status=='rejected'">
+                    <field name="employee_id"/>
+                    <field name="amount_requested"/>
+                    <field name="installment_amount"/>
+                    <field name="total_installments"/>
+                    <field name="installments_paid"/>
+                    <field name="outstanding_balance"/>
+                    <field name="date_requested"/>
+                    <field name="deduction_start_date"/>
+                    <field name="status"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Loan Form View -->
+        <record id="view_hr_loan_form" model="ir.ui.view">
+            <field name="name">hr.loan.form</field>
+            <field name="model">surepay_payroll.hr.loan</field>
+            <field name="priority">99</field>
+            <field name="arch" type="xml">
+                <form string="Employee Loan">
+                    <header>
+                        <!-- Standard Workflow Buttons -->
+                        <button name="action_submit" string="Submit" type="object" 
+                                class="btn-primary" invisible="status != 'draft'">
+                            <i class="fa fa-paper-plane" title="Submit for Approval"/>
+                        </button>
+                        <button name="action_approve" string="Approve" type="object" 
+                                class="btn-success"
+                                groups="surepay_payroll.group_surepay_payroll_user"
+                                invisible="status != 'submitted'">
+                            <i class="fa fa-check" title="Approve"/>
+                        </button>
+                        <button name="action_reject" string="Reject" type="object" 
+                                class="btn-danger"
+                                groups="surepay_payroll.group_surepay_payroll_user"
+                                invisible="status not in ['submitted', 'approved']">
+                            <i class="fa fa-times" title="Reject"/>
+                        </button>
+                        <button name="action_complete" string="Complete" type="object" 
+                                class="btn-info" 
+                                groups="surepay_payroll.group_surepay_payroll_user"
+                                invisible="status not in ['approved', 'active']">
+                            <i class="fa fa-check-circle" title="Mark as Completed"/>
+                        </button>
+                        
+                        <!-- Status Bar on Right Side -->
+                        <field name="status" widget="statusbar" statusbar_visible="draft,submitted,approved,active"/>
+                    </header>
+                    <sheet>
+                        
+                        <div class="oe_title">
+                            <h1>
+                                <field name="employee_id"/>
+                            </h1>
+                            <h2>
+                                Employee Loan
+                            </h2>
+                        </div>
+                        
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="amount_requested"/>
+                                <field name="date_requested" readonly="1"/>
+                                <field name="deduction_start_date"/>
+                            </group>
+                            <group>
+                                <field name="currency_id" readonly="1"/>
+                                <field name="company_id" readonly="1" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                        
+                        <group string="Repayment Plan">
+                            <group>
+                                <field name="installment_amount"/>
+                                <field name="total_installments"/>
+                                <field name="installments_paid" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="outstanding_balance" readonly="1"/>
+                                <div class="text-muted">
+                                    <span>Remaining Installments: </span>
+                                    <field name="total_installments" readonly="1"/> - <field name="installments_paid" readonly="1"/>
+                                </div>
+                            </group>
+                        </group>
+                        
+                        <separator string="Deduction Information"/>
+                        <group>
+                            <div class="alert alert-info" role="alert">
+                                <strong>How Loan Deductions Work:</strong> This loan will be repaid through automatic payroll deductions. Each installment will be deducted from the employee's payslip according to the repayment schedule until the full amount is repaid.
+                            </div>
+                            <group>
+                                <field name="outstanding_balance" readonly="1"/>
+                                <field name="installments_paid" readonly="1"/>
+                            </group>
+                        </group>
+                        
+                        <separator string="Rejection Reason" invisible="[('status', '!=', 'rejected')]"/>
+                        <field name="rejection_reason" placeholder="Reason for rejection..."
+                               readonly="[('status', '!=', 'rejected')]"/>
+                        
+                        <notebook>
+                            <page string="Deductions">
+                                <field name="payslip_line_ids">
+                                    <tree>
+                                        <field name="slip_id"/>
+                                        <field name="total"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Installment Schedule">
+                                <div class="alert alert-info" role="alert">
+                                    <strong>Installment Schedule:</strong> This shows the expected repayment schedule for this loan. Each installment will be automatically deducted from the employee's payslip starting from the deduction start date.
+                                </div>
+                                <group>
+                                    <group>
+                                        <field name="deduction_start_date"/>
+                                        <field name="installment_amount"/>
+                                    </group>
+                                    <group>
+                                        <field name="total_installments"/>
+                                        <field name="installments_paid" readonly="1"/>
+                                    </group>
+                                </group>
+                                <separator string="Expected Repayment Timeline"/>
+                                <div class="text-muted">
+                                    <p><strong>Total Repayment Amount:</strong> <field name="amount_requested" readonly="1"/> (<field name="installment_amount" readonly="1"/> × <field name="total_installments" readonly="1"/> installments)</p>
+                                    <p><strong>Remaining Balance:</strong> <field name="outstanding_balance" readonly="1"/></p>
+                                    <p><strong>Estimated Completion:</strong> After <field name="total_installments" readonly="1"/> - <field name="installments_paid" readonly="1"/> = <field name="remaining_installments" readonly="1"/> more installments</p>
+                                </div>
+                            </page>
+                            <page string="Notes">
+                                <group>
+                                    <field name="reason" placeholder="Reason for loan request..."/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Loan Search View -->
+        <record id="view_hr_loan_search" model="ir.ui.view">
+            <field name="name">hr.loan.search</field>
+            <field name="model">surepay_payroll.hr.loan</field>
+            <field name="arch" type="xml">
+                <search string="Employee Loans">
+                    <field name="employee_id"/>
+                    <field name="status"/>
+                    <field name="date_requested"/>
+                    <separator/>
+                    <filter name="draft" string="Draft" domain="[('status', '=', 'draft')]"/>
+                    <filter name="submitted" string="Submitted" domain="[('status', '=', 'submitted')]"/>
+                    <filter name="approved" string="Approved" domain="[('status', '=', 'approved')]"/>
+                    <filter name="active" string="Active" domain="[('status', '=', 'active')]"/>
+                    <filter name="completed" string="Completed" domain="[('status', '=', 'completed')]"/>
+                    <filter name="rejected" string="Rejected" domain="[('status', '=', 'rejected')]"/>
+                    <separator/>
+                    <filter name="my_loans" string="My Loans" domain="[('employee_id.user_id', '=', uid)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                        <filter name="group_date" string="Date" context="{'group_by': 'date_requested'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Loan Kanban View -->
+        <record id="view_hr_loan_kanban" model="ir.ui.view">
+            <field name="name">hr.loan.kanban</field>
+            <field name="model">surepay_payroll.hr.loan</field>
+            <field name="arch" type="xml">
+                <kanban class="o_hr_employee_kanban">
+                    <field name="employee_id"/>
+                    <field name="amount_requested"/>
+                    <field name="installment_amount"/>
+                    <field name="total_installments"/>
+                    <field name="installments_paid"/>
+                    <field name="outstanding_balance"/>
+                    <field name="status"/>
+                    <field name="date_requested"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="employee_id"/> - Employee Loan
+                                    </strong>
+                                    <div class="o_kanban_tags_section">
+                                        <span class="badge badge-pill badge-info">
+                                            Requested: <field name="amount_requested"/>
+                                        </span>
+                                        <span class="badge badge-pill badge-success">
+                                            Installment: <field name="installment_amount"/>
+                                        </span>
+                                        <span class="badge badge-pill badge-warning">
+                                            Paid: <field name="installments_paid"/>/<field name="total_installments"/>
+                                        </span>
+                                    </div>
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_right">
+                                            <div class="oe_kanban_status">
+                                                <field name="status" widget="kanban_state_selection"/>
+                                            </div>
+                                        </div>
+                                        <div class="oe_kanban_bottom_left">
+                                            <span class="text-muted">Outstanding: <field name="outstanding_balance"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Loan Action -->
+        <record id="action_hr_loan" model="ir.actions.act_window">
+            <field name="name">Employee Loans</field>
+            <field name="res_model">surepay_payroll.hr.loan</field>
+            <field name="view_mode">tree,form,kanban,pivot,graph</field>
+            <field name="context">{'search_default_my_loans': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first employee loan
+                </p>
+                <p>
+                    Request employee loans with installment-based repayment that will be automatically deducted from payroll.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

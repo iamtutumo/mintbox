@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Payroll Report Assets -->
+        <template id="payroll_report_assets" name="Payroll Report Assets">
+            <link href="/surepay_payroll/static/src/css/payroll_print.css" rel="stylesheet"/>
+        </template>
+        
+    </data>
+</odoo>

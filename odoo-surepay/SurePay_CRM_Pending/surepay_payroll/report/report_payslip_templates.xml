@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Redesigned Template for Payslip Report with Consistent Layouts -->
+    <template id="report_payslip">
+        <!-- Include payroll assets for proper print styling -->
+        <t t-call="surepay_payroll.payroll_report_assets"/>
+        <t t-call="web.external_layout">
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                    <main>
+                    <div class="oe_structure"/>
+                    
+                    <!-- Compact Payslip Header -->
+                    <div class="text-center mb-3" style="margin-top: 10px;">
+                        <h2 class="mb-1" style="font-weight: bold; border-bottom: 2px solid black; padding-bottom: 5px; font-size: 20px;">PAY SLIP</h2>
+                        <h5 class="text-muted mb-1" style="font-size: 14px;" t-field="o.name"/>
+                        <div class="text-muted small" style="font-size: 11px;">
+                            Period: <span t-field="o.date_from"/> to <span t-field="o.date_to"/>
+                        </div>
+                    </div>
+                    <!-- Employee Information Table -->
+                    <div class="table-responsive mb-3">
+                        <table class="table table-bordered" style="border: 2px solid #dee2e6; border-collapse: collapse; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th colspan="4" class="text-center" style="font-weight: bold; padding: 12px; font-size: 16px;">Employee Information</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td width="25%" style="font-weight: bold; border: 1px solid #dee2e6; padding: 8px; font-size: 14px;">Employee Name</td>
+                                    <td width="25%" style="border: 1px solid #dee2e6; padding: 8px; font-size: 14px;"><span t-field="o.employee_id"/></td>
+                                    <td width="25%" style="font-weight: bold; border: 1px solid #dee2e6; padding: 8px; font-size: 14px;">Designation</td>
+                                    <td width="25%" style="border: 1px solid #dee2e6; padding: 8px; font-size: 14px;"><span t-field="o.employee_id.job_id"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold; border: 1px solid #dee2e6; padding: 8px; font-size: 14px;">Email</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px; font-size: 14px;"><span t-field="o.employee_id.work_email"/></td>
+                                    <td style="font-weight: bold; border: 1px solid #dee2e6; padding: 8px; font-size: 14px;">Identification No</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px; font-size: 14px;"><span t-field="o.employee_id.identification_id"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold; border: 1px solid #dee2e6; padding: 8px; font-size: 14px;">Payslip No</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px; font-size: 14px;"><span t-field="o.number"/></td>
+                                    <td style="font-weight: bold; border: 1px solid #dee2e6; padding: 8px; font-size: 14px;">Bank Account</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px; font-size: 14px;"><span t-field="o.employee_id.bank_account_id"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold; border: 1px solid #dee2e6; padding: 8px; font-size: 14px;">Department</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px; font-size: 14px;"><span t-field="o.employee_id.department_id"/></td>
+                                    <td style="font-weight: bold; border: 1px solid #dee2e6; padding: 8px; font-size: 14px;">Work Location</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px; font-size: 14px;"><span t-field="o.employee_id.work_location_id"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Payslip Lines Table -->
+                    <div class="table-responsive mb-3">
+                        <table class="table table-bordered" style="border: 2px solid #dee2e6; border-collapse: collapse; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th width="12%" style="font-weight: bold; padding: 8px; text-align: center; font-size: 14px;">Code</th>
+                                    <th width="38%" style="font-weight: bold; padding: 8px; font-size: 14px;">Description</th>
+                                    <th width="15%" style="font-weight: bold; padding: 8px; text-align: center; font-size: 14px;">Quantity</th>
+                                    <th width="15%" style="font-weight: bold; padding: 8px; text-align: right; font-size: 14px;">Rate</th>
+                                    <th width="20%" style="font-weight: bold; padding: 8px; text-align: right; font-size: 14px;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="o.line_ids.filtered(lambda line: line.appears_on_payslip)">
+                                    <tr t-foreach="o.line_ids.filtered(lambda line: line.appears_on_payslip)" t-as="line">
+                                        <td style="border: 1px solid #dee2e6; padding: 6px; text-align: center; font-size: 12px;"><span t-field="line.code"/></td>
+                                        <td style="border: 1px solid #dee2e6; padding: 6px; font-size: 12px;"><span t-field="line.name"/></td>
+                                        <td style="border: 1px solid #dee2e6; padding: 6px; text-align: center; font-size: 12px;"><span t-field="line.quantity"/></td>
+                                        <td style="border: 1px solid #dee2e6; padding: 6px; text-align: right; font-size: 12px;">
+                                            <span t-field="line.amount" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                        </td>
+                                        <td style="border: 1px solid #dee2e6; padding: 6px; text-align: right; font-size: 12px;">
+                                            <span t-field="line.total" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-if="not o.line_ids.filtered(lambda line: line.appears_on_payslip)">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted" style="border: 1px solid #dee2e6; padding: 10px; font-size: 14px;">No payslip lines available</td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Horizontal Payment Summary -->
+                    <div class="table-responsive mb-3">
+                        <table class="table table-bordered" style="border: 2px solid #dee2e6; border-collapse: collapse; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th colspan="4" class="text-center" style="font-weight: bold; padding: 12px; font-size: 16px;">Payment Summary</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td width="25%" style="font-weight: bold; border: 1px solid #dee2e6; padding: 10px; text-align: center; font-size: 14px;">Gross Wage</td>
+                                    <td width="25%" style="font-weight: bold; border: 1px solid #dee2e6; padding: 10px; text-align: center; font-size: 14px;">Total Deductions</td>
+                                    <td width="25%" style="font-weight: bold; border: 1px solid #dee2e6; padding: 10px; text-align: center; font-size: 14px;">Net Wage</td>
+                                    <td width="25%" style="font-weight: bold; border: 1px solid #dee2e6; padding: 10px; text-align: center; font-size: 14px;">NET PAY</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px; text-align: right; font-weight: bold; font-size: 14px;">
+                                        <span t-field="o.gross_wage" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                    </td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px; text-align: right; font-weight: bold; font-size: 14px;">
+                                        <span t-field="o.total_ded" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                    </td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px; text-align: right; font-weight: bold; font-size: 14px;">
+                                        <span t-field="o.net_wage" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                    </td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px; text-align: right; font-weight: bold; font-size: 16px;">
+                                        <span t-field="o.net_wage" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Compact Footer Note -->
+                    <div class="text-center mt-2 mb-2">
+                        <p class="mb-0 small text-muted">Computer-generated payslip | Generated: <span t-esc="datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/></p>
+                    </div>
+                    </main>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

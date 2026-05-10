@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add Generate Client Assessment Form buttons to CRM Lead form -->
+    <record id="view_crm_lead_form_inherit_assessment" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.assessment</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Add buttons to the header buttons -->
+            <xpath expr="//header//button[@name='action_set_won_rainbowman']" position="before">
+                <button name="generate_client_assessment_form" 
+                        type="object" 
+                        class="oe_stat_button"
+                        groups="sales_team.group_sale_salesman"
+                        title="Download Client Assessment Form (DOCX)">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <i class="fa fa-file-word-o" role="img" title="Download DOCX"/>
+                        </span>
+                        <span class="o_stat_text">DOCX</span>
+                    </div>
+                </button>
+                <button name="generate_client_assessment_form_pdf" 
+                        type="object" 
+                        class="oe_stat_button"
+                        groups="sales_team.group_sale_salesman"
+                        title="Download Client Assessment Form (PDF)">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <i class="fa fa-file-pdf-o" role="img" title="Download PDF"/>
+                        </span>
+                        <span class="o_stat_text">PDF</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

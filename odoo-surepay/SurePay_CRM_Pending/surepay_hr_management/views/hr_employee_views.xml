@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Employee Form View Extension -->
+        <record id="hr_employee_view_form_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="action_view_skills" type="object" class="oe_stat_button" icon="fa-tasks">
+                        <field name="skill_gap_count" widget="statinfo" string="Skills"/>
+                        <field name="skill_ids" invisible="1"/>
+                    </button>
+                    <button name="action_view_disciplinary_actions" type="object" class="oe_stat_button" icon="fa-exclamation-triangle">
+                        <field name="disciplinary_action_count" widget="statinfo" string="Disciplinary"/>
+                        <field name="active_disciplinary_count" invisible="1"/>
+                    </button>
+                    <button name="action_view_skill_gaps" type="object" class="oe_stat_button" icon="fa-flag">
+                        <field name="skill_gap_count" widget="statinfo" string="Skill Gaps"/>
+                    </button>
+                </xpath>
+                
+                <xpath expr="//notebook" position="inside">
+                    <page name="skills" string="Skills">
+                        <field name="skill_ids">
+                            <tree editable="bottom">
+                                <field name="skill_id"/>
+                                <field name="skill_type_id"/>
+                                <field name="skill_level_id"/>
+                                <field name="is_required"/>
+                                <field name="has_skill_gap"/>
+                                <field name="gap_level"/>
+                                <button name="action_update_skill_level" type="object" icon="fa-edit" title="Update Skill Level"/>
+                            </tree>
+                        </field>
+                        <group>
+                            <group>
+                                <field name="required_skill_ids" widget="many2many_tags"/>
+                                <field name="skill_gap_count"/>
+                            </group>
+                            <group>
+                                <button name="action_view_skill_gaps" type="object" string="View Skill Gaps" class="btn-primary"/>
+                            </group>
+                        </group>
+                    </page>
+                    
+                    <page name="probation" string="Probation">
+                        <group>
+                            <group>
+                                <field name="probation_end_date"/>
+                                <field name="is_on_probation"/>
+                            </group>
+                            <group>
+                                <field name="contract_expiration_days"/>
+                                <field name="has_expiring_contract"/>
+                            </group>
+                        </group>
+                    </page>
+                    
+                    <page name="disciplinary_actions" string="Disciplinary Actions">
+                        <field name="disciplinary_action_ids">
+                            <tree decoration-danger="active" decoration-success="state == 'resolved'">
+                                <field name="date"/>
+                                <field name="action_type"/>
+                                <field name="title"/>
+                                <field name="state"/>
+                                <field name="active"/>
+                                <field name="confirmed_by"/>
+                                <button name="action_confirm" type="object" icon="fa-check" title="Confirm" invisible="state != 'draft'"/>
+                                <button name="action_activate" type="object" icon="fa-play" title="Activate" invisible="state not in ['confirmed', 'resolved']"/>
+                                <button name="action_resolve" type="object" icon="fa-check-circle" title="Resolve" invisible="state != 'active'"/>
+                                <button name="action_cancel" type="object" icon="fa-times" title="Cancel" invisible="state in ['resolved', 'cancelled']"/>
+                            </tree>
+                        </field>
+                        <group>
+                            <button name="action_view_disciplinary_actions" type="object" string="View All Disciplinary Actions" class="btn-primary"/>
+                        </group>
+                    </page>
+                </xpath>
+                
+                <xpath expr="//field[@name='category_ids']" position="after">
+                    <field name="has_expiring_contract" invisible="1"/>
+                    <field name="is_on_probation" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Employee Tree View Extension -->
+        <record id="hr_employee_view_tree_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.tree.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="inside">
+                    <field name="is_on_probation"/>
+                    <field name="has_expiring_contract"/>
+                    <field name="skill_gap_count"/>
+                    <field name="disciplinary_action_count"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Employee Kanban View Extension -->
+        <record id="hr_employee_view_kanban_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.kanban.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.hr_kanban_view_employees"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_kanban_details']" position="inside">
+                    <div class="oe_kanban_tags_section">
+                        <div class="oe_kanban_tags">
+                            <span class="badge badge-pill badge-warning" t-if="is_on_probation">On Probation</span>
+                            <span class="badge badge-pill badge-danger" t-if="has_expiring_contract">Contract Expiring</span>
+                            <span class="badge badge-pill badge-info" t-if="skill_gap_count > 0">
+                                <field name="skill_gap_count" readonly="1"/> Skill Gaps
+                            </span>
+                            <span class="badge badge-pill badge-danger" t-if="disciplinary_action_count > 0">
+                                <field name="disciplinary_action_count" readonly="1"/> Disciplinary Actions
+                            </span>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Employee Search View Extension -->
+        <record id="hr_employee_view_search_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.search.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[last()]" position="after">
+                    <separator/>
+                    <filter name="on_probation" string="On Probation" domain="[('is_on_probation', '=', True)]"/>
+                    <filter name="contract_expiring" string="Contract Expiring Soon" domain="[('has_expiring_contract', '=', True)]"/>
+                    <filter name="has_skill_gaps" string="Has Skill Gaps" domain="[('skill_gap_count', '>', 0)]"/>
+                    <filter name="has_disciplinary_actions" string="Has Disciplinary Actions" domain="[('disciplinary_action_count', '>', 0)]"/>
+                    <separator/>
+                    <filter name="no_skill_gaps" string="No Skill Gaps" domain="[('skill_gap_count', '=', 0)]"/>
+                    <filter name="no_disciplinary_actions" string="No Disciplinary Actions" domain="[('disciplinary_action_count', '=', 0)]"/>
+                </xpath>
+                
+                <xpath expr="//group" position="inside">
+                    <filter name="group_skill_gap_count" string="Skill Gaps" context="{'group_by': 'skill_gap_count'}"/>
+                    <filter name="group_disciplinary_count" string="Disciplinary Actions" context="{'group_by': 'disciplinary_action_count'}"/>
+                    <filter name="group_probation_status" string="Probation Status" context="{'group_by': 'is_on_probation'}"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Employee Action for Skills -->
+        <record id="action_hr_employee_skill" model="ir.actions.act_window">
+            <field name="name">Employee Skills</field>
+            <field name="res_model">hr.employee.skill</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No skills found for this employee
+                </p>
+                <p>
+                    Add skills to track employee competencies and identify skill gaps.
+                </p>
+            </field>
+        </record>
+        
+        <!-- Employee Action for Skill Gaps -->
+        <record id="action_hr_employee_skill_gaps" model="ir.actions.act_window">
+            <field name="name">Employee Skill Gaps</field>
+            <field name="res_model">hr.skill</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_required_skills': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No skill gaps found
+                </p>
+                <p>
+                    This employee has all required skills for their position.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

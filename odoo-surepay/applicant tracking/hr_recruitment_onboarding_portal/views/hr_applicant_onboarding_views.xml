@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Task Line Action -->
+    <record id="action_onboarding_task_line" model="ir.actions.act_window">
+        <field name="name">Tasks</field>
+        <field name="res_model">onboarding.task.line</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('onboarding_id', '=', active_id)]</field>
+    </record>
+
+    <!-- Document Action -->
+    <record id="action_onboarding_document" model="ir.actions.act_window">
+        <field name="name">Documents</field>
+        <field name="res_model">onboarding.document</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('onboarding_id', '=', active_id)]</field>
+    </record>
+
+    <!-- Onboarding Form View -->
+    <record id="view_hr_applicant_onboarding_form" model="ir.ui.view">
+        <field name="name">hr.applicant.onboarding.form</field>
+        <field name="model">hr.applicant.onboarding</field>
+        <field name="arch" type="xml">
+            <form string="Onboarding">
+                <header>
+                    <field name="status" widget="statusbar"/>
+                    <button name="action_send_onboarding_invitation" string="Send Invitation" type="object" class="btn-primary"/>
+                    <button name="action_create_employee" string="Create Employee" type="object" class="btn-success" invisible="status == 'completed'"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_onboarding_task_line)d" type="action" class="oe_stat_button" icon="fa-tasks">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="completed_task_count"/> / <field name="task_count"/></span>
+                                <span class="o_stat_text">Tasks</span>
+                            </div>
+                        </button>
+                        <button name="%(action_onboarding_document)d" type="action" class="oe_stat_button" icon="fa-file">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="uploaded_document_count"/> / <field name="document_count"/></span>
+                                <span class="o_stat_text">Documents</span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="applicant_id"/>
+                            <field name="applicant_name"/>
+                            <field name="job_id"/>
+                        </group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="expected_start_date"/>
+                            <field name="completion_date"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Progress">
+                        <field name="task_progress" widget="progressbar"/>
+                        <field name="document_progress" widget="progressbar"/>
+                    </group>
+                    
+                    <group string="Employee Information" invisible="not employee_id">
+                        <field name="employee_id"/>
+                        <field name="employee_number"/>
+                        <field name="contract_id"/>
+                        <field name="contract_signed"/>
+                        <field name="contract_sign_date" invisible="not contract_signed"/>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Tasks">
+                            <field name="task_ids">
+                                <tree editable="bottom" decoration-success="completed">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="task_type"/>
+                                    <field name="required"/>
+                                    <field name="completed"/>
+                                    <field name="completed_date"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Documents">
+                            <field name="document_ids">
+                                <tree decoration-success="verified" decoration-info="filename and not verified">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="document_type"/>
+                                    <field name="required"/>
+                                    <field name="file" invisible="1"/>
+                                    <field name="filename"/>
+                                    <field name="uploaded_date"/>
+                                    <field name="verified"/>
+                                    <field name="verified_by"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Onboarding Tree View -->
+    <record id="view_hr_applicant_onboarding_tree" model="ir.ui.view">
+        <field name="name">hr.applicant.onboarding.tree</field>
+        <field name="model">hr.applicant.onboarding</field>
+        <field name="arch" type="xml">
+            <tree string="Onboarding" decoration-success="status=='completed'" decoration-info="status=='in_progress'">
+                <field name="applicant_name"/>
+                <field name="job_id"/>
+                <field name="status"/>
+                <field name="task_progress" widget="progressbar"/>
+                <field name="document_progress" widget="progressbar"/>
+                <field name="start_date"/>
+                <field name="employee_number"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Onboarding Action -->
+    <record id="action_hr_applicant_onboarding" model="ir.actions.act_window">
+        <field name="name">Onboarding</field>
+        <field name="res_model">hr.applicant.onboarding</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_hr_applicant_onboarding"
+              name="Onboarding"
+              parent="hr_recruitment.menu_hr_recruitment_root"
+              action="action_hr_applicant_onboarding"
+              sequence="60"/>
+
+</odoo>

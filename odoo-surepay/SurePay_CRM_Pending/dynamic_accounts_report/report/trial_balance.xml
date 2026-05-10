@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="trial_balance">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-set="data_report_margin_top" t-value="12"/>
+                <t t-set="data_report_header_spacing" t-value="9"/>
+                <t t-set="data_report_dpi" t-value="110"/>
+                <div class="page">
+                    <!-- Professional Document Header -->
+                    <div class="text-center mb-4">
+                        <div class="badge bg-success text-white p-2 mb-2">
+                            <h1 class="mb-0" style="font-size: 24px; font-weight: bold;">TRIAL BALANCE</h1>
+                        </div>
+                        <h3 class="text-muted mb-0" t-esc="report_name" style="font-size: 18px;"/>
+                        <div class="text-muted small">
+                            Generated on <span t-esc="datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
+                        </div>
+                    </div>
+
+                    <!-- Report Filters -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Report Filters</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-secondary">
+                                        <tr>
+                                            <th>Date Range</th>
+                                            <th>Comparison</th>
+                                            <th>Account</th>
+                                            <th>Journal</th>
+                                            <th>Options</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <span class="badge bg-info">
+                                                    <t t-if="filters['start_date']" t-out="filters['start_date']"/>
+                                                    <t t-if="not filters['start_date']">Beginning</t>
+                                                    <t t-if="filters['end_date']">
+                                                        to <t t-out="filters['end_date']"/>
+                                                    </t>
+                                                    <t t-if="not filters['end_date']">Present</t>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <t t-if="filters['comparison_number_range']">
+                                                    <span class="badge bg-warning">
+                                                        <t t-out="filters['comparison_type']"/>
+                                                        : <t t-out="filters['comparison_number_range']"/>
+                                                    </span>
+                                                </t>
+                                                <t t-if="not filters['comparison_number_range']">
+                                                    <span class="badge bg-secondary">None</span>
+                                                </t>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    <t t-foreach="filters['journal']" t-as="selected_journal">
+                                                        <span class="badge bg-primary">
+                                                            <t t-out="selected_journal"/>
+                                                        </span>
+                                                    </t>
+                                                    <t t-if="not filters['journal']">
+                                                        <span class="badge bg-secondary">All Journals</span>
+                                                    </t>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    <t t-foreach="filters['account']" t-as="selected_account">
+                                                        <span class="badge bg-info">
+                                                            <t t-out="selected_account"/>
+                                                        </span>
+                                                    </t>
+                                                    <t t-if="not filters['account']">
+                                                        <span class="badge bg-secondary">All Accounts</span>
+                                                    </t>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column gap-1">
+                                                    <t t-if="filters['show_unposted']">
+                                                        <span class="badge bg-success">Show Unposted</span>
+                                                    </t>
+                                                    <t t-if="filters['show_posted']">
+                                                        <span class="badge bg-primary">Show Posted</span>
+                                                    </t>
+                                                    <t t-if="filters['show_reconciled']">
+                                                        <span class="badge bg-info">Show Reconciled</span>
+                                                    </t>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trial Balance Table -->
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover table-sm">
+                            <thead class="table-success">
+                                <tr>
+                                    <th t-att-colspan="filters['comparison_number_range'] and 6 or 6" class="text-center">Account Information</th>
+                                    <t t-if="filters['comparison_number_range']">
+                                        <th colspan="2" class="text-center">Current Period</th>
+                                        <th colspan="2" class="text-center">Comparison Period</th>
+                                    </t>
+                                    <t t-if="not filters['comparison_number_range']">
+                                        <th colspan="2" class="text-center">Amounts</th>
+                                    </t>
+                                </tr>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Account Name</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Reconciled</th>
+                                    <th>Partner</th>
+                                    <t t-if="filters['comparison_number_range']">
+                                        <th class="text-end">Debit</th>
+                                        <th class="text-end">Credit</th>
+                                        <th class="text-end">Debit</th>
+                                        <th class="text-end">Credit</th>
+                                    </t>
+                                    <t t-if="not filters['comparison_number_range']">
+                                        <th class="text-end">Debit</th>
+                                        <th class="text-end">Credit</th>
+                                    </t>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="data">
+                                    <t t-set="total_debit" t-value="0"/>
+                                    <t t-set="total_credit" t-value="0"/>
+                                    <t t-set="total_debit_cmp" t-value="0"/>
+                                    <t t-set="total_credit_cmp" t-value="0"/>
+                                    
+                                    <t t-foreach="data" t-as="move_line">
+                                        <t t-set="total_debit" t-value="total_debit + move_line.get('debit', 0)"/>
+                                        <t t-set="total_credit" t-value="total_credit + move_line.get('credit', 0)"/>
+                                        <t t-set="total_debit_cmp" t-value="total_debit_cmp + move_line.get('debit_cmp', 0)"/>
+                                        <t t-set="total_credit_cmp" t-value="total_credit_cmp + move_line.get('credit_cmp', 0)"/>
+                                        
+                                        <tr class="align-middle">
+                                            <td>
+                                                <span class="badge bg-dark" t-esc="move_line.get('code', '')"/>
+                                            </td>
+                                            <td>
+                                                <span class="ms-2" t-esc="move_line.get('name', '')"/>
+                                            </td>
+                                            <td>
+                                                <span class="badge 
+                                                       t-att-class="{'bg-primary': move_line.get('type') == 'receivable', 'bg-danger': move_line.get('type') == 'payable', 'bg-info': move_line.get('type') == 'liquidity', 'bg-secondary': move_line.get('type') == 'other'}"
+                                                       t-esc="move_line.get('type', '').title()"/>
+                                            </td>
+                                            <td>
+                                                <span class="badge 
+                                                       t-att-class="{'bg-success': move_line.get('state') == 'posted', 'bg-warning': move_line.get('state') == 'draft', 'bg-secondary': move_line.get('state') == 'cancel'}"
+                                                       t-esc="move_line.get('state', '').title()"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <t t-if="move_line.get('reconciled')">
+                                                    <i class="fas fa-check-circle text-success"></i>
+                                                </t>
+                                                <t t-if="not move_line.get('reconciled')">
+                                                    <i class="fas fa-times-circle text-danger"></i>
+                                                </t>
+                                            </td>
+                                            <td>
+                                                <span class="text-muted" t-esc="move_line.get('partner', '')"/>
+                                            </td>
+                                            <t t-if="filters['comparison_number_range']">
+                                                <td class="text-end">
+                                                    <span t-esc="move_line.get('debit', 0)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span t-esc="move_line.get('credit', 0)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span t-esc="move_line.get('debit_cmp', 0)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span t-esc="move_line.get('credit_cmp', 0)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                                </td>
+                                            </t>
+                                            <t t-if="not filters['comparison_number_range']">
+                                                <td class="text-end">
+                                                    <span t-esc="move_line.get('debit', 0)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span t-esc="move_line.get('credit', 0)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                                </td>
+                                            </t>
+                                        </tr>
+                                    </t>
+                                    
+                                    <!-- Total Row -->
+                                    <tr class="table-primary fw-bold">
+                                        <td t-att-colspan="filters['comparison_number_range'] and 6 or 6" class="text-end">
+                                            <i class="fas fa-calculator me-2"></i>
+                                            <strong>TOTALS</strong>
+                                        </td>
+                                        <t t-if="filters['comparison_number_range']">
+                                            <td class="text-end">
+                                                <span t-esc="total_debit" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <span t-esc="total_credit" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <span t-esc="total_debit_cmp" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <span t-esc="total_credit_cmp" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                            </td>
+                                        </t>
+                                        <t t-if="not filters['comparison_number_range']">
+                                            <td class="text-end">
+                                                <span t-esc="total_debit" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <span t-esc="total_credit" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                    
+                                    <!-- Balance Check -->
+                                    <tr class="table-warning fw-bold">
+                                        <td t-att-colspan="filters['comparison_number_range'] and 6 or 6" class="text-end">
+                                            <i class="fas fa-balance-scale me-2"></i>
+                                            <strong>BALANCE CHECK</strong>
+                                        </td>
+                                        <t t-if="filters['comparison_number_range']">
+                                            <td colspan="2" class="text-center">
+                                                <span t-esc="total_debit - total_credit" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                                <t t-if="abs(total_debit - total_credit) > 0.01">
+                                                    <span class="badge bg-danger ms-2">OUT OF BALANCE</span>
+                                                </t>
+                                                <t t-if="abs(total_debit - total_credit) <= 0.01">
+                                                    <span class="badge bg-success ms-2">BALANCED</span>
+                                                </t>
+                                            </td>
+                                            <td colspan="2" class="text-center">
+                                                <span t-esc="total_debit_cmp - total_credit_cmp" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                                <t t-if="abs(total_debit_cmp - total_credit_cmp) > 0.01">
+                                                    <span class="badge bg-danger ms-2">OUT OF BALANCE</span>
+                                                </t>
+                                                <t t-if="abs(total_debit_cmp - total_credit_cmp) <= 0.01">
+                                                    <span class="badge bg-success ms-2">BALANCED</span>
+                                                </t>
+                                            </td>
+                                        </t>
+                                        <t t-if="not filters['comparison_number_range']">
+                                            <td colspan="2" class="text-center">
+                                                <span t-esc="total_debit - total_credit" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                                <t t-if="abs(total_debit - total_credit) > 0.01">
+                                                    <span class="badge bg-danger ms-2">OUT OF BALANCE</span>
+                                                </t>
+                                                <t t-if="abs(total_debit - total_credit) <= 0.01">
+                                                    <span class="badge bg-success ms-2">BALANCED</span>
+                                                </t>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Trial Balance Summary -->
+                    <t t-if="data">
+                        <div class="card mt-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Trial Balance Summary</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 text-center">
+                                        <div class="border rounded p-3 bg-primary bg-opacity-10">
+                                            <h6 class="text-primary mb-2">Total Debits</h6>
+                                            <h4 class="mb-0 text-primary" t-esc="total_debit" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 text-center">
+                                        <div class="border rounded p-3 bg-success bg-opacity-10">
+                                            <h6 class="text-success mb-2">Total Credits</h6>
+                                            <h4 class="mb-0 text-success" t-esc="total_credit" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 text-center">
+                                        <div class="border rounded p-3 bg-info bg-opacity-10">
+                                            <h6 class="text-info mb-2">Net Balance</h6>
+                                            <h4 class="mb-0 text-info" t-esc="total_debit - total_credit" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 text-center">
+                                        <div class="border rounded p-3">
+                                            <h6 class="text-secondary mb-2">Total Entries</h6>
+                                            <h4 class="mb-0 text-secondary" t-esc="len(data)"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <t t-if="filters['comparison_number_range']">
+                                    <div class="row mt-3">
+                                        <div class="col-md-6 text-center">
+                                            <div class="border rounded p-3 bg-warning bg-opacity-10">
+                                                <h6 class="text-warning mb-2">Comparison Debits</h6>
+                                                <h4 class="mb-0 text-warning" t-esc="total_debit_cmp" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 text-center">
+                                            <div class="border rounded p-3 bg-danger bg-opacity-10">
+                                                <h6 class="text-danger mb-2">Comparison Credits</h6>
+                                                <h4 class="mb-0 text-danger" t-esc="total_credit_cmp" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- Empty State -->
+                    <t t-if="not data">
+                        <div class="text-center py-5">
+                            <i class="fas fa-balance-scale fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No Trial Balance Data</h4>
+                            <p class="text-muted">No accounting entries found for the selected criteria.</p>
+                        </div>
+                    </t>
+
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

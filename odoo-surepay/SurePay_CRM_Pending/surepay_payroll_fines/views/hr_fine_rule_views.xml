@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Fine Rule Tree View -->
+        <record id="hr_fine_rule_view_tree" model="ir.ui.view">
+            <field name="name">hr.fine.rule.tree</field>
+            <field name="model">hr.fine.rule</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="default_amount"/>
+                    <field name="active"/>
+                    <field name="company_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Fine Rule Form View -->
+        <record id="hr_fine_rule_view_form" model="ir.ui.view">
+            <field name="name">hr.fine.rule.form</field>
+            <field name="model">hr.fine.rule</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="default_amount"/>
+                                <field name="active"/>
+                            </group>
+                            <group>
+                                <field name="company_id"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Fine Rule Search View -->
+        <record id="hr_fine_rule_view_search" model="ir.ui.view">
+            <field name="name">hr.fine.rule.search</field>
+            <field name="model">hr.fine.rule</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="description"/>
+                    <separator/>
+                    <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                    <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_company" string="Company" context="{'group_by': 'company_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Fine Rule Action -->
+        <record id="action_hr_fine_rule" model="ir.actions.act_window">
+            <field name="name">Fine Rules</field>
+            <field name="res_model">hr.fine.rule</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No fine rules found
+                </p>
+                <p>
+                    Create fine rules to standardize fine amounts and descriptions.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Item -->
+        <menuitem id="menu_hr_fine_rule"
+                  name="Fine Rules"
+                  parent="surepay_payroll.menu_surepay_payroll_configuration"
+                  action="action_hr_fine_rule"
+                  sequence="90"
+                  groups="hr.group_hr_manager"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Budget 80% Utilization Notification Template -->
+        <record id="mail_template_budget_80_percent" model="mail.template">
+            <field name="name">Budget 80% Utilization Warning</field>
+            <field name="model_id" ref="model_hr_expense_budget"/>
+            <field name="subject">Budget Warning: 80% Utilization for ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name or 'Employee'},</p>
+                    <p>This is a notification that your expense budget has reached 80% utilization.</p>
+                    
+                    <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                        <h3 style="margin: 0 0 10px 0; color: #495057;">Budget Details:</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Employee:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${object.employee_id.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Period:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${object.period_type} (${object.date_start} to ${object.date_end})</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Allocated:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${format_amount(object.amount_allocated, object.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Spent:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${format_amount(object.amount_spent, object.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Remaining:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${format_amount(object.amount_remaining, object.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px;"><strong>Utilization:</strong></td>
+                                <td style="padding: 5px;">${'%.1f' % object.get_budget_utilization()}%</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p>Please monitor your remaining budget and plan accordingly for the rest of the period.</p>
+                    
+                    <p>If you have any questions about your budget, please contact your manager or HR department.</p>
+                    
+                    <p>Best regards,<br/>
+                    ${user.company_id.name}<br/>
+                    HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang or 'en_US'}</field>
+        </record>
+
+        <!-- Budget Exceeded Notification Template -->
+        <record id="mail_template_budget_exceeded" model="mail.template">
+            <field name="name">Budget Exceeded Notification</field>
+            <field name="model_id" ref="model_hr_expense_budget"/>
+            <field name="subject">Budget Exceeded: ${object.employee_id.name} - ${'%.1f' % object.get_budget_utilization()}% Utilization</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear Manager/HR/Finance Team,</p>
+                    <p><strong style="color: #dc3545;">ALERT:</strong> The expense budget for <strong>${object.employee_id.name}</strong> has been exceeded.</p>
+                    
+                    <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                        <h3 style="margin: 0 0 10px 0; color: #721c24;">Budget Details:</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Employee:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;">${object.employee_id.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Department:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;">${object.employee_id.department_id.name or 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Period:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;">${object.period_type} (${object.date_start} to ${object.date_end})</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Allocated:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;">${format_amount(object.amount_allocated, object.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Spent:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;">${format_amount(object.amount_spent, object.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Over Budget:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong style="color: #dc3545;">${format_amount(abs(object.amount_remaining), object.currency_id)}</strong></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px;"><strong>Utilization:</strong></td>
+                                <td style="padding: 5px;"><strong style="color: #dc3545;">${'%.1f' % object.get_budget_utilization()}%</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p><strong>Action Required:</strong></p>
+                    <ul>
+                        <li>Review the expenses that caused the budget overrun</li>
+                        <li>Assess if additional budget approval is needed</li>
+                        <li>Discuss with the employee about expense planning</li>
+                        <li>Consider adjusting future budget allocations if necessary</li>
+                    </ul>
+                    
+                    <p>You can view the detailed budget and expenses by clicking on the following link:</p>
+                    <p><a href="${object.get_base_url()}/web#id=${object.id}&amp;model=hr.expense.budget">View Budget Details</a></p>
+                    
+                    <p>Best regards,<br/>
+                    ${user.company_id.name}<br/>
+                    HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang or 'en_US'}</field>
+        </record>
+
+        <!-- Budget Override Approval Template -->
+        <record id="mail_template_budget_override" model="mail.template">
+            <field name="name">Budget Override Approval Request</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense"/>
+            <field name="subject">Budget Override Approval Required: ${object.name} - ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear HR Manager/Finance Accountant,</p>
+                    <p><strong style="color: #fd7e14;">ACTION REQUIRED:</strong> An expense requires override approval as it exceeds the allocated budget.</p>
+                    
+                    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                        <h3 style="margin: 0 0 10px 0; color: #856404;">Expense Details:</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;"><strong>Employee:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;">${object.employee_id.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;"><strong>Expense Description:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;">${object.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;"><strong>Amount:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;">${format_amount(object.total_amount, object.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;"><strong>Date:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;">${object.date}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;"><strong>Budget Period:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;">${object.budget_id.period_type} (${object.budget_id.date_start} to ${object.budget_id.date_end})</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;"><strong>Budget Allocated:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;">${format_amount(object.budget_id.amount_allocated, object.budget_id.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;"><strong>Budget Spent:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;">${format_amount(object.budget_id.amount_spent, object.budget_id.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;"><strong>Budget Remaining:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #ffeaa7;"><strong style="color: #dc3545;">${format_amount(object.budget_id.amount_remaining, object.budget_id.currency_id)}</strong></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px;"><strong>Shortage:</strong></td>
+                                <td style="padding: 5px;"><strong style="color: #dc3545;">${format_amount(object.total_amount - object.budget_id.amount_remaining, object.currency_id)}</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p><strong>Approval Required:</strong></p>
+                    <ul>
+                        <li>This expense exceeds the available budget by ${format_amount(object.total_amount - object.budget_id.amount_remaining, object.currency_id)}</li>
+                        <li>Only HR Managers or Finance Accountants can approve this expense</li>
+                        <li>Please review the expense details and business justification</li>
+                    </ul>
+                    
+                    <p>You can review and approve this expense by clicking on the following link:</p>
+                    <p><a href="${object.get_base_url()}/web#id=${object.id}&amp;model=hr.expense">Review Expense</a></p>
+                    
+                    <p>Best regards,<br/>
+                    ${user.company_id.name}<br/>
+    HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang or 'en_US'}</field>
+        </record>
+
+        <!-- Budget Created Notification Template -->
+        <record id="mail_template_budget_created" model="mail.template">
+            <field name="name">Budget Created Notification</field>
+            <field name="model_id" ref="model_hr_expense_budget"/>
+            <field name="subject">New Budget Assigned: ${object.period_type} Budget for ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name or 'Employee'},</p>
+                    <p>A new expense budget has been assigned to you.</p>
+                    
+                    <div style="background-color: #d1ecf1; border: 1px solid #bee5eb; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                        <h3 style="margin: 0 0 10px 0; color: #0c5460;">Budget Details:</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #bee5eb;"><strong>Period Type:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #bee5eb;">${object.period_type}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #bee5eb;"><strong>Period:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #bee5eb;">${object.date_start} to ${object.date_end}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #bee5eb;"><strong>Amount Allocated:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #bee5eb;">${format_amount(object.amount_allocated, object.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px;"><strong>Status:</strong></td>
+                                <td style="padding: 5px;">${object.state}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p>You can now submit expenses within this budget period. Please ensure that your expenses do not exceed the allocated amount.</p>
+                    
+                    <p>If you have any questions about your budget, please contact your manager or HR department.</p>
+                    
+                    <p>Best regards,<br/>
+                    ${user.company_id.name}<br/>
+                    HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang or 'en_US'}</field>
+        </record>
+
+        <!-- Budget Escalation Request Template -->
+        <record id="mail_template_budget_escalation" model="mail.template">
+            <field name="name">Budget Escalation Request</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense"/>
+            <field name="subject">URGENT: Budget Escalation Required - ${object.name} - ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear Senior Management,</p>
+                    <p><strong style="color: #dc3545;">URGENT ESCALATION REQUIRED:</strong> An expense requires senior management approval as it exceeds 150% of the allocated budget.</p>
+                    
+                    <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                        <h3 style="margin: 0 0 10px 0; color: #721c24;">Expense Details:</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Employee:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;">${object.employee_id.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Department:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;">${object.employee_id.department_id.name or 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Expense Description:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;">${object.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Amount:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong style="color: #dc3545;">${format_amount(object.total_amount, object.currency_id)}</strong></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Budget Allocated:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;">${format_amount(object.budget_id.amount_allocated, object.budget_id.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Budget Spent:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;">${format_amount(object.budget_id.amount_spent, object.budget_id.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Over Budget:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong style="color: #dc3545;">${format_amount(abs(object.budget_id.amount_remaining), object.budget_id.currency_id)}</strong></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px;"><strong>Utilization:</strong></td>
+                                <td style="padding: 5px;"><strong style="color: #dc3545;">${'%.1f' % object.budget_id.get_budget_utilization()}%</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p><strong>Escalation Required:</strong></p>
+                    <ul>
+                        <li>This expense exceeds 150% of the allocated budget</li>
+                        <li>Standard override approval is insufficient</li>
+                        <li>Senior management approval is required</li>
+                        <li>Immediate action needed</li>
+                    </ul>
+                    
+                    <p><strong>Requested by:</strong> ${object.escalation_requested_by.name or object.override_approved_by.name}</p>
+                    <p><strong>Request Date:</strong> ${object.escalation_requested_date or object.override_approved_date}</p>
+                    
+                    <p>You can review and approve/reject this expense by clicking on the following link:</p>
+                    <p><a href="${object.get_base_url()}/web#id=${object.id}&amp;model=hr.expense">Review Expense</a></p>
+                    
+                    <p>Best regards,<br/>
+                    ${user.company_id.name}<br/>
+                    HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang or 'en_US'}</field>
+        </record>
+        
+        <!-- Escalation Approved Template -->
+        <record id="mail_template_escalation_approved" model="mail.template">
+            <field name="name">Escalation Approved</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense"/>
+            <field name="subject">Escalation Approved: ${object.name} - ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name or 'Employee'},</p>
+                    <p><strong style="color: #28a745;">GOOD NEWS:</strong> Your expense escalation has been approved by senior management.</p>
+                    
+                    <div style="background-color: #d4edda; border: 1px solid #c3e6cb; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                        <h3 style="margin: 0 0 10px 0; color: #155724;">Expense Details:</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #c3e6cb;"><strong>Expense Description:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #c3e6cb;">${object.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #c3e6cb;"><strong>Amount:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #c3e6cb;">${format_amount(object.total_amount, object.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #c3e6cb;"><strong>Approved By:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #c3e6cb;">${object.escalation_approved_by.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px;"><strong>Approval Date:</strong></td>
+                                <td style="padding: 5px;">${object.escalation_approved_date}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p>Your expense has been fully approved and will be processed for payment.</p>
+                    
+                    <p>If you have any questions, please contact your manager or HR department.</p>
+                    
+                    <p>Best regards,<br/>
+                    ${user.company_id.name}<br/>
+                    HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang or 'en_US'}</field>
+        </record>
+        
+        <!-- Escalation Rejected Template -->
+        <record id="mail_template_escalation_rejected" model="mail.template">
+            <field name="name">Escalation Rejected</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense"/>
+            <field name="subject">Escalation Rejected: ${object.name} - ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name or 'Employee'},</p>
+                    <p><strong style="color: #dc3545;">NOTICE:</strong> Your expense escalation has been rejected by senior management.</p>
+                    
+                    <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                        <h3 style="margin: 0 0 10px 0; color: #721c24;">Expense Details:</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Expense Description:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;">${object.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Amount:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;">${format_amount(object.total_amount, object.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;"><strong>Rejected By:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #f5c6cb;">${object.escalation_approved_by.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px;"><strong>Rejection Date:</strong></td>
+                                <td style="padding: 5px;">${object.escalation_approved_date}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p>Your expense has been returned to draft status. You may:</p>
+                    <ul>
+                        <li>Modify the expense details and resubmit</li>
+                        <li>Discuss the expense with your manager</li>
+                        <li>Submit a different expense within budget limits</li>
+                    </ul>
+                    
+                    <p>If you have any questions about this decision, please contact your manager or HR department.</p>
+                    
+                    <p>Best regards,<br/>
+                    ${user.company_id.name}<br/>
+                    HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang or 'en_US'}</field>
+        </record>
+
+        <!-- Budget Renewal Notification Template -->
+        <record id="mail_template_budget_renewal" model="mail.template">
+            <field name="name">Budget Renewal Notification</field>
+            <field name="model_id" ref="model_hr_expense_budget"/>
+            <field name="subject">New Budget Created: ${object.period_type} Budget for ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name or 'Employee'},</p>
+                    <p>A new expense budget has been created for you.</p>
+                    
+                    <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                        <h3 style="margin: 0 0 10px 0; color: #495057;">New Budget Details:</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Employee:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${object.employee_id.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Period:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${object.period_type} (${object.date_start} to ${object.date_end})</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Amount Allocated:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${format_amount(object.amount_allocated, object.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px;"><strong>Auto Renew:</strong></td>
+                                <td style="padding: 5px;">${'Yes' if object.auto_renew else 'No'}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p>Your new budget is now active and ready for use. You can submit expenses as needed within the allocated amount.</p>
+                    
+                    <p>If you have any questions about your budget, please contact your manager or HR department.</p>
+                    
+                    <p>Best regards,<br/>
+                    ${user.company_id.name}<br/>
+                    HR Department</p>
+                </div>
+            </field>
+            <field name="email_to">${object.employee_id.work_email}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang or 'en_US'}</field>
+        </record>
+
+        <!-- Budget Expiration Warning Template -->
+        <record id="mail_template_budget_expiration_warning" model="mail.template">
+            <field name="name">Budget Expiration Warning</field>
+            <field name="model_id" ref="model_hr_expense_budget"/>
+            <field name="subject">Budget Expiring Soon: ${object.period_type} Budget for ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name or 'Employee'},</p>
+                    <p>This is a reminder that your expense budget will expire in 7 days.</p>
+                    
+                    <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0; border: 1px solid #ffeaa7;">
+                        <h3 style="margin: 0 0 10px 0; color: #856404;">Budget Expiring Soon:</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Employee:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${object.employee_id.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Period:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${object.period_type} (${object.date_start} to ${object.date_end})</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Expires On:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${object.date_end}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Amount Allocated:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${format_amount(object.amount_allocated, object.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Amount Spent:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${format_amount(object.amount_spent, object.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px;"><strong>Remaining:</strong></td>
+                                <td style="padding: 5px;">${format_amount(object.amount_remaining, object.currency_id)}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p>Please submit any pending expenses before the budget expires. Any unspent amount will be lost unless rollover is enabled.</p>
+                    
+                    <p>If you have any questions about your budget, please contact your manager or HR department.</p>
+                    
+                    <p>Best regards,<br/>
+                    ${user.company_id.name}<br/>
+                    HR Department</p>
+                </div>
+            </field>
+            <field name="email_to">${object.employee_id.work_email}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang or 'en_US'}</field>
+        </record>
+
+        <!-- Budget Exceeded Notification Template -->
+        <record id="mail_template_budget_exceeded" model="mail.template">
+            <field name="name">Budget Exceeded Notification</field>
+            <field name="model_id" ref="model_hr_expense_budget"/>
+            <field name="subject">Budget Exceeded: ${object.period_type} Budget for ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name or 'Employee'},</p>
+                    <p>This is a notification that your expense budget has been exceeded.</p>
+                    
+                    <div style="background-color: #f8d7da; padding: 15px; border-radius: 5px; margin: 15px 0; border: 1px solid #f5c6cb;">
+                        <h3 style="margin: 0 0 10px 0; color: #721c24;">Budget Exceeded:</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Employee:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${object.employee_id.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Period:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${object.period_type} (${object.date_start} to ${object.date_end})</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Amount Allocated:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${format_amount(object.amount_allocated, object.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;"><strong>Amount Spent:</strong></td>
+                                <td style="padding: 5px; border-bottom: 1px solid #dee2e6;">${format_amount(object.amount_spent, object.currency_id)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px;"><strong>Over Budget:</strong></td>
+                                <td style="padding: 5px;">${format_amount(abs(object.amount_remaining), object.currency_id)}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p>Your expenses have exceeded the allocated budget amount. Additional expenses may require override approval.</p>
+                    
+                    <p>Please review your expenses and contact your manager if you need additional budget allocation.</p>
+                    
+                    <p>If you have any questions about your budget, please contact your manager or HR department.</p>
+                    
+                    <p>Best regards,<br/>
+                    ${user.company_id.name}<br/>
+                    HR Department</p>
+                </div>
+            </field>
+            <field name="email_to">${object.employee_id.work_email}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang or 'en_US'}</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Evaluation Form View -->
+    <record id="view_hr_applicant_evaluation_form" model="ir.ui.view">
+        <field name="name">hr.applicant.evaluation.form</field>
+        <field name="model">hr.applicant.evaluation</field>
+        <field name="arch" type="xml">
+            <form string="Evaluation">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="applicant_id"/>
+                            <field name="job_id"/>
+                            <field name="reviewer_id"/>
+                            <field name="reviewer_role"/>
+                        </group>
+                        <group>
+                            <field name="interview_date"/>
+                            <field name="evaluation_date"/>
+                            <field name="recommendation"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Scoring">
+                        <group>
+                            <label for="technical_score"/>
+                            <div class="o_row">
+                                <field name="technical_score" widget="float"/> / 10
+                                <span class="ml-2">Weight: </span>
+                                <field name="technical_weight" widget="float"/>%
+                            </div>
+                            
+                            <label for="cultural_fit_score"/>
+                            <div class="o_row">
+                                <field name="cultural_fit_score" widget="float"/> / 10
+                                <span class="ml-2">Weight: </span>
+                                <field name="cultural_weight" widget="float"/>%
+                            </div>
+                            
+                            <label for="communication_score"/>
+                            <div class="o_row">
+                                <field name="communication_score" widget="float"/> / 10
+                                <span class="ml-2">Weight: </span>
+                                <field name="communication_weight" widget="float"/>%
+                            </div>
+                        </group>
+                        <group>
+                            <field name="overall_score" widget="progressbar"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Feedback">
+                            <group>
+                                <field name="strengths" placeholder="List key strengths observed..."/>
+                            </group>
+                            <group>
+                                <field name="weaknesses" placeholder="List areas for improvement..."/>
+                            </group>
+                            <group>
+                                <field name="notes" placeholder="Any additional observations..."/>
+                            </group>
+                        </page>
+                        <page string="Attachments">
+                            <field name="attachment_ids" widget="many2many_binary"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Evaluation Tree View -->
+    <record id="view_hr_applicant_evaluation_tree" model="ir.ui.view">
+        <field name="name">hr.applicant.evaluation.tree</field>
+        <field name="model">hr.applicant.evaluation</field>
+        <field name="arch" type="xml">
+            <tree string="Evaluations" decoration-success="recommendation=='strongly_recommend'" decoration-info="recommendation=='recommend'" decoration-warning="recommendation=='neutral'" decoration-danger="recommendation=='not_recommend'">
+                <field name="evaluation_date"/>
+                <field name="applicant_name"/>
+                <field name="job_id"/>
+                <field name="reviewer_id"/>
+                <field name="reviewer_role"/>
+                <field name="overall_score" widget="progressbar"/>
+                <field name="recommendation"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Evaluation Action -->
+    <record id="action_hr_applicant_evaluation" model="ir.actions.act_window">
+        <field name="name">Evaluations</field>
+        <field name="res_model">hr.applicant.evaluation</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_hr_applicant_evaluation"
+              name="Evaluations"
+              parent="hr_recruitment.menu_hr_recruitment_root"
+              action="action_hr_applicant_evaluation"
+              sequence="40"/>
+
+</odoo>

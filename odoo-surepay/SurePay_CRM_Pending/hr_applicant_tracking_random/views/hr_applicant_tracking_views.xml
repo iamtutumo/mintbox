@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_applicant_tree_tracking" model="ir.ui.view">
+        <field name="name">hr.applicant.tree.tracking</field>
+        <field name="model">hr.applicant</field>
+        <field name="arch" type="xml">
+            <tree string="Applicants">
+                <field name="name"/>
+                <field name="partner_name"/>
+                <field name="tracking_id" string="Tracking ID"/>
+                <field name="job_id"/>
+                <field name="department_id"/>
+                <field name="stage_id"/>
+                <field name="priority"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_applicant_search_tracking" model="ir.ui.view">
+        <field name="name">hr.applicant.search.tracking</field>
+        <field name="model">hr.applicant</field>
+        <field name="arch" type="xml">
+            <search string="Applicants">
+                <field name="name"/>
+                <field name="partner_name"/>
+                <field name="tracking_id"/>
+                <field name="email_from"/>
+                <field name="job_id"/>
+                <field name="department_id"/>
+                <field name="stage_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Stage" name="group_stage" context="{'group_by':'stage_id'}"/>
+                    <filter string="Job" name="group_job" context="{'group_by':'job_id'}"/>
+                    <filter string="Department" name="group_department" context="{'group_by':'department_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action to open the applicant tracking -->
+    <record id="action_applicant_tracking" model="ir.actions.act_window">
+        <field name="name">Applicants Tracking</field>
+        <field name="res_model">hr.applicant</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No applicants found. Let's create one!
+            </p>
+        </field>
+    </record>
+
+    <!-- Applicants Menu Item -->
+    <menuitem id="menu_applicant_tracking"
+              name="Applicants Tracking"
+              parent="hr_recruitment.menu_hr_recruitment_root"
+              action="action_applicant_tracking"
+              sequence="10"/>
+
+    <!-- Server action to generate missing tracking IDs -->
+    <record id="action_generate_tracking_ids" model="ir.actions.server">
+        <field name="name">Generate Tracking IDs</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="binding_model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = records.generate_missing_tracking_ids()
+        </field>
+    </record>
+</odoo>

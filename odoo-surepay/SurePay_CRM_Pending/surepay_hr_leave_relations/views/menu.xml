@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Main HR Menu - Now under Employees menu -->
+        <menuitem id="menu_hr_root" name="HR Management" parent="hr.menu_hr_root" sequence="50"/>
+        
+        <!-- Employee Relations Menu -->
+        <menuitem id="menu_hr_employee_relations" name="Employee Relations" parent="menu_hr_root" sequence="50"/>
+        
+        <!-- Exit Clearance Menu -->
+        <menuitem id="menu_hr_exit_clearance" name="Exit Clearance" parent="menu_hr_employee_relations" sequence="10" action="action_hr_exit_clearance"/>
+        <menuitem id="menu_hr_exit_clearance_lines" name="Exit Clearance Lines" parent="menu_hr_employee_relations" sequence="20" action="action_hr_exit_clearance_line"/>
+        
+        <!-- Grievance Menu -->
+        <menuitem id="menu_hr_grievance" name="Grievances" parent="menu_hr_employee_relations" sequence="30" action="action_hr_grievance"/>
+        
+        <!-- Leave Management Menu -->
+        <menuitem id="menu_hr_leave_management" name="Leave Management" parent="menu_hr_root" sequence="20"/>
+        
+        
+        <!-- Configuration Menu - Now under Employees Configuration -->
+        <menuitem id="menu_hr_config" name="HR Configuration" parent="hr.menu_human_resources_configuration" sequence="20"/>
+        
+        <!-- Leave Type Configuration Menu - Commented out due to missing action reference -->
+        <!-- <menuitem id="menu_hr_leave_type_config" name="Leave Types" parent="menu_hr_config" sequence="10" action="hr_leave.hr_leave_type_action"/> -->
+        
+    </data>
+</odoo>

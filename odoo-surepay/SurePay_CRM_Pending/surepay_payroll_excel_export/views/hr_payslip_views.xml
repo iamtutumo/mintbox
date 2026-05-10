@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit hr.payslip form view to add export buttons -->
+        <record id="hr_payslip_view_form_inherit_excel_export" model="ir.ui.view">
+            <field name="name">hr.payslip.form.inherit.excel.export</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+            <field name="inherit_id" ref="surepay_payroll.hr_payslip_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                    <button name="action_export_to_excel" 
+                            type="object" 
+                            string="Export to Excel" 
+                            class="oe_stat_button"
+                            icon="fa-file-excel-o"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit hr.payslip tree view to add export button -->
+        <record id="hr_payslip_view_tree_inherit_excel_export" model="ir.ui.view">
+            <field name="name">hr.payslip.tree.inherit.excel.export</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+            <field name="inherit_id" ref="surepay_payroll.hr_payslip_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="js_class">export_button_tree</attribute>
+                </xpath>
+                <xpath expr="//tree" position="inside">
+                    <button name="action_export_to_excel" 
+                            type="object" 
+                            string="Export" 
+                            class="btn btn-primary"
+                            icon="fa-file-excel-o"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit hr.payslip search view to add export filters -->
+        <record id="hr_payslip_view_search_inherit_excel_export" model="ir.ui.view">
+            <field name="name">hr.payslip.search.inherit.excel.export</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+            <field name="inherit_id" ref="surepay_payroll.hr_payslip_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='done']" position="after">
+                    <separator/>
+                    <filter name="export_ready" string="Ready for Export" domain="[('state', 'in', ['paid', 'done'])]"/>
+                    <separator/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Add export action to payslip list view -->
+        <record id="action_hr_payslip_export_excel" model="ir.actions.server">
+            <field name="name">Export Payslips to Excel</field>
+            <field name="model_id" ref="surepay_payroll.model_surepay_payroll_hr_payslip"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                    records.action_export_multiple_to_excel()
+            </field>
+        </record>
+
+        <!-- Add export wizard action -->
+        <record id="action_payroll_export_wizard" model="ir.actions.act_window">
+            <field name="name">Export Payroll</field>
+            <field name="res_model">payroll.export.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Export payroll data to Excel
+                </p>
+                <p>
+                    Use this wizard to export payroll data to Excel format with customizable templates and filters.
+                </p>
+            </field>
+        </record>
+
+        <!-- Add staff export wizard action -->
+        <record id="action_staff_export_wizard" model="ir.actions.act_window">
+            <field name="name">Export Staff Data</field>
+            <field name="res_model">staff.export.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Export staff data for payroll processing
+                </p>
+                <p>
+                    Use this wizard to export staff data to Excel with editable fields for allowances, fines, and salary adjustments.
+                </p>
+            </field>
+        </record>
+
+        <!-- Add staff import wizard action -->
+        <record id="action_staff_import_wizard" model="ir.actions.act_window">
+            <field name="name">Import Staff Data</field>
+            <field name="res_model">staff.import.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Import staff payroll data from Excel
+                </p>
+                <p>
+                    Use this wizard to import staff payroll data from Excel files and process them in batch.
+                </p>
+            </field>
+        </record>
+
+        <!-- Add staff export/import buttons to payslip tree view -->
+        <record id="hr_payslip_view_tree_inherit_staff_import_export" model="ir.ui.view">
+            <field name="name">hr.payslip.tree.inherit.staff.import.export</field>
+            <field name="model">surepay_payroll.hr.payslip</field>
+            <field name="inherit_id" ref="surepay_payroll.hr_payslip_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="inside">
+                    <button name="%(action_staff_export_wizard)d" 
+                            type="action" 
+                            string="Export Staff Data" 
+                            class="btn-secondary"
+                            help="Export staff data for payroll processing"/>
+                    <button name="%(action_staff_import_wizard)d" 
+                            type="action" 
+                            string="Import Staff Data" 
+                            class="btn-primary"
+                            help="Import staff payroll data from Excel"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Inherit Applicant Form to Add Screening Information -->
+    <record id="view_applicant_form_screening" model="ir.ui.view">
+        <field name="name">hr.applicant.form.screening</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_applicant_tracking_random.view_applicant_form_tracking"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Screening Smart Button -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_screening_logs" type="object" class="oe_stat_button" icon="fa-search">
+                    <field name="screening_log_count" widget="statinfo" string="Screening Logs"/>
+                </button>
+            </xpath>
+            
+            <!-- Add Screening Status in Header -->
+            <xpath expr="//header" position="inside">
+                <field name="screening_status" widget="statusbar" statusbar_visible="pending,passed,failed"/>
+            </xpath>
+            
+            <!-- Add Screening Information Group -->
+            <xpath expr="//sheet/group" position="after">
+                <group string="Screening Information" name="screening_info">
+                    <field name="screening_status"/>
+                    <field name="last_screening_date"/>
+                </group>
+            </xpath>
+            
+            <!-- Add Screening Actions in Header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_rescreen_applicant" 
+                        string="Re-Screen" 
+                        type="object" 
+                        class="btn-primary"
+                        invisible="screening_status in ['pending', 'override']"/>
+                <button name="action_manual_screening_override" 
+                        string="Override Screening" 
+                        type="object" 
+                        class="btn-warning"
+                        groups="hr_recruitment.group_hr_recruitment_manager"
+                        invisible="screening_status != 'failed'"/>
+            </xpath>
+            
+            <!-- Add Screening Logs Page -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Screening Logs" name="screening_logs" invisible="screening_log_count == 0">
+                    <field name="screening_log_ids" nolabel="1">
+                        <tree>
+                            <field name="screening_date"/>
+                            <field name="screening_result"/>
+                            <field name="experience_check"/>
+                            <field name="education_check"/>
+                            <field name="skills_check"/>
+                            <field name="auto_screened"/>
+                        </tree>
+                        <form>
+                            <sheet>
+                                <group>
+                                    <group>
+                                        <field name="screening_date"/>
+                                        <field name="screening_result"/>
+                                        <field name="auto_screened"/>
+                                    </group>
+                                    <group>
+                                        <field name="experience_check"/>
+                                        <field name="education_check"/>
+                                        <field name="skills_check"/>
+                                    </group>
+                                </group>
+                                
+                                <group string="Experience Details">
+                                    <field name="applicant_experience_years"/>
+                                    <field name="required_experience"/>
+                                </group>
+                                
+                                <group string="Education Details">
+                                    <field name="applicant_education"/>
+                                    <field name="required_education"/>
+                                </group>
+                                
+                                <group string="Skills Details">
+                                    <field name="applicant_skills_count"/>
+                                    <field name="required_skills_count"/>
+                                    <field name="matching_skills_count"/>
+                                </group>
+                                
+                                <group string="Notes">
+                                    <field name="screening_notes" nolabel="1"/>
+                                </group>
+                                
+                                <group string="Failure Reasons" invisible="screening_result != 'fail'">
+                                    <field name="failure_reasons" nolabel="1"/>
+                                </group>
+                            </sheet>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+            
+        </field>
+    </record>
+
+    <!-- Screening Log Tree View -->
+    <record id="view_applicant_screening_log_tree" model="ir.ui.view">
+        <field name="name">applicant.screening.log.tree</field>
+        <field name="model">applicant.screening.log</field>
+        <field name="arch" type="xml">
+            <tree string="Screening Logs" decoration-success="screening_result=='pass'" decoration-danger="screening_result=='fail'">
+                <field name="screening_date"/>
+                <field name="applicant_name"/>
+                <field name="job_id"/>
+                <field name="screening_result"/>
+                <field name="experience_check"/>
+                <field name="education_check"/>
+                <field name="skills_check"/>
+                <field name="auto_screened"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Screening Log Form View -->
+    <record id="view_applicant_screening_log_form" model="ir.ui.view">
+        <field name="name">applicant.screening.log.form</field>
+        <field name="model">applicant.screening.log</field>
+        <field name="arch" type="xml">
+            <form string="Screening Log">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="applicant_id"/>
+                            <field name="job_id"/>
+                            <field name="screening_date"/>
+                        </group>
+                        <group>
+                            <field name="screening_result"/>
+                            <field name="auto_screened"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Screening Checks">
+                        <field name="experience_check"/>
+                        <field name="education_check"/>
+                        <field name="skills_check"/>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Experience Details">
+                            <group>
+                                <field name="applicant_experience_years"/>
+                                <field name="required_experience"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Education Details">
+                            <group>
+                                <field name="applicant_education"/>
+                                <field name="required_education"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Skills Details">
+                            <group>
+                                <field name="applicant_skills_count"/>
+                                <field name="required_skills_count"/>
+                                <field name="matching_skills_count"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Notes &amp; Reasons">
+                            <group>
+                                <field name="screening_notes"/>
+                                <field name="failure_reasons" invisible="screening_result != 'fail'"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Screening Log Action -->
+    <record id="action_applicant_screening_log" model="ir.actions.act_window">
+        <field name="name">Screening Logs</field>
+        <field name="res_model">applicant.screening.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No screening logs yet
+            </p>
+            <p>
+                Screening logs are created automatically when applicants are screened against job requirements.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item for Screening Logs -->
+    <menuitem id="menu_applicant_screening_log"
+              name="Screening Logs"
+              parent="hr_recruitment.menu_hr_recruitment_root"
+              action="action_applicant_screening_log"
+              sequence="50"/>
+
+</odoo>

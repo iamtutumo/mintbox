@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Referee Form View -->
+    <record id="view_hr_applicant_referee_form" model="ir.ui.view">
+        <field name="name">hr.applicant.referee.form</field>
+        <field name="model">hr.applicant.referee</field>
+        <field name="arch" type="xml">
+            <form string="Referee">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Full name of referee"/>
+                            <field name="position" placeholder="e.g., Senior Manager"/>
+                            <field name="company" placeholder="e.g., XYZ Corporation"/>
+                            <field name="relationship"/>
+                        </group>
+                        <group>
+                            <field name="email" widget="email"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="years_known"/>
+                            <field name="can_contact"/>
+                        </group>
+                    </group>
+                    <group string="Contact Information" invisible="not contacted">
+                        <field name="contacted"/>
+                        <field name="contacted_date" invisible="not contacted"/>
+                    </group>
+                    <group string="Feedback" invisible="not contacted">
+                        <field name="feedback" placeholder="Feedback received from this referee..." nolabel="1"/>
+                    </group>
+                    <group>
+                        <field name="notes" placeholder="Any additional notes about this referee..."/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Referee Tree View -->
+    <record id="view_hr_applicant_referee_tree" model="ir.ui.view">
+        <field name="name">hr.applicant.referee.tree</field>
+        <field name="model">hr.applicant.referee</field>
+        <field name="arch" type="xml">
+            <tree string="Referees">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="position"/>
+                <field name="company"/>
+                <field name="relationship"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="can_contact"/>
+                <field name="contacted"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>

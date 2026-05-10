@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Report Template -->
+    <record id="recruitment_summary_report" model="ir.actions.report">
+        <field name="name">Recruitment Summary Report</field>
+        <field name="model">hr.recruitment.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hr_recruitment_analytics_dashboard.report_recruitment_summary</field>
+        <field name="report_file">hr_recruitment_analytics_dashboard.report_recruitment_summary</field>
+        <field name="binding_model_id" ref="model_hr_recruitment_report"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_recruitment_summary">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>Recruitment Summary Report</h2>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Job Position</th>
+                                <th>Department</th>
+                                <th>Total Applicants</th>
+                                <th>Hired</th>
+                                <th>Rejected</th>
+                                <th>Conversion Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="doc">
+                                <tr>
+                                    <td><t t-esc="doc.job_id.name"/></td>
+                                    <td><t t-esc="doc.department_id.name"/></td>
+                                    <td><t t-esc="doc.applicant_count"/></td>
+                                    <td><t t-esc="doc.hired_count"/></td>
+                                    <td><t t-esc="doc.rejected_count"/></td>
+                                    <td><t t-esc="'%.1f%%' % doc.conversion_rate"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

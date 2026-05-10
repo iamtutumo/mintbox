@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Outstanding Advances & Loans Pivot View -->
+        <record id="view_hr_advance_loan_pivot" model="ir.ui.view">
+            <field name="name">hr.advance.loan.pivot</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <pivot string="Outstanding Advances &amp; Loans" disable_linking="True">
+                    <field name="name" type="row"/>
+                    <field name="total_advance_outstanding" type="measure"/>
+                    <field name="total_loan_outstanding" type="measure"/>
+                    <field name="advance_count" type="measure"/>
+                    <field name="loan_count" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Outstanding Advances &amp; Loans Graph View -->
+        <record id="view_hr_advance_loan_graph" model="ir.ui.view">
+            <field name="name">hr.advance.loan.graph</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <graph string="Outstanding Advances &amp; Loans" type="bar">
+                    <field name="name" type="row"/>
+                    <field name="total_advance_outstanding" type="measure"/>
+                    <field name="total_loan_outstanding" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Outstanding Advances &amp; Loans Tree View -->
+        <record id="view_hr_advance_loan_tree" model="ir.ui.view">
+            <field name="name">hr.advance.loan.tree</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <tree string="Outstanding Advances &amp; Loans" create="false" edit="false">
+                    <field name="name"/>
+                    <field name="advance_count"/>
+                    <field name="loan_count"/>
+                    <field name="total_advance_outstanding" sum="Total Advances"/>
+                    <field name="total_loan_outstanding" sum="Total Loans"/>
+                    <field name="department_id"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Outstanding Advances &amp; Loans Search View -->
+        <record id="view_hr_advance_loan_search" model="ir.ui.view">
+            <field name="name">hr.advance.loan.search</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <search string="Outstanding Advances &amp; Loans">
+                    <field name="name"/>
+                    <field name="department_id"/>
+                    <separator/>
+                    <filter name="has_advances" string="Has Advances" domain="[('advance_count', '>', 0)]"/>
+                    <filter name="has_loans" string="Has Loans" domain="[('loan_count', '>', 0)]"/>
+                    <filter name="has_outstanding" string="Has Outstanding Balance" domain="['|', ('total_advance_outstanding', '>', 0), ('total_loan_outstanding', '>', 0)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_department" string="Department" context="{'group_by': 'department_id'}"/>
+                        <filter name="group_company" string="Company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Outstanding Advances &amp; Loans Action -->
+        <record id="action_hr_advance_loan_report" model="ir.actions.act_window">
+            <field name="name">Outstanding Advances &amp; Loans</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">tree,pivot,graph</field>
+            <field name="context">{'search_default_has_outstanding': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No outstanding advances or loans found
+                </p>
+                <p>
+                    This report shows all employees with outstanding salary advances and loans.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Item for Reports -->
+        <menuitem id="menu_hr_advance_loan_report"
+                  name="Outstanding Advances &amp; Loans"
+                  parent="menu_hr_salary_advance_root"
+                  action="action_hr_advance_loan_report"
+                  sequence="90"
+                  groups="surepay_payroll.group_surepay_payroll_user,surepay_payroll.group_surepay_payroll_manager"/>
+
+    </data>
+</odoo>

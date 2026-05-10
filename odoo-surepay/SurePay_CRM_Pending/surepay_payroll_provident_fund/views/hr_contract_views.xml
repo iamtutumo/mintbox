@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit hr.contract form view to add Provident Fund configuration -->
+        <record id="hr_contract_view_form_inherit_provident_fund" model="ir.ui.view">
+            <field name="name">hr.contract.form.inherit.provident.fund</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/group" position="inside">
+                    <group string="Provident Fund">
+                        <field name="has_provident_fund"/>
+                        <field name="provident_fund_rate" invisible="has_provident_fund == False" required="has_provident_fund == True"/>
+                        <field name="provident_fund_max_amount" invisible="has_provident_fund == False"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit hr.contract tree view to add Provident Fund indicator -->
+        <record id="hr_contract_view_tree_inherit_provident_fund" model="ir.ui.view">
+            <field name="name">hr.contract.tree.inherit.provident.fund</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='wage']" position="after">
+                    <field name="has_provident_fund" optional="show"/>
+                    <field name="provident_fund_rate" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit hr.contract search view to add Provident Fund filters -->
+        <record id="hr_contract_view_search_inherit_provident_fund" model="ir.ui.view">
+            <field name="name">hr.contract.search.inherit.provident.fund</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='running']" position="after">
+                    <separator/>
+                    <filter name="has_provident_fund" string="Has Provident Fund" domain="[('has_provident_fund', '=', True)]"/>
+                    <filter name="no_provident_fund" string="No Provident Fund" domain="[('has_provident_fund', '=', False)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_provident_fund" string="Provident Fund" context="{'group_by': 'has_provident_fund'}"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

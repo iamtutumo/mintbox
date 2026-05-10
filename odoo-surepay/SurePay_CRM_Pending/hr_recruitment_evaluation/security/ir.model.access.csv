@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_applicant_evaluation_user,hr.applicant.evaluation.user,model_hr_applicant_evaluation,hr_recruitment.group_hr_recruitment_user,1,1,1,0
+access_hr_applicant_evaluation_manager,hr.applicant.evaluation.manager,model_hr_applicant_evaluation,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
+access_evaluation_wizard_user,evaluation.wizard.user,model_evaluation_wizard,hr_recruitment.group_hr_recruitment_user,1,1,1,1

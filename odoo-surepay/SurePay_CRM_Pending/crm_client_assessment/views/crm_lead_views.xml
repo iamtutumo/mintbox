@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View Extension -->
+    <record id="view_crm_case_opportunities_form_inherit_client_assessment" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.client.assessment</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='extra']" position="after">
+                <page string="Client Assessment" name="client_assessment">
+                    <!-- ORGANIZATION INFORMATION -->
+                    <group string="1. ORGANIZATION INFORMATION">
+                        <group>
+                            <field name="organization_name" placeholder="Name of Organization"/>
+                            <field name="years_in_business" placeholder="Years in Business"/>
+                            <field name="sector_industry" placeholder="Sector/Industry"/>
+                            <field name="contact_person" placeholder="Contact Person"/>
+                            <field name="head_office_location" placeholder="Head Office Location"/>
+                        </group>
+                        <group>
+                            <field name="project_coordinator_phone" placeholder="Contact Number for the Project Coordinator"/>
+                            <field name="email_address" placeholder="Email Address"/>
+                            <field name="skype_address" placeholder="Skype Address"/>
+                        </group>
+                    </group>
+                    
+                    <!-- PROJECT INFORMATION -->
+                    <group string="2. PROJECT INFORMATION">
+                        <group>
+                            <field name="services_requested" widget="many2many_tags" options="{'no_create_edit': True}" placeholder="Services Requested for from SurePay"/>
+                            <field name="main_expectation" nolabel="1" placeholder="Main Expectation from the SurePay Service Offer"/>
+                            <field name="current_transactions" nolabel="1" placeholder="Current Number of Transactions"/>
+                            <field name="current_provider" placeholder="Current Provider of the Service"/>
+                        </group>
+                        <group>
+                            <field name="current_average_transactions" placeholder="Current Average of Transactions"/>
+                            <field name="average_transaction_value" placeholder="Average Value of Each Transaction"/>
+                        </group>
+                    </group>
+                    
+                    <!-- PROJECTIONS -->
+                    <group string="3. PROJECTIONS">
+                        <group>
+                            <field name="estimated_customers" placeholder="Estimated Number of Customers Expected to Be Served"/>
+                            <field name="projected_transactions" nolabel="1" placeholder="Projected Number of Transactions"/>
+                            <field name="estimated_average_value" placeholder="Estimated average Value of Each Transaction"/>
+                            <field name="expected_monthly_turnover" placeholder="Expected Average Monthly Turnover for this Service"/>
+                        </group>
+                    </group>
+                    
+                    <!-- CUSTOMER ONBOARDING DETAILS -->
+                    <group string="4. CUSTOMER ONBOARDING DETAILS">
+                        <group>
+                            <field name="target_customers" nolabel="1" placeholder="Who are the main targeted Customers for this Service?"/>
+                            <field name="customer_distribution" widget="many2many_tags" options="{'no_create_edit': True}" placeholder="Customer Geographical Distribution"/>
+                            <field name="onboarding_responsible_id" placeholder="Who handles the Customer Onboarding Process?"/>
+                            <field name="marketing_budget" placeholder="Do you have a Marketing Budget for the service?"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Declaration Section -->
+                    <group string="Declaration" colspan="2">
+                        <group>
+                            <field name="declaration_date"/>
+                            <field name="declaration_signed_by"/>
+                            <field name="declaration_signed_on" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="declaration_signature" widget="image" class="oe_avatar" options="{'preview_image': 'image_128'}"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Tree View Extension -->
+    <record id="view_crm_case_opportunities_filter_inherit_client_assessment" model="ir.ui.view">
+        <field name="name">crm.lead.tree.inherit.client.assessment</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="services_requested" invisible="1"/>
+                <field name="onboarding_responsible_id" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Search View Extension -->
+    <record id="view_crm_case_opportunities_search_inherit_client_assessment" model="ir.ui.view">
+        <field name="name">crm.lead.search.inherit.client.assessment</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+            <!-- Add fields needed for filters -->
+            <xpath expr="//search" position="inside">
+                <field name="user_id" invisible="1"/>
+                <field name="activity_ids" invisible="1"/>
+                <field name="message_partner_ids" invisible="1"/>
+                
+                <!-- Add our custom filters -->
+                <filter string="Needs Assessment" name="needs_assessment" domain="[('services_requested','!=',False)]"/>
+                <filter string="My Onboarding" name="my_onboarding" domain="[('onboarding_responsible_id','=',uid)]"/>
+                
+                <!-- Add group by options -->
+                <separator/>
+                <filter string="Group by Services" name="group_services" context="{'group_by': 'services_requested'}"/>
+                <filter string="Group by Onboarding Responsible" name="group_onboarding" context="{'group_by': 'onboarding_responsible_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Action to manage Services -->
+    <record id="action_crm_client_assessment_service" model="ir.actions.act_window">
+        <field name="name">Client Assessment Services</field>
+        <field name="res_model">crm.client.assessment.service</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No services defined. Click to create a new service.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action to manage Customer Distribution -->
+    <record id="action_crm_client_assessment_distribution" model="ir.actions.act_window">
+        <field name="name">Customer Distribution Channels</field>
+        <field name="res_model">crm.client.assessment.distribution</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No distribution channels defined. Click to create a new channel.
+            </p>
+        </field>
+    </record>
+
+</odoo>

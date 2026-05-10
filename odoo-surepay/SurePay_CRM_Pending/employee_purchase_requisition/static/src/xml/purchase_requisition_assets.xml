@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Purchase Requisition Report Assets -->
+        <template id="purchase_requisition_report_assets" name="Purchase Requisition Report Assets">
+            <link href="/employee_purchase_requisition/static/src/css/purchase_requisition_print.css" rel="stylesheet"/>
+        </template>
+        
+    </data>
+</odoo>

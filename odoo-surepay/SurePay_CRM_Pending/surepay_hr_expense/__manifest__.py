@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+{
+    'name': 'SurePay HR Expense Management',
+    'version': '17.0.1.0.0',
+    'category': 'Human Resources/Expenses',
+    'summary': 'Budget-based expense management with approval workflows',
+    'author': 'SurePay Ltd',
+    'website': 'https://surepayltd.com',
+    'license': 'LGPL-3',
+    'depends': ['hr', 'hr_expense', 'account', 'mail'],
+    'data': [
+        'security/ir.model.access.csv',
+        'security/ir_rule.xml',
+        'views/hr_expense_budget_views.xml',
+        'views/hr_employee_views.xml',
+        'views/hr_expense_views.xml',
+        'views/report_views.xml',
+        'views/menu_views.xml',
+        'views/hr_expense_budget_template_views.xml',
+        'data/mail_template_data.xml',
+    ],
+    'demo': [],
+    'test': [
+        'tests/test_hr_expense_budget.py',
+        'tests/test_hr_expense_workflow.py',
+        'tests/test_budget_template.py',
+    ],
+    'installable': True,
+    'auto_install': False,
+    'application': True,
+}

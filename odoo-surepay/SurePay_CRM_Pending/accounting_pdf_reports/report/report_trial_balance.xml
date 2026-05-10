@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_trialbalance">
+        <t t-call="web.html_container">
+            <t t-set="data_report_margin_top" t-value="12"/>
+            <t t-set="data_report_header_spacing" t-value="9"/>
+            <t t-set="data_report_dpi" t-value="110"/>
+            <t t-call="web.internal_layout">
+                <div class="page">
+                    <!-- Professional Document Header -->
+                    <div class="text-center mb-4">
+                        <div class="badge bg-success text-white p-2 mb-2">
+                            <h1 class="mb-0" style="font-size: 24px; font-weight: bold;">TRIAL BALANCE</h1>
+                        </div>
+                        <h3 class="text-muted mb-0" t-field="res_company.name" style="font-size: 18px;"/>
+                        <div class="text-muted small">
+                            Generated on <span t-esc="datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
+                        </div>
+                    </div>
+
+                    <!-- Report Filters and Parameters -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Report Parameters</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <strong class="text-success">Display Account:</strong><br/>
+                                    <span class="badge bg-secondary">
+                                        <span t-if="data['display_account'] == 'all'">All Accounts</span>
+                                        <span t-if="data['display_account'] == 'movement'">With Movements</span>
+                                        <span t-if="data['display_account'] == 'not_zero'">With Balance ≠ 0</span>
+                                    </span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <strong class="text-success">Target Moves:</strong><br/>
+                                    <span class="badge bg-info">
+                                        <span t-if="data['target_move'] == 'all'">All Entries</span>
+                                        <span t-if="data['target_move'] == 'posted'">Posted Entries Only</span>
+                                    </span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <strong class="text-success">Date Range:</strong><br/>
+                                    <span class="text-muted">
+                                        <t t-if="data['date_from']"><span t-esc="data['date_from']"/></t>
+                                        <t t-if="not data['date_from']">Beginning</t>
+                                        to 
+                                        <t t-if="data['date_to']"><span t-esc="data['date_to']"/></t>
+                                        <t t-if="not data['date_to']">Present</t>
+                                    </span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong class="text-success">Journals:</strong><br/>
+                                    <span class="text-muted" t-esc="', '.join([ lt or '' for lt in print_journal ]) or 'All Journals'"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <t t-if="analytic_accounts">
+                                        <strong class="text-success">Analytic Accounts:</strong><br/>
+                                        <span class="text-muted" t-esc="', '.join([ analytic_account or '' for analytic_account in analytic_accounts ])"/>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trial Balance Table -->
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover table-sm">
+                            <thead class="table-success">
+                                <tr>
+                                    <th style="width: 100px;">Code</th>
+                                    <th>Account Name</th>
+                                    <th style="width: 120px;" class="text-end">Debit</th>
+                                    <th style="width: 120px;" class="text-end">Credit</th>
+                                    <th style="width: 120px;" class="text-end">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="Accounts" t-as="account">
+                                    <tr class="align-middle">
+                                        <td>
+                                            <span class="badge bg-dark" t-esc="account['code']"/>
+                                        </td>
+                                        <td>
+                                            <span class="ms-2" t-esc="account['name']"/>
+                                        </td>
+                                        <td class="text-end">
+                                            <span t-esc="account['debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </td>
+                                        <td class="text-end">
+                                            <span t-esc="account['credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </td>
+                                        <td class="text-end fw-bold">
+                                            <span t-esc="account['balance']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Trial Balance Summary -->
+                    <t t-if="Accounts">
+                        <div class="card mt-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Trial Balance Summary</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 text-center">
+                                        <div class="border rounded p-3 bg-success bg-opacity-10">
+                                            <h6 class="text-success mb-2">Total Debits</h6>
+                                            <h4 class="mb-0 text-success" t-esc="sum(acc['debit'] for acc in Accounts)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="border rounded p-3 bg-danger bg-opacity-10">
+                                            <h6 class="text-danger mb-2">Total Credits</h6>
+                                            <h4 class="mb-0 text-danger" t-esc="sum(acc['credit'] for acc in Accounts)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-center">
+                                        <div class="border rounded p-3">
+                                            <h6 class="text-primary mb-2">Difference</h6>
+                                            <h4 class="mb-0" t-esc="sum(acc['balance'] for acc in Accounts)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                            <t t-if="abs(sum(acc['balance'] for acc in Accounts)) > 0.01">
+                                                <span class="badge bg-warning text-danger ms-2">OUT OF BALANCE</span>
+                                            </t>
+                                            <t t-if="abs(sum(acc['balance'] for acc in Accounts)) <= 0.01">
+                                                <span class="badge bg-success ms-2">BALANCED</span>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Balance Status Alert -->
+                                <t t-if="abs(sum(acc['balance'] for acc in Accounts)) > 0.01">
+                                    <div class="alert alert-warning mt-3">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <strong>Warning:</strong> The trial balance is out of balance by 
+                                        <span t-esc="abs(sum(acc['balance'] for acc in Accounts))" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>.
+                                        Please review your entries for accuracy.
+                                    </div>
+                                </t>
+                                <t t-if="abs(sum(acc['balance'] for acc in Accounts)) <= 0.01">
+                                    <div class="alert alert-success mt-3">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <strong>Success:</strong> The trial balance is in balance. All debits equal all credits.
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- Account Statistics -->
+                    <t t-if="Accounts">
+                        <div class="card mt-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Account Statistics</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 text-center">
+                                        <div class="border rounded p-3">
+                                            <h6 class="text-info mb-2">Total Accounts</h6>
+                                            <h3 class="mb-0 text-info" t-esc="len(Accounts)"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 text-center">
+                                        <div class="border rounded p-3">
+                                            <h6 class="text-warning mb-2">Accounts with Debits</h6>
+                                            <h3 class="mb-0 text-warning" t-esc="len([acc for acc in Accounts if acc['debit'] > 0])"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 text-center">
+                                        <div class="border rounded p-3">
+                                            <h6 class="text-secondary mb-2">Accounts with Credits</h6>
+                                            <h3 class="mb-0 text-secondary" t-esc="len([acc for acc in Accounts if acc['credit'] > 0])"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 text-center">
+                                        <div class="border rounded p-3">
+                                            <h6 class="text-dark mb-2">Zero Balance Accounts</h6>
+                                            <h3 class="mb-0 text-dark" t-esc="len([acc for acc in Accounts if acc['balance'] == 0])"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- Empty State -->
+                    <t t-if="not Accounts">
+                        <div class="text-center py-5">
+                            <i class="fas fa-balance-scale fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No Trial Balance Data</h4>
+                            <p class="text-muted">No accounts found for the selected criteria.</p>
+                        </div>
+                    </t>
+
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Exit Clearance Email Templates -->
+        
+        <!-- Exit Clearance Submitted Template -->
+        <record id="email_template_exit_clearance_submitted" model="mail.template">
+            <field name="name">Exit Clearance - Submitted</field>
+            <field name="model_id" ref="model_hr_exit_clearance"/>
+            <field name="subject">Exit Clearance Request Submitted - ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear HR Manager,</p>
+                    <p>A new exit clearance request has been submitted by <strong>${object.employee_id.name}</strong>.</p>
+                    <div style="margin: 16px 0;">
+                        <strong>Request Details:</strong><br/>
+                        Employee: ${object.employee_id.name}<br/>
+                        Request Date: ${object.request_date}<br/>
+                        Last Working Day: ${object.last_working_day}<br/>
+                        Exit Reason: ${object.exit_reason}
+                    </div>
+                    <p>Please review and process this request.</p>
+                    <p>Best regards,<br/>${object.employee_id.name}</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang}</field>
+        </record>
+        
+        <!-- Exit Clearance Started Template -->
+        <record id="email_template_exit_clearance_started" model="mail.template">
+            <field name="name">Exit Clearance - Clearance Started</field>
+            <field name="model_id" ref="model_hr_exit_clearance"/>
+            <field name="subject">Exit Clearance Process Started - ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name},</p>
+                    <p>Your exit clearance process has been started. Please complete the clearance requirements with the following departments:</p>
+                    <div style="margin: 16px 0;">
+                        <strong>Clearance Departments:</strong><br/>
+                        % for line in object.clearance_line_ids:
+                        - ${line.department}: ${line.state}<br/>
+                        % endfor
+                    </div>
+                    <p>Please ensure all clearance items are completed before your last working day.</p>
+                    <p>Best regards,<br/>HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang}</field>
+        </record>
+        
+        <!-- Exit Clearance Approved Template -->
+        <record id="email_template_exit_clearance_approved" model="mail.template">
+            <field name="name">Exit Clearance - Approved</field>
+            <field name="model_id" ref="model_hr_exit_clearance"/>
+            <field name="subject">Exit Clearance Approved - ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name},</p>
+                    <p>Your exit clearance request has been approved. Your clearance form has been generated and attached to this email.</p>
+                    <div style="margin: 16px 0;">
+                        <strong>Cleared Departments:</strong><br/>
+                        % for line in object.clearance_line_ids:
+                        - ${line.department}: Cleared<br/>
+                        % endfor
+                    </div>
+                    <p>Please find your clearance form attached. You may use this for your final settlement and references.</p>
+                    <p>Best regards,<br/>HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang}</field>
+        </record>
+        
+        <!-- Exit Clearance Rejected Template -->
+        <record id="email_template_exit_clearance_rejected" model="mail.template">
+            <field name="name">Exit Clearance - Rejected</field>
+            <field name="model_id" ref="model_hr_exit_clearance"/>
+            <field name="subject">Exit Clearance Rejected - ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name},</p>
+                    <p>We regret to inform you that your exit clearance request has been rejected.</p>
+                    <div style="margin: 16px 0;">
+                        <strong>Request Details:</strong><br/>
+                        Request Date: ${object.request_date}<br/>
+                        Last Working Day: ${object.last_working_day}<br/>
+                        Exit Reason: ${object.exit_reason}
+                    </div>
+                    <p>Please contact HR for more information regarding the rejection and next steps.</p>
+                    <p>Best regards,<br/>HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang}</field>
+        </record>
+        
+        <!-- Exit Clearance Manager Notification Template -->
+        <record id="email_template_exit_clearance_manager" model="mail.template">
+            <field name="name">Exit Clearance - Manager Notification</field>
+            <field name="model_id" ref="model_hr_exit_clearance"/>
+            <field name="subject">Exit Clearance Request - Manager Approval Required - ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.manager_id.name},</p>
+                    <p>An exit clearance request has been submitted by <strong>${object.employee_id.name}</strong> from your department and requires your approval.</p>
+                    <div style="margin: 16px 0;">
+                        <strong>Request Details:</strong><br/>
+                        Employee: ${object.employee_id.name}<br/>
+                        Department: ${object.department_id.name}<br/>
+                        Request Date: ${object.request_date}<br/>
+                        Last Working Day: ${object.last_working_day}<br/>
+                        Exit Reason: ${object.exit_reason}
+                    </div>
+                    <p>Please review this request and provide your approval or rejection. You can access the request through the system or contact HR for more information.</p>
+                    <p>Best regards,<br/>HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.manager_id.lang or 'en_US'}</field>
+        </record>
+        
+        <!-- Exit Clearance Form Completed Template -->
+        <record id="email_template_clearance_form_completed" model="mail.template">
+            <field name="name">Exit Clearance - Form Completed</field>
+            <field name="model_id" ref="model_hr_exit_clearance"/>
+            <field name="subject">Exit Clearance Form Completed - ${object.employee_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name},</p>
+                    <p>Your exit clearance form has been completed and is ready for your use. Please find the completed clearance form attached to this email.</p>
+                    <div style="margin: 16px 0;">
+                        <strong>Clearance Summary:</strong><br/>
+                        Employee: ${object.employee_id.name}<br/>
+                        Department: ${object.department_id.name}<br/>
+                        Last Working Day: ${object.last_working_day}<br/>
+                        Exit Reason: ${object.exit_reason}<br/>
+                        Clearance Status: ${object.state}
+                    </div>
+                    <div style="margin: 16px 0;">
+                        <strong>Department Clearances:</strong><br/>
+                        % for line in object.clearance_line_ids:
+                        - ${line.department_name}: ${line.status}<br/>
+                        % endfor
+                    </div>
+                    <p>Please keep this form for your records and use it for any final settlement processes or future references.</p>
+                    <p>If you have any questions regarding your exit clearance, please contact the HR department.</p>
+                    <p>Best regards,<br/>HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang}</field>
+        </record>
+        
+        <!-- Grievance Email Templates -->
+        
+        <!-- Grievance Submitted Template -->
+        <record id="email_template_grievance_submitted" model="mail.template">
+            <field name="name">Grievance - Submitted</field>
+            <field name="model_id" ref="model_hr_grievance"/>
+            <field name="subject">New Grievance Submitted - ${object.title}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear HR Manager,</p>
+                    <p>A new grievance has been submitted by <strong>${object.employee_id.name}</strong>.</p>
+                    <div style="margin: 16px 0;">
+                        <strong>Grievance Details:</strong><br/>
+                        Employee: ${object.employee_id.name}<br/>
+                        Title: ${object.title}<br/>
+                        Type: ${object.grievance_type}<br/>
+                        Priority: ${object.priority}<br/>
+                        Submission Date: ${object.submission_date}
+                    </div>
+                    <div style="margin: 16px 0;">
+                        <strong>Description:</strong><br/>
+                        ${object.description}
+                    </div>
+                    <p>Please review and assign this grievance for investigation.</p>
+                    <p>Best regards,<br/>${object.employee_id.name}</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang}</field>
+        </record>
+        
+        <!-- Grievance Assigned Template -->
+        <record id="email_template_grievance_assigned" model="mail.template">
+            <field name="name">Grievance - Assigned</field>
+            <field name="model_id" ref="model_hr_grievance"/>
+            <field name="subject">Grievance Assigned - ${object.title}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.assigned_to.name},</p>
+                    <p>A grievance has been assigned to you for investigation and resolution.</p>
+                    <div style="margin: 16px 0;">
+                        <strong>Grievance Details:</strong><br/>
+                        Employee: ${object.employee_id.name}<br/>
+                        Title: ${object.title}<br/>
+                        Type: ${object.grievance_type}<br/>
+                        Priority: ${object.priority}<br/>
+                        Expected Resolution Date: ${object.expected_resolution_date}
+                    </div>
+                    <div style="margin: 16px 0;">
+                        <strong>Description:</strong><br/>
+                        ${object.description}
+                    </div>
+                    <p>Please review and take appropriate action. The expected resolution date is ${object.expected_resolution_date}.</p>
+                    <p>Best regards,<br/>HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang}</field>
+        </record>
+        
+        <!-- Grievance Resolved Template -->
+        <record id="email_template_grievance_resolved" model="mail.template">
+            <field name="name">Grievance - Resolved</field>
+            <field name="model_id" ref="model_hr_grievance"/>
+            <field name="subject">Grievance Resolved - ${object.title}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name},</p>
+                    <p>Your grievance has been resolved.</p>
+                    <div style="margin: 16px 0;">
+                        <strong>Grievance Details:</strong><br/>
+                        Title: ${object.title}<br/>
+                        Type: ${object.grievance_type}<br/>
+                        Resolution Date: ${object.resolution_date}
+                    </div>
+                    <div style="margin: 16px 0;">
+                        <strong>Resolution Notes:</strong><br/>
+                        ${object.resolution_notes}
+                    </div>
+                    <p>If you are satisfied with the resolution, please let us know. If you have any concerns, please contact HR.</p>
+                    <p>Best regards,<br/>HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang}</field>
+        </record>
+        
+        <!-- Grievance Escalated Template -->
+        <record id="email_template_grievance_escalated" model="mail.template">
+            <field name="name">Grievance - Escalated</field>
+            <field name="model_id" ref="model_hr_grievance"/>
+            <field name="subject">Grievance Escalated - ${object.title}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear HR Manager,</p>
+                    <p>A grievance has been escalated due to the resolution timeframe being exceeded.</p>
+                    <div style="margin: 16px 0;">
+                        <strong>Grievance Details:</strong><br/>
+                        Employee: ${object.employee_id.name}<br/>
+                        Title: ${object.title}<br/>
+                        Type: ${object.grievance_type}<br/>
+                        Priority: ${object.priority}<br/>
+                        Assigned To: ${object.assigned_to.name}<br/>
+                        Expected Resolution Date: ${object.expected_resolution_date}<br/>
+                        Escalation Date: ${object.escalation_date}
+                    </div>
+                    <div style="margin: 16px 0;">
+                        <strong>Description:</strong><br/>
+                        ${object.description}
+                    </div>
+                    <p>Please review this escalated grievance and take immediate action.</p>
+                    <p>Best regards,<br/>HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang}</field>
+        </record>
+        
+        <!-- Grievance Closed Template -->
+        <record id="email_template_grievance_closed" model="mail.template">
+            <field name="name">Grievance - Closed</field>
+            <field name="model_id" ref="model_hr_grievance"/>
+            <field name="subject">Grievance Closed - ${object.title}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name},</p>
+                    <p>Your grievance has been closed.</p>
+                    <div style="margin: 16px 0;">
+                        <strong>Grievance Details:</strong><br/>
+                        Title: ${object.title}<br/>
+                        Type: ${object.grievance_type}<br/>
+                        Resolution Date: ${object.resolution_date}
+                    </div>
+                    <div style="margin: 16px 0;">
+                        <strong>Resolution Notes:</strong><br/>
+                        ${object.resolution_notes}
+                    </div>
+                    <p>Thank you for your patience during this process. If you have any further concerns, please feel free to contact HR.</p>
+                    <p>Best regards,<br/>HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.employee_id.lang}</field>
+        </record>
+        
+        <!-- Grievance Rejected Template -->
+        <record id="email_template_grievance_rejected" model="mail.template">
+            <field name="name">Grievance - Rejected</field>
+            <field name="model_id" ref="model_hr_grievance"/>
+            <field name="subject">Grievance Rejected - ${object.title}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name},</p>
+                    <p>We regret to inform you that your grievance has been rejected.</p>
+                    <div style="margin: 16px 0;">
+                        <strong>Grievance Details:</strong><br/>
+                        Title: ${object.title}<br/>
+                        Type: ${object.grievance_type.name}<br/>
+                        Submission Date: ${object.submission_date}<br/>
+                        Resolution Notes: ${object.resolution_notes or 'N/A'}
+                    </div>
+                    <p>Please contact HR for more information regarding the rejection and next steps.</p>
+                    <p>Best regards,<br/>HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete">True</field>
+            <field name="lang">${object.employee_id.lang}</field>
+        </record>
+        
+        <!-- Leave Management Email Templates -->
+        
+        <!-- Leave Balance Notification Email Template -->
+        <record id="email_template_leave_balance_notification" model="mail.template">
+            <field name="name">Leave Balance Notification</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="subject">Low Leave Balance Notification - ${object.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.name},</p>
+                    <p>This is a notification regarding your annual leave balance.</p>
+                    <p><strong>Your current leave balance details:</strong></p>
+                    <ul>
+                        <li>Total Annual Leave Allocated: 20 days</li>
+                        <li>Leave Taken: ${object.leave_taken or 0} days</li>
+                        <li>Remaining Balance: ${object.leave_remaining or 0} days</li>
+                    </ul>
+                    <p><strong>Warning:</strong> Your remaining leave balance is low (${object.leave_remaining or 0} days). Please plan your remaining leave accordingly.</p>
+                    <p>If you have any questions about your leave balance or need to apply for leave, please contact the HR department.</p>
+                    <p>Best regards,<br/>HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete">True</field>
+            <field name="lang">${object.partner_id.lang or 'en_US'}</field>
+        </record>
+        
+        <!-- Leave Request Confirmation Email Template -->
+        <record id="email_template_leave_request_confirmation" model="mail.template">
+            <field name="name">Leave Request Confirmation</field>
+            <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+            <field name="subject">Leave Request Confirmation - ${object.holiday_status_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name},</p>
+                    <p>Your leave request has been successfully submitted.</p>
+                    <p><strong>Leave Request Details:</strong></p>
+                    <ul>
+                        <li>Leave Type: ${object.holiday_status_id.name}</li>
+                        <li>Start Date: ${object.request_date_from}</li>
+                        <li>End Date: ${object.request_date_to}</li>
+                        <li>Number of Days: ${object.number_of_days}</li>
+                        <li>Status: ${object.state}</li>
+                    </ul>
+                    <p>Your request is currently ${object.state} and will be reviewed by your manager.</p>
+                    <p>You will receive another notification once your request has been approved or rejected.</p>
+                    <p>Best regards,<br/>HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete">True</field>
+            <field name="lang">${object.employee_id.partner_id.lang or 'en_US'}</field>
+        </record>
+        
+        <!-- Leave Request Approval Email Template -->
+        <record id="email_template_leave_approval" model="mail.template">
+            <field name="name">Leave Request Approval</field>
+            <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+            <field name="subject">Leave Request Approved - ${object.holiday_status_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name},</p>
+                    <p>Your leave request has been approved.</p>
+                    <p><strong>Approved Leave Details:</strong></p>
+                    <ul>
+                        <li>Leave Type: ${object.holiday_status_id.name}</li>
+                        <li>Start Date: ${object.request_date_from}</li>
+                        <li>End Date: ${object.request_date_to}</li>
+                        <li>Number of Days: ${object.number_of_days}</li>
+                    </ul>
+                    <p>Enjoy your leave!</p>
+                    <p>Best regards,<br/>HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete">True</field>
+            <field name="lang">${object.employee_id.partner_id.lang or 'en_US'}</field>
+        </record>
+        
+        <!-- Leave Request Rejection Email Template -->
+        <record id="email_template_leave_rejection" model="mail.template">
+            <field name="name">Leave Request Rejection</field>
+            <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+            <field name="subject">Leave Request Rejected - ${object.holiday_status_id.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.employee_id.name},</p>
+                    <p>Your leave request has been rejected.</p>
+                    <p><strong>Rejected Leave Details:</strong></p>
+                    <ul>
+                        <li>Leave Type: ${object.holiday_status_id.name}</li>
+                        <li>Start Date: ${object.request_date_from}</li>
+                        <li>End Date: ${object.request_date_to}</li>
+                        <li>Number of Days: ${object.number_of_days}</li>
+                    </ul>
+                    <p>Please contact your manager or HR department for more information.</p>
+                    <p>Best regards,<br/>HR Department</p>
+                </div>
+            </field>
+            <field name="auto_delete">True</field>
+            <field name="lang">${object.employee_id.partner_id.lang or 'en_US'}</field>
+        </record>
+        
+    </data>
+</odoo>

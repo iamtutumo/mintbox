@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main template for header and footer modifications -->
+    <template id="custom_website_assets" inherit_id="website.layout" name="Custom Website Assets" priority="20">
+        <xpath expr="//head" position="inside">
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Replace logo
+                    var logo = document.querySelector('.navbar-brand img, a.navbar-brand img, #logo img, .o_logo img');
+                    if (logo) {
+                        logo.src = '/hr_recruitment_application_extended/static/src/img/logo.svg';
+                        logo.alt = 'SurePay';
+                        logo.style.maxHeight = '50px';
+                        logo.style.width = 'auto';
+                    }
+                    
+                    // Hide footer
+                    var footer = document.querySelector('footer, .o_footer, #footer');
+                    if (footer) {
+                        footer.style.display = 'none';
+                    }
+                    
+                    // Simplify navigation menu (optional - uncomment if needed)
+                    /*
+                    var menu = document.querySelector('#top_menu, .o_menu_systray, .o_main_navbar');
+                    if (menu) {
+                        menu.innerHTML = `
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item">
+                                    <a href="/" class="nav-link">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/jobs" class="nav-link">Jobs</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/web/login" class="nav-link">Sign In</a>
+                                </li>
+                            </ul>
+                        `;
+                    }
+                    */
+                });
+            </script>
+            <style>
+                /* Ensure logo displays correctly */
+                .navbar-brand img, .o_logo img, #logo img {
+                    max-height: 50px !important;
+                    height: auto !important;
+                    width: auto !important;
+                    object-fit: contain !important;
+                }
+            </style>
+        </xpath>
+    </template>
+</odoo>

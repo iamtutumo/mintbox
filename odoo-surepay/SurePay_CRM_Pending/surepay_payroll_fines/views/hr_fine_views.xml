@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Fine Tree View -->
+        <record id="hr_fine_view_tree" model="ir.ui.view">
+            <field name="name">hr.fine.tree</field>
+            <field name="model">hr.fine</field>
+            <field name="arch" type="xml">
+                <tree decoration-success="state=='deducted'" decoration-danger="state=='cancelled'">
+                    <field name="date"/>
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="fine_rule_id"/>
+                    <field name="description"/>
+                    <field name="amount" sum="Total Amount"/>
+                    <field name="state"/>
+                    <field name="payslip_id"/>
+                    <field name="disciplinary_action_id"/>
+                    <button name="action_deduct" type="object" 
+                            class="btn btn-sm btn-success" 
+                            icon="fa-check" 
+                            title="Mark as Deducted"
+                            invisible="state != 'pending'"/>
+                    <button name="action_cancel" type="object" 
+                            class="btn btn-sm btn-danger" 
+                            icon="fa-times" 
+                            title="Cancel Fine"
+                            invisible="state != 'pending'"/>
+                    <button name="action_reset_pending" type="object" 
+                            class="btn btn-sm btn-primary" 
+                            icon="fa-undo" 
+                            title="Reset to Pending"
+                            invisible="state == 'pending'"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Fine Form View -->
+        <record id="hr_fine_view_form" model="ir.ui.view">
+            <field name="name">hr.fine.form</field>
+            <field name="model">hr.fine</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_deduct" type="object" 
+                                class="btn btn-success" 
+                                string="Mark as Deducted"
+                                invisible="state != 'pending'"/>
+                        <button name="action_cancel" type="object" 
+                                class="btn btn-danger" 
+                                string="Cancel Fine"
+                                invisible="state != 'pending'"/>
+                        <button name="action_reset_pending" type="object" 
+                                class="btn btn-primary" 
+                                string="Reset to Pending"
+                                invisible="state == 'pending'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="pending,deducted"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="department_id"/>
+                                <field name="company_id"/>
+                                <field name="date"/>
+                            </group>
+                            <group>
+                                <field name="fine_rule_id"/>
+                                <field name="amount"/>
+                                <field name="payslip_id"/>
+                                <field name="disciplinary_action_id"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Fine Search View -->
+        <record id="hr_fine_view_search" model="ir.ui.view">
+            <field name="name">hr.fine.search</field>
+            <field name="model">hr.fine</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="employee_id"/>
+                    <field name="description"/>
+                    <field name="fine_rule_id"/>
+                    <field name="department_id"/>
+                    <separator/>
+                    <filter name="pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                    <filter name="deducted" string="Deducted" domain="[('state', '=', 'deducted')]"/>
+                    <filter name="cancelled" string="Cancelled" domain="[('state', '=', 'cancelled')]"/>
+                    <separator/>
+                    <filter name="my_employees" string="My Employees" domain="[('employee_id.parent_id.user_id', '=', uid)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_department" string="Department" context="{'group_by': 'department_id'}"/>
+                        <filter name="group_fine_rule" string="Fine Rule" context="{'group_by': 'fine_rule_id'}"/>
+                        <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                        <filter name="group_date" string="Date" context="{'group_by': 'date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Fine Action -->
+        <record id="action_hr_fine" model="ir.actions.act_window">
+            <field name="name">Employee Fines</field>
+            <field name="res_model">hr.fine</field>
+            <field name="view_mode">tree,form,pivot,graph</field>
+            <field name="context">{'search_default_pending': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No fines found
+                </p>
+                <p>
+                    Employee fines will appear here when they are assigned.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Item -->
+        <menuitem id="menu_hr_fine"
+                  name="Employee Fines"
+                  parent="surepay_payroll.menu_surepay_payroll_root"
+                  action="action_hr_fine"
+                  sequence="80"
+                  groups="hr.group_hr_user"/>
+
+    </data>
+</odoo>
